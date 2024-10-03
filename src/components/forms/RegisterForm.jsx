@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
-import { FcGoogle } from "react-icons/fc";
 
 import { HR } from "flowbite-react";
-import { registerUser } from "../../service/authService";
+import { RegisterUser } from "../../service/AuthService";
 import { GoogleLoginButton } from "../buttons/Button";
 
 export function RegisterForm() {
@@ -25,7 +24,7 @@ export function RegisterForm() {
 
   const onSubmit = async (data) => {
     try {
-      await registerUser(data, navigate);
+      await RegisterUser(data, navigate);
     } catch (error) {
       console.error("Error during login:", error.message);
     }

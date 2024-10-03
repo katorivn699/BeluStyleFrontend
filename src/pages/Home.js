@@ -9,6 +9,8 @@ export function Home() {
   useEffect(() => {
     const token = localStorage.getItem("user");
 
+    
+
 
     if (token) {
       try {
@@ -27,7 +29,7 @@ export function Home() {
 
   return (
     <MainLayout>
-      <h1>Hi</h1>
+      <h1>hi</h1>
     </MainLayout>
   );
 }

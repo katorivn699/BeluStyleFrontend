@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { loginUser } from "../../service/authService";
+
 import { ForgotBtn } from "../buttons/Button";
+import { HandleForgotPassword } from "../../service/AuthService";
 
 export function ForgotForm() {
   const {
@@ -17,7 +18,8 @@ export function ForgotForm() {
 
   const onSubmit = async (data) => {
     try {
-      await loginUser(data, navigate); 
+      console.log(data);
+      await HandleForgotPassword(data, navigate); 
     } catch (error) {
       console.error("Error during login:", error.message);
     }

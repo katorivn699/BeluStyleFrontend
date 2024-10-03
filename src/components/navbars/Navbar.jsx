@@ -1,42 +1,31 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import logo from "../../assets/images/logo.png";
-import userdefault from "../../assets/images/userdefault.svg";
 import GuessMenu from "../menus/GuessMenu";
-import { jwtDecode } from "jwt-decode";
 import { IoCartOutline, IoSearchOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
+import { useAuth } from "../../store/AuthContext";
+import LoggedMenu from "../menus/LoggedMenu";
 
 export function Navbar() {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isLoggedIn, avatarUrl } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState({ guess: false, logged: false });
   const dropdownRef = useRef(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("user");
-
-    if (token) {
-      try {
-        const parsedUser = JSON.parse(token);
-        const decoded = jwtDecode(parsedUser.token);
-
-        const username = decoded.name || "User";
-        const avatar = decoded.user_image || userdefault;
-
-        setUser({ username, avatar });
-      } catch (error) {
-        console.error("Failed to decode token", error);
-      }
-    }
-  }, []);
+  const toggleMenu = (menuType) => {
+    setIsMenuOpen((prevState) => ({
+      guess: menuType === "guess" ? !prevState.guess : false,
+      logged: menuType === "logged" ? !prevState.logged : false,
+    }));
+  };
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsMenuOpen(false);
+      setIsMenuOpen({ guess: false, logged: false }); // Đóng tất cả menu
     }
   };
 
+  // Sử dụng hook useEffect để đóng menu khi click ra ngoài
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -88,18 +77,35 @@ export function Navbar() {
           </ul>
         </div>
         <div className="navinfo items-center justify-end flex space-x-10 pr-10">
-        <div className="relative" ref={dropdownRef}>
-            {/* Avatar icon to toggle the menu */}
-            <div
-              className="cursor-pointer hover:text-gray-700 transition duration-300"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <CiUser className="text-4xl" />
+          {isLoggedIn ? (
+            <div className="relative" ref={dropdownRef}>
+              {/* Avatar icon để mở menu */}
+              <div
+                className="cursor-pointer hover:text-gray-700 transition duration-300"
+                onClick={() => toggleMenu("logged")}
+              >
+                <img
+                  src={avatarUrl}
+                  className="rounded-full w-12 h-12 object-cover"
+                  alt="User avatar"
+                />
+              </div>
+              {/* LoggedMenu khi đăng nhập */}
+              <LoggedMenu isMenuOpen={isMenuOpen.logged} />
             </div>
-
-            {/* Render the GuessMenu */}
-            <GuessMenu isMenuOpen={isMenuOpen} />
-          </div>
+          ) : (
+            <div className="relative" ref={dropdownRef}>
+              {/* Icon user để mở menu Guest */}
+              <div
+                className="cursor-pointer hover:text-gray-700 transition duration-300 pb-2"
+                onClick={() => toggleMenu("guess")}
+              >
+                <CiUser className="text-4xl" />
+              </div>
+              {/* GuessMenu khi chưa đăng nhập */}
+              <GuessMenu isMenuOpen={isMenuOpen.guess} />
+            </div>
+          )}
           <div className="searchBtn hover:text-gray-700 transition duration-300">
             <button>
               <IoSearchOutline className="text-3xl" />
@@ -107,7 +113,7 @@ export function Navbar() {
           </div>
           <div className="cartBtn hover:text-gray-700 transition duration-300">
             <button>
-            <IoCartOutline className="text-3xl" />
+              <IoCartOutline className="text-3xl" />
             </button>
           </div>
         </div>

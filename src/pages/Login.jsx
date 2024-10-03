@@ -1,7 +1,7 @@
 // src/pages/Login.js
 import React from 'react';
-import UserForm from '../layouts/UserPermission';
 import { LoginForm } from '../components/forms/LoginForm';
+import { UserForm } from '../layouts/LRFCLayout';
 
 export function Login() {
   

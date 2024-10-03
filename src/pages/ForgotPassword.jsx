@@ -1,5 +1,6 @@
 import { ForgotForm } from "../components/forms/ForgotForm";
-import UserForm from "../layouts/UserPermission";
+import { UserForm } from "../layouts/LRFCLayout";
+
 
 function ForgotPassword() {
   return (

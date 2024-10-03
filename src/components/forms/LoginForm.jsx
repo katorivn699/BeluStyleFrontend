@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
-import { FcGoogle } from "react-icons/fc";
 
 import { HR } from "flowbite-react";
-import { loginUser } from "../../service/authService";
+import { LoginUser } from "../../service/AuthService";
 import { GoogleLoginButton, LoginBtn } from "../buttons/Button";
+import { useAuth } from "../../store/AuthContext";
 
 export function LoginForm() {
   const {
@@ -18,6 +18,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const { setIsLoggedIn, setAvatarUrl, setUsername } = useAuth();
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -25,7 +26,7 @@ export function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      await loginUser(data, navigate); 
+      await LoginUser(data, navigate, setIsLoggedIn, setAvatarUrl, setUsername); 
     } catch (error) {
       console.error("Error during login:", error.message);
     }
