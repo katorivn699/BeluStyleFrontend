@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
 import { HR } from "flowbite-react";
-import { RegisterUser } from "../../service/AuthService";
+import { RegisterUser } from "../../service/authService";
 import { GoogleLoginButton } from "../buttons/Button";
 
 export function RegisterForm() {

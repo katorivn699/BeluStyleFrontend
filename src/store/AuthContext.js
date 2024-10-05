@@ -11,25 +11,35 @@ export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("AuthToken");
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    let user = null;
-
-    if (token) {
-      user = jwtDecode(token);
-      setIsLoggedIn(true);
-      if (user.user_image) {
-        setAvatarUrl(user.user_image);
-      } else {
+    const userTokenString = localStorage.getItem("NextAuth");
+  
+    if (userTokenString) {
+      try {
+        const userToken = JSON.parse(userTokenString);
+  
+        if (userToken.token && userToken.expire) {
+          const user = jwtDecode(userToken.token);
+          setIsLoggedIn(true);
+          setAvatarUrl(user.image || userDefault);
+          setUsername(user.username || null);
+        } else {
+          setIsLoggedIn(false);
+          setAvatarUrl(userDefault);
+          setUsername(null);
+        }
+      } catch (error) {
+        console.error("Error parsing token:", error);
+        setIsLoggedIn(false);
         setAvatarUrl(userDefault);
+        setUsername(null);
       }
-      setUsername(user.username || null);
     } else {
       setIsLoggedIn(false);
       setAvatarUrl(userDefault);
       setUsername(null);
     }
   }, []);
+  
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, setAvatarUrl, setUsername, avatarUrl, username }}>

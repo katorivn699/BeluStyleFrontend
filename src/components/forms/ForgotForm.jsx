@@ -1,10 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-
-
 import { ForgotBtn } from "../buttons/Button";
-import { HandleForgotPassword } from "../../service/AuthService";
+import { HandleForgotPassword } from "../../service/authService";
 
 export function ForgotForm() {
   const {

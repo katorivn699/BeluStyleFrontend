@@ -4,9 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
 import { HR } from "flowbite-react";
-import { LoginUser } from "../../service/AuthService";
+import { LoginUser } from "../../service/authService";
 import { GoogleLoginButton, LoginBtn } from "../buttons/Button";
 import { useAuth } from "../../store/AuthContext";
+import { toast } from "react-toastify";
 
 export function LoginForm() {
   const {
@@ -29,6 +30,9 @@ export function LoginForm() {
       await LoginUser(data, navigate, setIsLoggedIn, setAvatarUrl, setUsername); 
     } catch (error) {
       console.error("Error during login:", error.message);
+      // toast.error(error.message, {
+      //   position: "top-center",
+      //   });
     }
   };
   const handleRememberMeChange = () => {
@@ -36,7 +40,7 @@ export function LoginForm() {
   };
 
   return (
-    <div>
+    <div className="pt-20">
       <h2 className="font-poppins text-5xl mb-6 text-left">Login</h2>{" "}
       {/* Increase font size */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -68,14 +72,12 @@ export function LoginForm() {
               {showPassword ? (
                 <>
                   <BiSolidHide className="mr-1 text-3xl text-gray-500" />{" "}
-                  {/* Icon for hiding password */}
-                  Hide {/* Text for hiding password */}
+                  Hide
                 </>
               ) : (
                 <>
                   <BiSolidShow className="mr-1 text-3xl text-gray-500" />{" "}
-                  {/* Icon for showing password */}
-                  Show {/* Text for showing password */}
+                  Show 
                 </>
               )}
             </button>

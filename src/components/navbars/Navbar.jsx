@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import logo from "../../assets/images/logo.png";
-import GuessMenu from "../menus/GuessMenu";
 import { IoCartOutline, IoSearchOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { useAuth } from "../../store/AuthContext";
+import GuessMenu from "../menus/GuessMenu";
 import LoggedMenu from "../menus/LoggedMenu";
 
 export function Navbar() {
@@ -34,7 +34,7 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav className="bg-white p-1">
+    <nav className="fixed top-0 left-0 right-0 bg-white p-1 z-50">
       <div className="navitem grid grid-cols-3 items-center">
         <div className="nar-left flex items-center justify-start pl-10">
           <img src={logo} alt="" className="logo w-20" />
@@ -79,7 +79,6 @@ export function Navbar() {
         <div className="navinfo items-center justify-end flex space-x-10 pr-10">
           {isLoggedIn ? (
             <div className="relative" ref={dropdownRef}>
-              {/* Avatar icon để mở menu */}
               <div
                 className="cursor-pointer hover:text-gray-700 transition duration-300"
                 onClick={() => toggleMenu("logged")}
@@ -90,19 +89,16 @@ export function Navbar() {
                   alt="User avatar"
                 />
               </div>
-              {/* LoggedMenu khi đăng nhập */}
               <LoggedMenu isMenuOpen={isMenuOpen.logged} />
             </div>
           ) : (
             <div className="relative" ref={dropdownRef}>
-              {/* Icon user để mở menu Guest */}
               <div
                 className="cursor-pointer hover:text-gray-700 transition duration-300 pb-2"
                 onClick={() => toggleMenu("guess")}
               >
                 <CiUser className="text-4xl" />
               </div>
-              {/* GuessMenu khi chưa đăng nhập */}
               <GuessMenu isMenuOpen={isMenuOpen.guess} />
             </div>
           )}

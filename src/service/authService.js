@@ -1,98 +1,64 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { Bounce, toast } from "react-toastify";
-import { useAuth } from "../store/AuthContext";
-import userDefault from "../assets/images/userdefault.svg"
+import { toast, Zoom } from "react-toastify";
+import userDefault from "../assets/images/userdefault.svg";
 
-export const LoginUser = async (data, navigate, setIsLoggedIn, setAvatarUrl, setUsername) => {
+export const LoginUser = async (
+  data,
+  navigate,
+  setIsLoggedIn,
+  setAvatarUrl,
+  setUsername
+) => {
+  const loginPromise = axios.post("http://localhost:8080/api/auth/login", {
+    username: data.username,
+    passwordHash: data.password,
+  });
+
+  toast.promise(
+    loginPromise,
+    {
+      pending: "Logging in...",
+      success: "Login successful!",
+      error: {
+        render({ data }) {
+          if (data.response) {
+            const errorMessage = data.response.data?.message || "An error occurred. Please try again.";
+            return errorMessage;
+          }
+          return "An error occurred. Please try again."; 
+        },
+      },
+    },
+    {
+      position: "bottom-center",
+      transition: Zoom,
+    }
+  );
+
   try {
-    const response = await axios.post("http://localhost:8080/api/auth/login", {
-      username: data.username,
-      passwordHash: data.password,
-    });
+    const response = await loginPromise;
 
     const userData = {
-      token: response.data,
+      token: response.data.token,
+      expire: response.data.expirationTime,
     };
 
-    localStorage.setItem("AuthToken", JSON.stringify(userData));
+    localStorage.setItem("NextAuth", JSON.stringify(userData));
 
-    const user = jwtDecode(response.data); 
+    const user = jwtDecode(response.data.token);
     setIsLoggedIn(true);
-    setAvatarUrl(user.user_image || userDefault);
-    setUsername(user.username);
+    setAvatarUrl(user.image || userDefault);
+    setUsername(user.sub);
     navigate("/");
-
-
-    toast.success(response.data.message || "Login successful!", {
-      position: "bottom-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      transition: Bounce,
-      });
 
     return userData;
   } catch (error) {
-    if (error.response) {
-      // console.error("Login failed", error.response.data);
-      toast.error(error.response.data, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-        });
-      throw new Error(error.response.data);
-    } else {
-      console.error("Login failed", error);
-      toast.warn('An error occurred. Please try again.', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-        });
-      throw new Error("An error occurred. Please try again.");
-    }
+    console.error("Error during login:", error); 
+    throw new Error(error.response?.data.message || "An error occurred. Please try again.");
   }
 };
 
-export const HandleLogin = (navigate, setIsLoggedIn) => {
-  const user = localStorage.getItem("AuthToken");
-  if (user) {
-    try {
-      const parsedUser = JSON.parse(user);
-      const token = parsedUser.token;
-
-      if (token) {
-        const decoded = jwtDecode(token);
-        if (decoded.role !== null) {
-          navigate("/");
-          setIsLoggedIn(true);
-        }
-      } else {
-        console.log("Token not found in user object");
-      }
-    } catch (error) {
-      console.error("Invalid token or user data", error);
-    }
-  } else {
-    console.log("No user found in local storage");
-  }
-};
 
 export const RegisterUser = async (data, navigate) => {
   try {
@@ -105,35 +71,20 @@ export const RegisterUser = async (data, navigate) => {
     });
     toast.success(response.data.message || "Register successful!", {
       position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
+      transition: Zoom,
     });
-    navigate("/login")
-
+    navigate("/login");
   } catch (error) {
     if (error.response) {
       console.error("Register failed", error.response.data);
       toast.error(error.response.data, {
         position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+        transition: Zoom,
       });
       throw new Error(error.response.data);
     } else {
-      console.error("Register failed", error);
-      alert("An error occurred. Please try again.");
+      // console.error("Register failed", error);
+      // alert("An error occurred. Please try again.");
       throw new Error("An error occurred. Please try again.");
     }
   }
@@ -141,24 +92,20 @@ export const RegisterUser = async (data, navigate) => {
 
 export const HandleForgotPassword = async (data, navigate) => {
   try {
-      const response = await axios.post('http://localhost:8080/api/auth/forgotPassword', { email: data });
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/forgotPassword",
+      { email: data }
+    );
 
-      const token = response.data.token;
+    const token = response.data.token;
 
-      localStorage.setItem('ForgotAuth', token);
+    localStorage.setItem("ForgotAuth", token);
 
-      navigate("/forgotPassword/success");
+    navigate("/forgotPassword/success");
   } catch (error) {
-      toast.error(error.response.data, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+    toast.error(error.response.data, {
+      position: "top-center",
+      transition: Zoom,
+    });
   }
 };

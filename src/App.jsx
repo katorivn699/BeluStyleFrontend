@@ -7,24 +7,35 @@ import { Shop } from "./pages/Shop";
 import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
 import { Login } from "./pages/Login";
-import { NavLogin } from "./components/navbars/NavLogin";
+import { NavLogin } from "./components/navbars/UserAccessBar";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
-import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, Zoom } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Logout from "./pages/Logout";
 import ForgotSuccess from "./pages/ForgotPasswordSuccess";
+import '@smastrom/react-rating/style.css';
 
 function App() {
   const location = useLocation();
   // const state = useState
   const renderNavbar = () => {
-    const path = location.pathname;  // Sử dụng location.pathname thay vì window.location.pathname
-    if (path === "/" || path === "/shop" || path === "/about" || path === "/contact") {
+    const path = location.pathname;
+    if (
+      path === "/" ||
+      path === "/shop" ||
+      path === "/about" ||
+      path === "/contact"
+    ) {
       return <Navbar />;
     } else if (path.startsWith("/products/")) {
       return <Navbar />;
-    } else if (path === "/login" || path === "/register" || path === "/forgotPassword" || path === "/forgotPassword/success") {
+    } else if (
+      path === "/login" ||
+      path === "/register" ||
+      path === "/forgotPassword" ||
+      path === "/forgotPassword/success"
+    ) {
       return <NavLogin />;
     }
     return null;
@@ -32,8 +43,18 @@ function App() {
   return (
     <>
       {renderNavbar()}
-      <ToastContainer/>
-      <div className="container">
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Zoom}
+      />
+      <div className="container pt-[80px]">
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />

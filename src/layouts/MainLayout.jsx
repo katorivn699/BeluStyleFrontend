@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 const MainLayout = ({ children }) => {
   return (
-    <div className="flex items-center justify-center w-screen bg-white overflow-hidden"> 
-      <div className="bg-white p-4 rounded"> 
+    <div className="center bg-white min-h-[calc(100vh-100px)] desktop-125:w-3xl">
+      <div className="container mx-auto max-w-screen-md p-2 rounded bg-white">
         {children}
       </div>
     </div>

@@ -9,12 +9,10 @@ function Logout() {
     const { setIsLoggedIn, setAvatarUrl, setUsername } = useAuth();
     useEffect(() => {
 
-        localStorage.removeItem("AuthToken");
+        localStorage.removeItem("NextAuth");
         setIsLoggedIn(false);
         setAvatarUrl(userDefault); 
         setUsername(null);
-        
-        navigate('/');
     }, [navigate, setIsLoggedIn, setAvatarUrl, setUsername]); 
 
     return null;
