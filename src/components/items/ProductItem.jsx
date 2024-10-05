@@ -12,9 +12,9 @@ const ProductItem = ({ product }) => {
   }
 
   return (
-    <div>
+    <div className="max-w-3xl mx-auto"> {/* Increased the width of the product container */}
       <Link to={`/products/${product.productId}`} className="block">
-        <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white group relative">
+        <div className="max-w-2xl rounded overflow-hidden shadow-lg group relative"> {/* Increased the width */}
           <img
             className="w-full h-64 object-cover"
             src={product.productImage}
@@ -22,34 +22,41 @@ const ProductItem = ({ product }) => {
           />
 
           <div className="p-4">
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg font-bold">
               {product.productName}
             </h3>
             <p className="text-blue-600 font-semibold text-base mb-2">
-              ${discountedPrice.toFixed(2) < 0 ? 0 : discountedPrice.toFixed(2)} {/* Giá sau khi giảm giá */}
+              ${discountedPrice.toFixed(2) < 0 ? 0 : discountedPrice.toFixed(2)} {/* Discounted price */}
             </p>
             {product.saleValue > 0 && (
               <p className="text-red-600 font-semibold text-base mb-2 line-through">
-                ${product.productPrice.toFixed(2)} {/* Giá gốc */}
+                ${product.productPrice.toFixed(2)} {/* Original price */}
               </p>
             )}
             <div className="flex items-center mb-4">
               <div className="flex items-center">
-              <Rating style={{ maxWidth: 100 }} readOnly value={product.averageRating} itemStyles={{ itemShapes: Star, activeFillColor: '#ffb700', inactiveFillColor: '#fbf1a9' }} />
+                <Rating
+                  style={{ maxWidth: 100 }}
+                  readOnly
+                  value={product.averageRating}
+                  itemStyles={{
+                    itemShapes: Star,
+                    activeFillColor: '#ffb700',
+                    inactiveFillColor: '#fbf1a9'
+                  }}
+                />
                 <span className="ml-2 text-gray-600">
                   ({product.totalRating})
                 </span>
               </div>
             </div>
-            <div className="sale">
             {product.saleValue > 0 && (
-              <div className="mt-2 bg-red-400 p-2 rounded text-center">
+              <div className="mt-2 badge-error p-2 rounded text-center">
                 {product.saleType === "percentage"
                   ? `Giảm ${product.saleValue}%`
                   : `Giảm $${product.saleValue.toFixed(2)}`}
               </div>
             )}
-            </div>
           </div>
         </div>
       </Link>

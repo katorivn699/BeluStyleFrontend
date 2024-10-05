@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
-import { HR } from "flowbite-react";
 import { LoginUser } from "../../service/authService";
 import { GoogleLoginButton, LoginBtn } from "../buttons/Button";
 import { useAuth } from "../../store/AuthContext";
@@ -29,10 +28,9 @@ export function LoginForm() {
     try {
       await LoginUser(data, navigate, setIsLoggedIn, setAvatarUrl, setUsername); 
     } catch (error) {
-      console.error("Error during login:", error.message);
-      // toast.error(error.message, {
-      //   position: "top-center",
-      //   });
+      toast.error(error.message, {
+        position: "top-center",
+        });
     }
   };
   const handleRememberMeChange = () => {
@@ -122,10 +120,7 @@ export function LoginForm() {
           <p className="font font-montserrat">Don't have an account? <Link to="/register" className="underline font-medium font-montserrat">Sign up</Link></p>
         </div>
       <div className="otherLogin flex flex-col pt-10">
-        <HR.Text
-          className="inline-flex w-full items-center font-montserrat justify-center px-3 dark:border-gray-300"
-          text="Or continue with"
-        />
+      <div class="divider">Or continue with</div>
         <div className="loginWithGoogle flex pt-10 justify-center">
           <GoogleLoginButton/>
         </div>

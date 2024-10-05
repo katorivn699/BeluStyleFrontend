@@ -62,7 +62,7 @@ export const LoginUser = async (
 
 export const RegisterUser = async (data, navigate) => {
   try {
-    const response = await axios.post("http://localhost:8080/api/users", {
+    const response = await axios.post("http://localhost:8080/api/auth/register", {
       username: data.username,
       fullName: data.fullname,
       email: data.email,

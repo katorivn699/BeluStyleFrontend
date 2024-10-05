@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
-import { HR } from "flowbite-react";
 import { RegisterUser } from "../../service/authService";
 import { GoogleLoginButton } from "../buttons/Button";
 
@@ -119,18 +118,14 @@ export function RegisterForm() {
         <button
           type="submit"
           tabIndex={3}
-          className="w-full bg-gray-200 text-white p-4 rounded-full text-xl 
-             hover:bg-black hover:text-white 
+          className="w-full btn btn-active btn-neutral rounded-full text-xl  
              transition-colors duration-300 ease-in-out"
         >
-          Login
+          Register
         </button>
       </form>
       <div className="otherLogin flex flex-col pt-10">
-        <HR.Text
-          className="inline-flex w-full items-center font-montserrat justify-center px-3 dark:border-gray-300"
-          text="Or"
-        />
+      <div class="divider">Or</div>
         <div className="loginWithGoogle flex pt-10 justify-center">
           <GoogleLoginButton />
         </div>

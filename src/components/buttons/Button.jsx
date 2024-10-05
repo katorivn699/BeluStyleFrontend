@@ -24,7 +24,7 @@ export function ShowMore({onClick, tabindex = "0"}) {
 
 export function LoginBtn({onClick, tabindex = "0"}) {
     return(
-        <button type="submit" onClick={onClick} tabIndex={tabindex} className="w-full bg-gray-200 text-white p-4 rounded-full text-xl hover:bg-black hover:text-white transition-colors duration-300 ease-in-out">
+        <button type="submit" onClick={onClick} tabIndex={tabindex} className="w-full btn btn-active btn-neutral rounded-full text-xl transition-colors duration-300 ease-in-out">
   Login
 </button>
     );
@@ -41,7 +41,7 @@ Reset password
 
 export function GoogleLoginButton() {
     const handleGoogleLogin = () => {
-      window.location.href = "http://localhost:8080/oauth2/authorization/google";
+      window.location.href = "http://localhost:8080/api/auth/googleLogin";
     };
   
     return (

@@ -1,21 +1,25 @@
-// shop.jsx
 import ProductList from "../components/lists/ProductList";
 import MainLayout from "../layouts/MainLayout";
 import products from "../DataDemo/DataDemo";
-import { Pagination } from "flowbite-react";
 import { useState } from "react";
+import ReactPaginate from "react-paginate";
 
 export function Shop() {
-  const ITEMS_PER_PAGE = 9;
-  const [currentPage, setCurrentPage] = useState(1);
+  const [itemOffset, setItemOffset] = useState(0);
 
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = products.slice(offset, offset + ITEMS_PER_PAGE);
+  const itemsPerPage = 9;
+  const endOffset = itemOffset + itemsPerPage;
+  const currentItems = products.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(products.length / itemsPerPage);
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % products.length;
+    setItemOffset(newOffset);
 
-  const onPageChange = (page) => {
-    setCurrentPage(page);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', 
+    });
   };
 
   return (
@@ -23,13 +27,25 @@ export function Shop() {
       <div className="productshow flex flex-col">
         <div className="flex flex-col items-center">
           <ProductList products={currentItems} />
-          <div className="flex justify-center mt-4">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={onPageChange}
-            />
-          </div>
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel="Next"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={pageCount}
+            previousLabel="Previous"
+            renderOnZeroPageCount={null}
+            pageClassName="page-item join-item btn btn-square"
+            pageLinkClassName="page-link join-item btn btn-square"
+            previousClassName="page-item join-item btn"
+            previousLinkClassName="page-link join-item btn"
+            nextClassName="page-item join-item btn"
+            nextLinkClassName="page-link join-item btn"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            containerClassName="pagination"
+            activeClassName="active"
+          />
         </div>
       </div>
     </MainLayout>

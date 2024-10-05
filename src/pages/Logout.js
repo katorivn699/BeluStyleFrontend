@@ -13,6 +13,7 @@ function Logout() {
         setIsLoggedIn(false);
         setAvatarUrl(userDefault); 
         setUsername(null);
+        navigate(-1);
     }, [navigate, setIsLoggedIn, setAvatarUrl, setUsername]); 
 
     return null;

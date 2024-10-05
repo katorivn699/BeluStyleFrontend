@@ -1,5 +1,5 @@
 // import { useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Navbar } from "./components/navbars/Navbar";
@@ -14,11 +14,14 @@ import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Logout from "./pages/Logout";
 import ForgotSuccess from "./pages/ForgotPasswordSuccess";
-import '@smastrom/react-rating/style.css';
+import "@smastrom/react-rating/style.css";
 
 function App() {
   const location = useLocation();
-  // const state = useState
+  const [theme] = useState(localStorage.getItem("theme") || "light");
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
   const renderNavbar = () => {
     const path = location.pathname;
     if (
