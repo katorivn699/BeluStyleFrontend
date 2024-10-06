@@ -28,9 +28,9 @@ export function LoginForm() {
     try {
       await LoginUser(data, navigate, setIsLoggedIn, setAvatarUrl, setUsername); 
     } catch (error) {
-      toast.error(error.message, {
-        position: "top-center",
-        });
+      // toast.error(error.message, {
+      //   position: "top-center",
+      //   });
     }
   };
   const handleRememberMeChange = () => {

@@ -28,10 +28,9 @@ function App() {
       path === "/" ||
       path === "/shop" ||
       path === "/about" ||
-      path === "/contact"
+      path === "/contact" ||
+      path.startsWith("/products/")
     ) {
-      return <Navbar />;
-    } else if (path.startsWith("/products/")) {
       return <Navbar />;
     } else if (
       path === "/login" ||
@@ -46,18 +45,7 @@ function App() {
   return (
     <>
       {renderNavbar()}
-      <ToastContainer
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-        transition={Zoom}
-      />
-      <div className="container pt-[80px]">
+      <div className="pt-[80px]">
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
@@ -70,6 +58,17 @@ function App() {
           <Route path="/forgotPassword/success" element={<ForgotSuccess />} />
         </Routes>
       </div>
+      <ToastContainer
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Zoom}
+      />
     </>
   );
 }

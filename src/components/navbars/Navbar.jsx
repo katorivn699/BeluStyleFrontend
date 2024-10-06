@@ -4,9 +4,10 @@ import logo from "../../assets/images/logo.png";
 import { IoCartOutline, IoSearchOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { useAuth } from "../../store/AuthContext";
-import GuessMenu from "../menus/GuessMenu";
 import LoggedMenu from "../menus/LoggedMenu";
 import { FaRegUser } from "react-icons/fa";
+import { FiUsers } from "react-icons/fi";
+import { AiOutlineLock } from "react-icons/ai";
 
 export function Navbar() {
   const { isLoggedIn, avatarUrl } = useAuth();
@@ -87,7 +88,7 @@ export function Navbar() {
               >
                 <img
                   src={avatarUrl}
-                  className="rounded-full w-12 h-12 object-cover"
+                  className="rounded-full w-8 h-8 object-cover"
                   alt="User avatar"
                 />
               </div>
@@ -110,17 +111,17 @@ export function Navbar() {
                 >
                   <li>
                     <Link to="/login" className="dropdown-item">
-                    <FaRegUser className="text-3xl" /> <p className="text-xl">Login</p>
+                    <FaRegUser className="text-2xl" /> <p className="text-base">Login</p>
                     </Link>
                   </li>
                   <li>
                     <Link to="/register" className="dropdown-item">
-                      Register
+                    <FiUsers className="text-2xl" /><p className="text-base">Register</p>
                     </Link>
                   </li>
                   <li>
                     <Link to="/register" className="dropdown-item">
-                      Forgot Password
+                    <AiOutlineLock className="text-2xl" /><p className="text-base">Forgot Password</p>
                     </Link>
                   </li>
                 </ul>
