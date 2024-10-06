@@ -17,7 +17,7 @@ export function NavLogin() {
           <button onClick={handleGoBack} ><IoArrowBack className="text-3xl" /></button>
         </div>
         <div className="navinfo items-center justify-center flex space-x-4">
-          <img src={logo} alt="" className="logo flex w-auto h-20" />
+          <img src={logo} alt="" className="logo flex w-auto h-16" />
         </div>
       </div>
     </nav>

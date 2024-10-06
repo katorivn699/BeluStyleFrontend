@@ -126,7 +126,7 @@ export function RegisterForm() {
       </form>
       <div className="otherLogin flex flex-col pt-10">
       <div class="divider">Or</div>
-        <div className="loginWithGoogle flex pt-10 justify-center">
+        <div className="loginWithGoogle flex pt-5 justify-center">
           <GoogleLoginButton />
         </div>
       </div>

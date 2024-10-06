@@ -45,7 +45,7 @@ function App() {
   return (
     <>
       {renderNavbar()}
-      <div className="pt-[80px]">
+      <div className="pt-[70px]">
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />

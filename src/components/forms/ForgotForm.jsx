@@ -27,12 +27,9 @@ export function ForgotForm() {
     <div>
       <h2 className="font-poppins text-5xl mb-6 text-left">Forgot password</h2>{" "}
       <p className="font-poppins text-1xl mb-6 text-left text-gray-600">Please enter your email to reset the password</p>
-      {/* Increase font size */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label className="block mb-2 text-gray-500 text-xl">
-            {" "}
-            {/* Increase font size */}
             Your email
           </label>
           <input

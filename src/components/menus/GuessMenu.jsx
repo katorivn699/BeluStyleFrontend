@@ -1,51 +1,38 @@
 import React from "react";
-import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai";
-import { RiLockLine } from "react-icons/ri";
+import { AiOutlineLock } from "react-icons/ai";
+import { FaRegUser } from "react-icons/fa";
+import { FiUsers } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
 const GuessMenu = ({ isMenuOpen }) => {
   return (
-    <div
-      className={`absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-lg z-50 transition-opacity duration-300 ease-in-out ${
-        isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
-      }`}
-    >
-      <ul>
-        <li className="border-b border-gray-200">
-          <Link
-            to="/login"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 items-center transition-transform duration-200 ease-in-out"
-          >
-            <div className="logintag flex items-center space-x-4">
-              <AiOutlineUser className="text-2xl" />
-              <p>Sign In</p>
-            </div>
-          </Link>
-        </li>
-        <li className="border-b border-gray-200">
-          <Link
-            to="/register"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-transform duration-200 ease-in-out"
-          >
-            <div className="registertag flex items-center space-x-4">
-              <AiOutlineUsergroupAdd className="text-2xl" />
-              <p>Sign Up</p>
-            </div>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/forgotPassword"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-transform duration-200 ease-in-out"
-          >
-            <div className="forgottag flex items-center space-x-4">
-              <RiLockLine className="text-2xl" />
-              <p>Forgot Password</p>
-            </div>
-          </Link>
-        </li>
-      </ul>
-    </div>
+    <>
+      {isMenuOpen && (
+        <ul
+          tabIndex={0}
+          className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+        >
+          <li>
+            <Link to="/login" className="dropdown-item">
+              <FaRegUser className="text-2xl" />
+              <p className="text-base">Login</p>
+            </Link>
+          </li>
+          <li>
+            <Link to="/register" className="dropdown-item">
+              <FiUsers className="text-2xl" />
+              <p className="text-base">Register</p>
+            </Link>
+          </li>
+          <li>
+            <Link to="/register" className="dropdown-item">
+              <AiOutlineLock className="text-2xl" />
+              <p className="text-base">Forgot Password</p>
+            </Link>
+          </li>
+        </ul>
+      )}
+    </>
   );
 };
 

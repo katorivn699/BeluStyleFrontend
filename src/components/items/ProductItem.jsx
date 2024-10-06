@@ -11,7 +11,7 @@ const ProductItem = ({ product }) => {
   }
 
   return (
-    <div className="max-w-xs w-full mx-auto bg-white rounded-lg overflow-hidden shadow-md p-2">
+    <div className="max-w-2xl w-full mx-auto bg-base-300 rounded-lg overflow-hidden shadow-md p-2">
       <Link to={`/products/${product.productId}`} className="block">
         <img
           className="w-full h-64 object-cover max-w-full" // Added max-w-full
