@@ -1,7 +1,7 @@
 {
   "homepage": ".",
   "name": "belustyle-frontend",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "private": true,
   "proxy": "http://localhost:8080",
   "dependencies": {

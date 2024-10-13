@@ -1,14 +1,14 @@
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
-import { Navigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const ProtectedRoute = ({ children }) => {
+const CustomerProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useIsAuthenticated();
+  const navigate = useNavigate();
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" />;
+    return (navigate("/"));
   }
-
   return children;
 };
 
-export default ProtectedRoute;
+export default CustomerProtectedRoute;

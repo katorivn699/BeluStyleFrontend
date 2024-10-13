@@ -1,6 +1,6 @@
-import MainLayout from "../layouts/MainLayout";
-import bg from "../assets/images/homeBg.png";
-import { BuyNow } from "../components/buttons/Button";
+import MainLayout from "../../layouts/MainLayout";
+import bg from "../../assets/images/homeBg.png";
+import { BuyNow } from "../../components/buttons/Button";
 
 export function Home() {
   return (

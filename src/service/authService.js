@@ -71,7 +71,8 @@ export const RegisterUser = async (data, navigate) => {
       position: "top-center",
       transition: Zoom,
     });
-    navigate("/register/confirm");
+    localStorage.setItem("mail", data.email);
+    navigate("/register/confirm-registration");
   } catch (error) {
     if (error.response.data.message) {
       toast.error(error.response.data.message, {

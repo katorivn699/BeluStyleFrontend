@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import products from "../MockData/DataDemo";
-import ProductList from "../components/lists/ProductList";
-import MainLayout from "../layouts/MainLayout";
-import bg from "../assets/images/bg.svg";
+import products from "../../MockData/DataDemo";
+import ProductList from "../../components/lists/ProductList";
+import MainLayout from "../../layouts/MainLayout";
+import bg from "../../assets/images/bg.svg";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 

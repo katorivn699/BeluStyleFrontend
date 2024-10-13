@@ -9,7 +9,8 @@ module.exports = {
         poppins: ['Poppins', 'san-serif'],
         montserrat: ['Montserrat', 'san-serif'],
         ropaSans: ['Ropa Sans', 'san-serif'],
-        inter: ['Inter', 'san-serif']
+        inter: ['Inter', 'san-serif'],
+        nunito: ['Nunito', 'san-serif']
       },
       screens: {
         'desktop-100': { 'raw': '(min-width: 1280px) and (max-width: 1865px)' },
@@ -22,6 +23,7 @@ module.exports = {
       backgroundColor: {
         'beluBlue': "#7ECCFA",
         'blueOcean' : "#177CD8",
+        'blueOcean-lighter' : "#297FFD",
       },
       backgroundImage: {
         'green-to-white': 'linear-gradient(to bottom, #177CD8 50%, white 0%)',
