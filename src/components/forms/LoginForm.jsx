@@ -3,10 +3,9 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
-import { LoginUser } from "../../service/authService";
+import { LoginUser } from "../../service/AuthService";
 import { GoogleLoginButton, LoginBtn } from "../buttons/Button";
-import { useAuth } from "../../store/AuthContext";
-import { toast } from "react-toastify";
+import useSignIn from "react-auth-kit/hooks/useSignIn";
 
 export function LoginForm() {
   const {
@@ -18,7 +17,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  const { setIsLoggedIn, setAvatarUrl, setUsername } = useAuth();
+  const signIn = useSignIn();
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -26,7 +25,7 @@ export function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      await LoginUser(data, navigate, setIsLoggedIn, setAvatarUrl, setUsername); 
+      await LoginUser(data, navigate, signIn);
     } catch (error) {
       // toast.error(error.message, {
       //   position: "top-center",
@@ -44,18 +43,20 @@ export function LoginForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label className="block mb-2 text-gray-500 text-xl">
-            {" "}
             {/* Increase font size */}
-            Email or username
+            Username
           </label>
           <input
             type="text"
             tabIndex={1}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg" // Increase padding and font size
-            {...register("username", { required: "is required" })}
+            {...register("username", { required: "username can't blank", pattern: {
+              value: "[a-zA-Z0-9]+$",
+              message: "Only letters and numbers are allowed. No special characters or email (no '@' allowed)."
+            } })}
           />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          {errors.username && (
+            <p className="text-red-500 text-sm">{errors.username.message}</p>
           )}
         </div>
         <div>
@@ -69,13 +70,11 @@ export function LoginForm() {
             >
               {showPassword ? (
                 <>
-                  <BiSolidHide className="mr-1 text-3xl text-gray-500" />{" "}
-                  Hide
+                  <BiSolidHide className="mr-1 text-3xl text-gray-500" /> Hide
                 </>
               ) : (
                 <>
-                  <BiSolidShow className="mr-1 text-3xl text-gray-500" />{" "}
-                  Show 
+                  <BiSolidShow className="mr-1 text-3xl text-gray-500" /> Show
                 </>
               )}
             </button>
@@ -84,7 +83,10 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             tabIndex={2}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg text-gray-700" // Increase padding and font size
-            {...register("password", { required: "Password is required" })}
+            {...register("password", { required: "Password is required", pattern: {
+              value: "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+              message: "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+            } })}
           />
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
@@ -117,12 +119,21 @@ export function LoginForm() {
         </Link>
       </div>
       <div className="register flex justify-center pt-5">
-          <p className="font font-montserrat">Don't have an account? <Link to="/register" className="underline font-medium font-montserrat">Sign up</Link></p>
-        </div>
+        <p className="font font-montserrat">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="underline font-medium font-montserrat"
+          >
+            Sign up
+          </Link>
+        </p>
+      </div>
       <div className="otherLogin flex flex-col pt-10">
-      <div class="divider">Or continue with</div>
+        <div class="divider">Or continue with</div>
         <div className="loginWithGoogle flex pt-10 justify-center">
-          <GoogleLoginButton/>
+          <GoogleLoginButton signIn={signIn}
+          />
         </div>
       </div>
     </div>

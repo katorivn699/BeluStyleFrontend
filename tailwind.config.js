@@ -8,7 +8,8 @@ module.exports = {
       fontFamily: {
         poppins: ['Poppins', 'san-serif'],
         montserrat: ['Montserrat', 'san-serif'],
-        ropaSans: ['Ropa Sans', 'san-serif']
+        ropaSans: ['Ropa Sans', 'san-serif'],
+        inter: ['Inter', 'san-serif']
       },
       screens: {
         'desktop-100': { 'raw': '(min-width: 1280px) and (max-width: 1865px)' },
@@ -17,6 +18,26 @@ module.exports = {
       width: {
         '3xl': "1865px",
         '2xl': "1280px"
+      },
+      backgroundColor: {
+        'beluBlue': "#7ECCFA",
+        'blueOcean' : "#177CD8",
+      },
+      backgroundImage: {
+        'green-to-white': 'linear-gradient(to bottom, #177CD8 50%, white 0%)',
+      },
+      textColor: {
+        'blueOcean' : "#177CD8",
+      },
+      animation: {
+        typewriter: "typewriter 2s steps(11) forwards"
+      },
+      keyframes: {
+        typewriter: {
+          to: {
+            left: "100%"
+          }
+        }
       }
     },
   },
@@ -24,6 +45,6 @@ module.exports = {
     require('daisyui'),
   ],
   daisyui: {
-    themes: ["light", "dark", "cupcake"],
+    themes: ["pastel", "dark"],
   },
 }

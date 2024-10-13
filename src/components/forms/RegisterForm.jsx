@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
-import { RegisterUser } from "../../service/authService";
+import { RegisterUser } from "../../service/AuthService";
 import { GoogleLoginButton } from "../buttons/Button";
 
 export function RegisterForm() {
@@ -11,25 +11,25 @@ export function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
+  const password = watch("password");
+
   const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
+    setShowPassword((prev) => !prev);
   };
 
   const onSubmit = async (data) => {
     try {
+      console.table(data);
       await RegisterUser(data, navigate);
     } catch (error) {
       console.error("Error during login:", error.message);
     }
-  };
-  const handleRememberMeChange = () => {
-    setRememberMe((prev) => !prev);
   };
 
   return (
@@ -107,8 +107,46 @@ export function RegisterForm() {
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
         </div>
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xl text-gray-500">Confirm Password</label>{" "}
+            {/* Increase font size */}
+            <button
+              type="button"
+              className="flex items-center text-gray-500 text-xl"
+              onClick={toggleShowPassword}
+            >
+              {showPassword ? (
+                <>
+                  <BiSolidHide className="mr-1 text-3xl text-gray-500" />{" "}
+                  {/* Icon for hiding password */}
+                  Hide {/* Text for hiding password */}
+                </>
+              ) : (
+                <>
+                  <BiSolidShow className="mr-1 text-3xl text-gray-500" />{" "}
+                  {/* Icon for showing password */}
+                  Show {/* Text for showing password */}
+                </>
+              )}
+            </button>
+          </div>
+          <input
+          type={showPassword ? "text" : "password"}
+          tabIndex={3}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg text-gray-700"
+          {...register("confirmPassword", {
+            required: "Please confirm your password",
+            validate: (value) =>
+              value === password || "Passwords do not match",
+          })}
+        />
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+          )}
+        </div>
         <div className="agreeTerm flex flex-row">
-          <input type="checkbox" id="rememberMe" required className="mr-2" />
+          <input type="checkbox" id="rememberMe" required className="mr-2 checkbox" />
           <p className="text-left text-xl">
             By continuting, you argee to the{" "}
             <Link className="underline font-semibold">Term of use</Link> and{" "}
@@ -118,7 +156,7 @@ export function RegisterForm() {
         <button
           type="submit"
           tabIndex={3}
-          className="w-full btn btn-active btn-neutral rounded-full text-xl  
+          className="w-full btn btn-active hover:btn-neutral rounded-full text-xl  
              transition-colors duration-300 ease-in-out"
         >
           Register
@@ -127,7 +165,8 @@ export function RegisterForm() {
       <div className="otherLogin flex flex-col pt-10">
       <div class="divider">Or</div>
         <div className="loginWithGoogle flex pt-5 justify-center">
-          <GoogleLoginButton />
+        <GoogleLoginButton
+          />
         </div>
       </div>
     </div>

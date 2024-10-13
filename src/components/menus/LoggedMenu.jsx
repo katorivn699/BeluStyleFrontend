@@ -8,69 +8,45 @@ import { Link } from "react-router-dom";
 
 const LoggedMenu = ({ isMenuOpen }) => {
   return (
-    <div
-      className={`absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-lg z-50 transition-opacity duration-300 ease-in-out ${
-        isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
-      }`}
-    >
-      <ul>
-        <li>
-          <Link
-            to="/user/infomation"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 items-center transition-transform duration-200 ease-in-out"
-          >
-            <div className="logintag flex items-center space-x-4">
+    <>
+      {isMenuOpen && (
+        <ul
+          tabIndex={0}
+          className="dropdown-content menu bg-base-100 rounded-box z-[1] w-56 p-2 shadow"
+        >
+          <li>
+            <Link to="/user/information" className="dropdown-item">
               <FaRegUserCircle className="text-2xl" />
-              <p>Account Settings</p>
-            </div>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/history"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-transform duration-200 ease-in-out"
-          >
-            <div className="registertag flex items-center space-x-4">
+              <p className="text-base">Account Settings</p>
+            </Link>
+          </li>
+          <li>
+            <Link to="/history" className="dropdown-item">
               <LuMousePointerClick className="text-2xl" />
-              <p>Purchase History</p>
-            </div>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/notifications"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-transform duration-200 ease-in-out"
-          >
-            <div className="forgottag flex items-center space-x-4">
+              <p className="text-base">Purchase History</p>
+            </Link>
+          </li>
+          <li>
+            <Link to="/notifications" className="dropdown-item">
               <GoBell className="text-2xl" />
-              <p>Notifications</p>
-            </div>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/discounts"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-transform duration-200 ease-in-out"
-          >
-            <div className="forgottag flex items-center space-x-4">
+              <p className="text-base">Notifications</p>
+            </Link>
+          </li>
+          <li>
+            <Link to="/discounts" className="dropdown-item">
               <TbRosetteDiscount className="text-2xl" />
-              <p>Discounts</p>
-            </div>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/logout"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-transform duration-200 ease-in-out"
-          >
-            <div className="forgottag flex items-center space-x-4">
+              <p className="text-base">Discounts</p>
+            </Link>
+          </li>
+          <li>
+            <Link to="/logout" className="dropdown-item">
               <IoLogOutOutline className="text-2xl" />
-              <p>Sign out</p>
-            </div>
-          </Link>
-        </li>
-      </ul>
-    </div>
+              <p className="text-base">Sign out</p>
+            </Link>
+          </li>
+        </ul>
+      )}
+    </>
   );
 };
 

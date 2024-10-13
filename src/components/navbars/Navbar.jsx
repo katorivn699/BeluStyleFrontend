@@ -1,17 +1,20 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
-import logo from "../../assets/images/logo.png";
+import logo from "../../assets/images/logo.svg";
 import { IoCartOutline, IoSearchOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
-import { useAuth } from "../../store/AuthContext";
 import LoggedMenu from "../menus/LoggedMenu";
 import GuessMenu from "../menus/GuessMenu";
 import { BtnTheme } from "../buttons/Button";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import userDefault from "../../assets/images/userdefault.svg";
 
 export function Navbar() {
-  const { isLoggedIn, avatarUrl } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState({ guess: false, logged: false });
   const dropdownRef = useRef(null);
+  const isAuth = useIsAuthenticated();
+  const authUser = useAuthUser();
 
   const toggleMenu = (menuType) => {
     setIsMenuOpen((prevState) => ({
@@ -22,7 +25,7 @@ export function Navbar() {
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsMenuOpen({ guess: false, logged: false }); // Đóng tất cả menu
+      setIsMenuOpen({ guess: false, logged: false }); // Close all menus
     }
   };
 
@@ -34,53 +37,61 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 p-1 z-50 bg-base-100">
-      <div className="navitem grid grid-cols-3 items-center">
-        <div className="nar-left flex items-center justify-start pl-10">
-          <img src={logo} alt="" className="logo w-16" />
-          <h2 className="name font-montserrat font-bold text-3xl">BeluStyle</h2>
+    <nav className="fixed top-0 left-0 right-0 p-2 md:p-4 z-50 bg-base-100">
+      <div className="navitem grid grid-cols-1 md:grid-cols-3 items-center">
+        <div className="nav-left flex items-center justify-start pl-4 md:pl-10">
+          <img src={logo} alt="" className="logo w-12 md:w-16" />
+          <h2 className="name font-montserrat font-bold text-2xl md:text-3xl pl-2">BeluStyle</h2>
         </div>
-        <div className="nar-center justify-center flex">
-          <ul className="flex space-x-20 items-center">
+        <div className="nav-center justify-center hidden md:flex">
+          <ul className="flex space-x-6 md:space-x-20 items-center">
             <li>
-              <Link to="/" className="font-poppins hover:text-base-300 transition duration-300">
+              <NavLink
+                to="/"
+                className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
+              >
                 Home
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link to="/shop" className="font-poppins hover:text-base-300 transition duration-300">
+              <NavLink
+                to="/shop"
+                className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
+              >
                 Shop
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link
+              <NavLink
                 to="/about"
-                className="font-poppins hover:text-base-300 transition duration-300"
+                className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
               >
                 About
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link
-                to="/contact"
-                className="font-poppins hover:text-base-300 transition duration-300"
+              <NavLink
+                to="https://www.facebook.com/profile.php?id=100014062039112"
+                className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
               >
                 Contact
-              </Link>
+              </NavLink>
             </li>
           </ul>
         </div>
-        <div className="navinfo items-center justify-end flex space-x-10 pr-10">
-          {isLoggedIn ? (
-            <div className="relative" ref={dropdownRef}>
+        <div className="nav-right items-center justify-end flex space-x-4 md:space-x-10 pr-4 md:pr-10">
+          {isAuth ? (
+            <div className="dropdown dropdown-bottom" ref={dropdownRef}>
               <div
-                className="cursor-pointer hover:text-base-300 transition duration-300"
+                tabIndex={0}
+                role="button"
+                className="cursor-pointer hover:text-base-300 transition duration-300 pb-1"
                 onClick={() => toggleMenu("logged")}
               >
                 <img
-                  src={avatarUrl}
-                  className="rounded-full w-8 h-8 object-cover"
-                  alt="User avatar"
+                  src={authUser.userImage ? authUser.userImage : userDefault}
+                  className="rounded-full w-6 md:w-8 h-6 md:h-8 object-cover"
+                  alt="Profile"
                 />
               </div>
               <LoggedMenu isMenuOpen={isMenuOpen.logged} />
@@ -90,26 +101,26 @@ export function Navbar() {
               <div
                 tabIndex={0}
                 role="button"
-                className="cursor-pointer hover:text-base-300 transition duration-300 pb-2"
+                className="cursor-pointer hover:text-base-300 transition duration-300 pb-1"
                 onClick={() => toggleMenu("guess")}
               >
-                <CiUser className="text-4xl" />
+                <CiUser className="text-2xl md:text-3xl" />
               </div>
               <GuessMenu isMenuOpen={isMenuOpen.guess} />
             </div>
           )}
           <div className="searchBtn hover:text-base-300 transition duration-300">
             <button>
-              <IoSearchOutline className="text-3xl" />
+              <IoSearchOutline className="text-2xl md:text-3xl" />
             </button>
           </div>
           <div className="cartBtn hover:text-base-300 transition duration-300">
             <button>
-              <IoCartOutline className="text-3xl" />
+              <IoCartOutline className="text-2xl md:text-3xl" />
             </button>
           </div>
           <div className="themeBtn hover:text-base-300 transition duration-300">
-          <BtnTheme/>
+            <BtnTheme />
           </div>
         </div>
       </div>

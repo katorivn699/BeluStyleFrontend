@@ -1,54 +1,29 @@
+import React, { useState } from "react";
+import products from "../MockData/DataDemo";
 import ProductList from "../components/lists/ProductList";
 import MainLayout from "../layouts/MainLayout";
-import products from "../DataDemo/DataDemo";
-import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
 import bg from "../assets/images/bg.svg";
 import { Link } from "react-router-dom";
-import ProductFilter from "../components/filters/ProductFilter"; 
+import ReactPaginate from "react-paginate";
+
+const itemsPerPage = 9;
 
 export function Shop() {
-  const [itemOffset, setItemOffset] = useState(0);
-  const [filteredProducts, setFilteredProducts] = useState(products); 
-  const itemsPerPage = 9;
 
+  const [itemOffset, setItemOffset] = useState(0);
   const endOffset = itemOffset + itemsPerPage;
-  const currentItems = filteredProducts.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
+  const currentItems = products.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(products.length / itemsPerPage);
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % filteredProducts.length;
+    const newOffset = (event.selected * itemsPerPage) % products.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
     setItemOffset(newOffset);
-
-    window.scrollTo({
-      top: 2,
-      behavior: "smooth",
-    });
   };
 
-  const handleFilterChange = (filter) => {
-    const filtered = products.filter((product) => {
-      const matchesCategory = filter.category === "" || product.category === filter.category;
-  
-      const matchesPrice =
-        product.productPrice >= filter.priceRange[0] &&
-        product.productPrice <= filter.priceRange[1];
-  
-      const matchesRating =
-        filter.rating.length === 0 || product.averageRating >= Math.min(...filter.rating);
-  
-      return matchesCategory && matchesPrice && matchesRating;
-    });
-  
-    setFilteredProducts(filtered);
-    setItemOffset(0);
-  };
-  
-  useEffect(() => {
-    setItemOffset(0); 
-  }, [filteredProducts]);
-
-  const countProduct = Object.keys(products).length;
+  const countProduct = currentItems.length;
 
   return (
     <MainLayout>
@@ -67,17 +42,15 @@ export function Shop() {
             </div>
           </div>
         </div>
-        <div className="bg-slate-500 h-10"></div>
+        <div className="bg-beluBlue h-28"></div>
         <div className="numberProducts pl-16 pt-10">
-          <p className="font-montserrat font-semibold text-3xl" >New({countProduct})</p>
+          <p className="font-montserrat font-semibold text-3xl">
+            New({countProduct})
+          </p>
         </div>
         <div className="grid grid-cols-12 gap-4 pt-10">
           {/* Filter Sidebar */}
           <div className="col-span-3 px-12">
-            <ProductFilter
-              categories={["Tops", "Pants", "Shoes", "Accessories"]}
-              onFilterChange={handleFilterChange}
-            />
           </div>
 
           {/* Product List */}

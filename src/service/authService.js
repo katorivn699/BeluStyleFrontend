@@ -1,16 +1,13 @@
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { toast, Zoom } from "react-toastify";
-import userDefault from "../assets/images/userdefault.svg";
+import { apiClient } from "../core/api"; // Import apiClient from your api.js
 
 export const LoginUser = async (
   data,
   navigate,
-  setIsLoggedIn,
-  setAvatarUrl,
-  setUsername
+  signIn
 ) => {
-  const loginPromise = axios.post("http://localhost:8080/api/auth/login", {
+  const loginPromise = apiClient.post("/api/auth/login", {
     username: data.username,
     passwordHash: data.password,
   });
@@ -23,10 +20,12 @@ export const LoginUser = async (
       error: {
         render({ data }) {
           if (data.response) {
-            const errorMessage = data.response.data?.message || "An error occurred. Please try again.";
+            const errorMessage =
+              data.response.data?.message ||
+              "An error occurred. Please try again.";
             return errorMessage;
           }
-          return "An error occurred. Please try again."; 
+          return "An error occurred. Please try again.";
         },
       },
     },
@@ -39,52 +38,48 @@ export const LoginUser = async (
   try {
     const response = await loginPromise;
 
-    const userData = {
-      token: response.data.token,
-      expire: response.data.expirationTime,
-    };
-
-    localStorage.setItem("NextAuth", JSON.stringify(userData));
-
     const user = jwtDecode(response.data.token);
-    setIsLoggedIn(true);
-    setAvatarUrl(user.image || userDefault);
-    setUsername(user.sub);
-    navigate("/");
+    signIn({
+      auth: {
+        token: response.data.token,
+        type: 'Bearer',
+      },
+      userState: {
+        username: data.username,
+        userImage: user.image,
+        role: user.role?.[0]?.authority,
+      },
+    });
 
-    return userData;
+    navigate("/");
   } catch (error) {
-    console.error("Error during login:", error); 
-    throw new Error(error.response?.data.message || "An error occurred. Please try again.");
+    throw new Error(
+      error.response?.data.message || "An error occurred. Please try again."
+    );
   }
 };
 
-
 export const RegisterUser = async (data, navigate) => {
   try {
-    const response = await axios.post("http://localhost:8080/api/auth/register", {
+    const response = await apiClient.post("/api/auth/register", {
       username: data.username,
       fullName: data.fullname,
       email: data.email,
       passwordHash: data.password,
-      roleId: 2,
     });
     toast.success(response.data.message || "Register successful!", {
       position: "top-center",
       transition: Zoom,
     });
-    navigate("/login");
+    navigate("/register/confirm");
   } catch (error) {
-    if (error.response) {
-      console.error("Register failed", error.response.data);
-      toast.error(error.response.data, {
+    if (error.response.data.message) {
+      toast.error(error.response.data.message, {
         position: "top-center",
         transition: Zoom,
       });
       throw new Error(error.response.data);
     } else {
-      // console.error("Register failed", error);
-      // alert("An error occurred. Please try again.");
       throw new Error("An error occurred. Please try again.");
     }
   }
@@ -92,10 +87,9 @@ export const RegisterUser = async (data, navigate) => {
 
 export const HandleForgotPassword = async (data, navigate) => {
   try {
-    const response = await axios.post(
-      "http://localhost:8080/api/auth/forgotPassword",
-      { email: data }
-    );
+    const response = await apiClient.post("/api/auth/forgotPassword", {
+      email: data,
+    });
 
     const token = response.data.token;
 
@@ -107,5 +101,34 @@ export const HandleForgotPassword = async (data, navigate) => {
       position: "top-center",
       transition: Zoom,
     });
+  }
+};
+
+export const HandleLoginGoogle = async (
+  accessToken,
+  navigate,
+  signIn
+) => {
+  try {
+    const response = await apiClient.get(
+      `/api/auth/google-callback?token=${accessToken}`
+    );
+    const user = jwtDecode(response.data.token);
+    signIn({
+      auth: {
+        token: response.data.token,
+        type: 'Bearer',
+      },
+      userState: {
+        username: user.username,
+        userImage: user.image,
+        role: user.role?.[0]?.authority,
+      },
+    });
+
+    // Navigate to home
+    navigate("/");
+  } catch (error) {
+    console.error("Error in HandleLoginGoogle:", error);
   }
 };

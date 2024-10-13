@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { FaCartPlus, FaShareAlt } from "react-icons/fa"; 
+import { FaCartPlus, FaShareAlt } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { hasGrantedAllScopesGoogle, useGoogleLogin } from '@react-oauth/google';
-import axios from "axios";
+import { useGoogleLogin } from "@react-oauth/google";
+import { HandleLoginGoogle } from "../../service/AuthService";
+import { Link, useNavigate } from "react-router-dom";
 
 export function AddToCart({ onClick, tabindex = "0" }) {
   return (
@@ -67,19 +68,15 @@ export function ForgotBtn({ onClick, tabindex = "0" }) {
   );
 }
 
-export function GoogleLoginButton() {
-  const login = useGoogleLogin({
-    scope: 'email profile',
-    redirect_uri: 'http://localhost:8080/api/auth/googleCallback',
-    onSuccess: async (data) => {
-      const accessToken = data.access_token;
-      console.log('Google Access Token:', accessToken);
+export function GoogleLoginButton({signIn}) {
+  const navigate = useNavigate();
 
-      const response = await axios.get("http://localhost:8080/api/auth/googleCallback?code=", accessToken);
-      if(response){
-        console.log(response.data);
-      }
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const accessToken = tokenResponse.access_token;
+      HandleLoginGoogle(accessToken, navigate, signIn);
     },
+    scope: "openid email profile",
   });
 
   return (
@@ -89,12 +86,11 @@ export function GoogleLoginButton() {
   );
 }
 
-
 export function BtnTheme() {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "pastel");
 
   const handleToggle = (e) => {
-    const newTheme = e.target.checked ? "dark" : "light";
+    const newTheme = e.target.checked ? "dark" : "pastel";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
@@ -126,3 +122,11 @@ export function BtnTheme() {
     </button>
   );
 }
+
+export const BuyNow = () => {
+  return (
+    <>
+      <Link><div className="btn bg-blueOcean w-44 rounded-lg ">Buy now</div></Link>
+    </>
+  )
+};
