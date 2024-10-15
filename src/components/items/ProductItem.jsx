@@ -12,26 +12,35 @@ const ProductItem = ({ product }) => {
   }
 
   return (
-    <div className="max-w-2xl w-full bg-base-200 rounded-lg overflow-hidden shadow-md p-2">
+    <div className="w-full max-w-[350px] bg-base-200 rounded-lg overflow-hidden shadow-md p-4 mx-auto">
       <Link to={`/shop/product/${product.productId}`} className="block">
+        {/* Product Image */}
         <img
-          className="w-full h-96 object-cover max-w-full" // Added max-w-full
+          className="w-full h-64 object-cover rounded-md" // Make the image responsive
           src={product.productImage}
           alt={product.productName}
         />
 
+        {/* Product Info */}
         <div className="p-4">
-          <h3 className="text-lg font-semibold text-primary-content ">
+          {/* Product Name */}
+          <h3 className="text-lg font-semibold text-primary-content truncate">
             {product.productName}
           </h3>
+
+          {/* Product Price */}
           <p className="text-blue-600 font-semibold text-xl mb-2">
             ${discountedPrice.toFixed(2) < 0 ? 0 : discountedPrice.toFixed(2)}
           </p>
+
+          {/* Original Price if Sale is Active */}
           {product.saleValue > 0 && (
             <p className="text-red-500 font-semibold text-sm line-through mb-1">
               ${product.productPrice.toFixed(2)}
             </p>
           )}
+
+          {/* Product Rating */}
           <div className="flex items-center">
             <Rating
               style={{ maxWidth: 100 }}
@@ -47,6 +56,8 @@ const ProductItem = ({ product }) => {
               ({product.totalRating})
             </span>
           </div>
+
+          {/* Sale Badge */}
           {product.saleValue > 0 && (
             <div className="mt-2 bg-red-100 text-red-700 text-sm font-bold py-1 px-2 rounded text-center">
               {product.saleType === "percentage"

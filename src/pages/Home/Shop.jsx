@@ -1,19 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import products from "../../MockData/DataDemo";
 import ProductList from "../../components/lists/ProductList";
 import MainLayout from "../../layouts/MainLayout";
 import bg from "../../assets/images/bg.svg";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
+import FilterComponent from "../../components/filters/MultipleFilter";
+import axios from "axios";
 
 const itemsPerPage = 9;
 
 export function Shop() {
 
+  // const [products, setProducts] = useState([]);
   const [itemOffset, setItemOffset] = useState(0);
   const endOffset = itemOffset + itemsPerPage;
   const currentItems = products.slice(itemOffset, endOffset);
   const pageCount = Math.ceil(products.length / itemsPerPage);
+  
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % products.length;
@@ -23,7 +27,37 @@ export function Shop() {
     setItemOffset(newOffset);
   };
 
+  // const handleFilter = async (filters) => {
+  //   try {
+  //     const response = await axios.get("/api/products", {
+  //       params: {
+  //         category: filters.category,
+  //         brand: filters.brand,
+  //         priceOrder: filters.priceOrder,
+  //         rating: filters.rating,
+  //       },
+  //     });
+  //     setProducts(response.data); // Update the products list
+  //   } catch (error) {
+  //     console.error("Error fetching filtered products:", error);
+  //   }
+  // };
+
   const countProduct = currentItems.length;
+
+  // useEffect(() => {
+  //   // Fetch initial products without any filter
+  //   const fetchProducts = async () => {
+  //     try {
+  //       const response = await axios.get("/api/products");
+  //       setProducts(response.data);
+  //       console.table(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching products:", error);
+  //     }
+  //   };
+  //   fetchProducts();
+  // }, []);
 
   return (
     <MainLayout>
@@ -51,6 +85,8 @@ export function Shop() {
         <div className="grid grid-cols-12 gap-4 pt-10">
           {/* Filter Sidebar */}
           <div className="col-span-3 px-12">
+          <FilterComponent/>
+          {/* onFilter={handleFilter} */}
           </div>
 
           {/* Product List */}
@@ -75,7 +111,7 @@ export function Shop() {
                   breakClassName="page-item join-item btn btn-square"
                   breakLinkClassName="page-link join-item btn"
                   containerClassName="pagination"
-                  activeClassName="active"
+                  activeClassName="active btn-neutral"
                 />
               </div>
             </div>

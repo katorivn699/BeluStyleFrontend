@@ -31,16 +31,7 @@ module.exports = {
       textColor: {
         'blueOcean' : "#177CD8",
       },
-      animation: {
-        typewriter: "typewriter 2s steps(11) forwards"
-      },
-      keyframes: {
-        typewriter: {
-          to: {
-            left: "100%"
-          }
-        }
-      }
+      
     },
   },
   plugins: [

@@ -5,7 +5,7 @@ const RegisterSuccess = (email) => {
 
     return (
         <>
-            
+            <h1>Hi</h1>
         </>
     );
 }

@@ -1,8 +1,18 @@
 import MainLayout from "../../layouts/MainLayout";
 import bg from "../../assets/images/homeBg.png";
-import { BuyNow } from "../../components/buttons/Button";
+import { BuyNow, ShowMore } from "../../components/buttons/Button";
+import ProductList from "../../components/lists/ProductList";
+import products from "../../MockData/DataDemo";
+import { Link, useNavigate } from "react-router-dom";
 
 export function Home() {
+  const lastestProducts = products.slice(-6);
+  const navigate = useNavigate();
+
+  const handleShowMore = () => {
+    navigate("/shop");
+  }
+
   return (
     <MainLayout>
       <div className="Shop">
@@ -30,6 +40,17 @@ export function Home() {
               <div className="btnBottom py-2 md:py-5">
                 <BuyNow />
               </div>
+            </div>
+          </div>
+        </div>
+        <div className="product">
+          <div className="ProductContent py-10">
+            <h1 className="text-center font-poppins font-bold text-5xl">
+              Our Products
+            </h1>
+            <ProductList products={lastestProducts} />
+            <div className="showMore flex justify-center py-4">
+              <ShowMore onClick={handleShowMore}/>
             </div>
           </div>
         </div>

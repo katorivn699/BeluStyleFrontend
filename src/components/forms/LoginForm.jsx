@@ -65,16 +65,16 @@ export function LoginForm() {
             {/* Increase font size */}
             <button
               type="button"
-              className="flex items-center text-gray-500 text-xl"
+              className="flex items-center text-gray-500 text-xl swap"
               onClick={toggleShowPassword}
             >
               {showPassword ? (
                 <>
-                  <BiSolidHide className="mr-1 text-3xl text-gray-500" /> Hide
+                  <BiSolidHide className="mr-1 text-3xl text-gray-500"/> Hide
                 </>
               ) : (
                 <>
-                  <BiSolidShow className="mr-1 text-3xl text-gray-500" /> Show
+                  <BiSolidShow className="mr-1 text-3xl text-gray-500"/> Show
                 </>
               )}
             </button>

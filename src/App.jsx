@@ -16,8 +16,12 @@ import ForgotSuccess from "./pages/ForgotPasswordSuccess";
 import "@smastrom/react-rating/style.css";
 import Footer from "./components/footer/CustomerFooter";
 import ProductDetailPage from "./pages/Home/ProductDetail";
-import CustomerProtectedRoute from "./routes/CustomerRoute";
+import {
+  CustomerProtectedRoute,
+  RegisterProtectedRoute,
+} from "./routes/ProtectedRoute";
 import { ErrorNotFound } from "./pages/NotFound/404NotFound";
+import RegisterSuccess from "./pages/Register/RegisterSuccess";
 
 function App() {
   const location = useLocation();
@@ -110,8 +114,13 @@ function App() {
           <Route path="/forgotPassword/success" element={<ForgotSuccess />} />
           <Route
             path="/register/confirm-registration"
-            element={<ConfirmRegister />}
+            element={
+              <RegisterProtectedRoute>
+                <ConfirmRegister />
+              </RegisterProtectedRoute>
+            }
           />
+          <Route path="/register/success" element={<RegisterSuccess />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />
           <Route path="*" element={<ErrorNotFound />} />
         </Routes>

@@ -1,18 +1,12 @@
 import React, { useEffect } from "react";
 import Lottie from "lottie-react";
 import MailVer from "../../assets/anim/Mailverification.json";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 
 export function ConfirmRegister() {
     const email = localStorage.getItem("mail");
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!email) {
-            navigate(-1); // Redirect back if no email is found
-        }
-    }, [email, navigate]);
 
     const handleResendEmail = () => {
         // Logic to resend verification email
@@ -38,7 +32,7 @@ export function ConfirmRegister() {
                 <button className="btn bg-blueOcean rounded-2xl font-inter text-white w-44" onClick={handleResendEmail}>
                     <p>Resend email</p>
                 </button>
-                <button className="btnReturn btn flex" onClick={handleReturnToSite}>
+                <button className="btnReturn btn flex bg-transparent shadow-none border-none" onClick={handleReturnToSite}>
                     <p>Return to Site</p><FaArrowRight />
                 </button>
             </div>
