@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { toast, Zoom } from "react-toastify";
-import { apiClient } from "../core/api"; // Import apiClient from your api.js
+import { apiClient } from "../core/api"; 
 
 export const LoginUser = async (data, navigate, signIn) => {
   const loginPromise = apiClient.post("/api/auth/login", {

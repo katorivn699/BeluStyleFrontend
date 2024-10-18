@@ -3,7 +3,7 @@ import bg from "../../assets/images/homeBg.png";
 import { BuyNow, ShowMore } from "../../components/buttons/Button";
 import ProductList from "../../components/lists/ProductList";
 import products from "../../MockData/DataDemo";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export function Home() {
   const lastestProducts = products.slice(-6);

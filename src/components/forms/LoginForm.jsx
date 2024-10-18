@@ -6,6 +6,7 @@ import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 import { LoginUser } from "../../service/authService";
 import { GoogleLoginButton, LoginBtn } from "../buttons/Button";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
+import { Divider } from "@mui/material";
 
 export function LoginForm() {
   const {
@@ -139,7 +140,7 @@ export function LoginForm() {
         </p>
       </div>
       <div className="otherLogin flex flex-col pt-10">
-        <div class="divider">Or continue with</div>
+        <Divider>Or continue with</Divider>
         <div className="loginWithGoogle flex pt-10 justify-center">
           <GoogleLoginButton signIn={signIn} />
         </div>

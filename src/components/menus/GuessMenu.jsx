@@ -1,37 +1,62 @@
-import React from "react";
+import React, { useState } from "react";
 import { AiOutlineLock } from "react-icons/ai";
 import { FaRegUser } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
+import { CiUser } from "react-icons/ci";
 
-const GuessMenu = ({ isMenuOpen }) => {
+const GuessMenu = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isMenuOpen = Boolean(anchorEl);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
-      {isMenuOpen && (
-        <ul
-          tabIndex={0}
-          className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-        >
-          <li>
-            <Link to="/login" className="dropdown-item">
-              <FaRegUser className="text-2xl" />
-              <p className="text-base">Login</p>
-            </Link>
-          </li>
-          <li>
-            <Link to="/register" className="dropdown-item">
-              <FiUsers className="text-2xl" />
-              <p className="text-base">Register</p>
-            </Link>
-          </li>
-          <li>
-            <Link to="/register" className="dropdown-item">
-              <AiOutlineLock className="text-2xl" />
-              <p className="text-base">Forgot Password</p>
-            </Link>
-          </li>
-        </ul>
-      )}
+      <IconButton
+        aria-controls="guess-menu"
+        aria-haspopup="true"
+        onClick={handleMenuOpen}
+        color="inherit"
+      >
+        <CiUser className="text-4xl"/>
+      </IconButton>
+      <Menu
+        id="guess-menu"
+        anchorEl={anchorEl}
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+        disableScrollLock={true}
+        sx={{
+          borderRadius: "30px", // Apply rounded corners
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Optional: adds a slight shadow
+        }}
+      >
+        <MenuItem onClick={handleMenuClose} component={Link} to="/login">
+          <FaRegUser className="mr-2 text-xl" />
+          <p>Login</p>
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose} component={Link} to="/register">
+          <FiUsers className="mr-2 text-xl" />
+          <p>Register</p>
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose} component={Link} to="/forgot-password">
+          <AiOutlineLock className="mr-2 text-xl" />
+          <p>Forgot Password</p>
+        </MenuItem>
+      </Menu>
     </>
   );
 };

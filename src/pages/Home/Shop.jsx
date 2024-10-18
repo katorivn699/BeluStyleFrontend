@@ -1,63 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useRef } from "react";
 import products from "../../MockData/DataDemo";
 import ProductList from "../../components/lists/ProductList";
 import MainLayout from "../../layouts/MainLayout";
 import bg from "../../assets/images/bg.svg";
 import { Link } from "react-router-dom";
-import ReactPaginate from "react-paginate";
 import FilterComponent from "../../components/filters/MultipleFilter";
-import axios from "axios";
+import { Pagination } from "@mui/material";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Typography from "@mui/material/Typography";
 
 const itemsPerPage = 9;
 
 export function Shop() {
+  const [page, setPage] = useState(1); // Manage the current page
+  const productListRef = useRef(null); // Create ref for the product list container
 
-  // const [products, setProducts] = useState([]);
-  const [itemOffset, setItemOffset] = useState(0);
-  const endOffset = itemOffset + itemsPerPage;
-  const currentItems = products.slice(itemOffset, endOffset);
+  // Calculate currentItems and pageCount based on the current page
+  const startIndex = (page - 1) * itemsPerPage;
+  const currentItems = products.slice(startIndex, startIndex + itemsPerPage);
   const pageCount = Math.ceil(products.length / itemsPerPage);
-  
 
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % products.length;
-    console.log(
-      `User requested page number ${event.selected}, which is offset ${newOffset}`
-    );
-    setItemOffset(newOffset);
+  // Handle page change and scroll back to the product list section
+  const handlePageChange = (event, value) => {
+    setPage(value); // Update page state
+
+    // Scroll to the product list section smoothly
+    if (productListRef.current) {
+      productListRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
-  // const handleFilter = async (filters) => {
-  //   try {
-  //     const response = await axios.get("/api/products", {
-  //       params: {
-  //         category: filters.category,
-  //         brand: filters.brand,
-  //         priceOrder: filters.priceOrder,
-  //         rating: filters.rating,
-  //       },
-  //     });
-  //     setProducts(response.data); // Update the products list
-  //   } catch (error) {
-  //     console.error("Error fetching filtered products:", error);
-  //   }
-  // };
-
   const countProduct = currentItems.length;
-
-  // useEffect(() => {
-  //   // Fetch initial products without any filter
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const response = await axios.get("/api/products");
-  //       setProducts(response.data);
-  //       console.table(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching products:", error);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, []);
 
   return (
     <MainLayout>
@@ -66,13 +39,16 @@ export function Shop() {
           <img className="w-screen h-40 object-cover" src={bg} alt="Background" />
           <div className="headerName w-full absolute top-0 left-0 flex flex-col items-center justify-center h-full">
             <h1 className="font-poppins font-semibold text-2xl text-black">Shop</h1>
+            {/* Updated Breadcrumbs */}
             <div className="breadcrumbs mt-4">
-              <ul>
-                <li className="font-semibold font-poppins text-black">
-                  <Link to="/">Home</Link>
-                </li>
-                <li className="font-poppins text-black">Shop</li>
-              </ul>
+              <Breadcrumbs aria-label="breadcrumb" className="text-black">
+                <Link to="/" className="font-semibold font-poppins text-black hover:text-blue-600">
+                  Home
+                </Link>
+                <Typography color="textPrimary" className="font-poppins">
+                  Shop
+                </Typography>
+              </Breadcrumbs>
             </div>
           </div>
         </div>
@@ -85,33 +61,22 @@ export function Shop() {
         <div className="grid grid-cols-12 gap-4 pt-10">
           {/* Filter Sidebar */}
           <div className="col-span-3 px-12">
-          <FilterComponent/>
-          {/* onFilter={handleFilter} */}
+            <FilterComponent />
           </div>
 
           {/* Product List */}
           <div className="col-span-9">
-            <div className="col-span-1 flex flex-col items-center">
+            <div className="col-span-1 flex flex-col items-center" ref={productListRef}>
               <ProductList products={currentItems} />
               <div className="paginate mt-6">
-                <ReactPaginate
-                  breakLabel="..."
-                  nextLabel="Next"
-                  onPageChange={handlePageClick}
-                  pageRangeDisplayed={2}
-                  pageCount={pageCount}
-                  previousLabel="Previous"
-                  renderOnZeroPageCount={null}
-                  pageClassName="page-item join-item btn btn-square"
-                  pageLinkClassName="page-link join-item btn btn-square"
-                  previousClassName="page-item join-item btn"
-                  previousLinkClassName="page-link"
-                  nextClassName="page-item join-item btn"
-                  nextLinkClassName="page-link"
-                  breakClassName="page-item join-item btn btn-square"
-                  breakLinkClassName="page-link join-item btn"
-                  containerClassName="pagination"
-                  activeClassName="active btn-neutral"
+                <Pagination
+                  count={pageCount}
+                  page={page} // Controlled component with the current page
+                  onChange={handlePageChange} // Handle page change
+                  color="primary"
+                  shape="rounded"
+                  showFirstButton
+                  showLastButton
                 />
               </div>
             </div>

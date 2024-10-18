@@ -228,7 +228,7 @@ function App() {
         </Routes>
       </div>
       <ToastContainer
-        autoClose={5000}
+        autoClose={2500}
         hideProgressBar={false}
         newestOnTop={false}
         rtl={false}

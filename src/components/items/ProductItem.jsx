@@ -18,6 +18,7 @@ const ProductItem = ({ product }) => {
         <img
           className="w-full h-64 object-cover rounded-md" // Make the image responsive
           src={product.productImage}
+          loading="lazy"
           alt={product.productName}
         />
 
