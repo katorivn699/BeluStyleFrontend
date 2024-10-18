@@ -4,7 +4,7 @@ import { GoTrophy } from "react-icons/go";
 import { IoShieldCheckmarkOutline } from "react-icons/io5";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { Link } from "react-router-dom";
-import logo from "../../assets/images/logo.svg"
+import logo from "../../assets/images/logo.webp";
 
 const Footer = () => {
   return (

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
-import logo from "../../assets/images/logo.svg";
+import logo from "../../assets/images/logo.webp";
 import Lottie from "lottie-react";
 import FiveWhy from "../../assets/anim/5Why.json";
 import nambuoc from "../../assets/anim/5buoc.json";

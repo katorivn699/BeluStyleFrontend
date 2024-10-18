@@ -31,11 +31,12 @@ module.exports = {
       textColor: {
         'blueOcean' : "#177CD8",
       },
-      
+      colors: {
+        'blueOcean' : ""
+      }
     },
   },
   plugins: [
-    require('daisyui'),
   ],
   daisyui: {
     themes: ["pastel", "dark"],

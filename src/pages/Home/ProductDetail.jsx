@@ -1,242 +1,262 @@
+import React, { useState, useMemo, useEffect } from "react";
+import Carousel from "react-material-ui-carousel";
 import { Rating, Star } from "@smastrom/react-rating";
-import React, { useState } from "react";
-// import { useParams } from "react-router-dom";
+import { useCart } from "react-use-cart";
+import { useParams } from "react-router-dom";
 
 const ProductDetailPage = () => {
-  // const productId = useParams();
-
-  const [selectedColor, setSelectedColor] = useState("blue");
-  const [selectedSize, setSelectedSize] = useState("M");
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const [quantity, setQuantity] = useState(1);
-
-  const increaseQuantity = () => {
-    setQuantity((prev) => prev + 1);
-  };
-
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
-    }
-  };
+  const { addItem } = useCart();
+  const productById = useParams(); 
 
   const product = {
-    name: "Premium Cotton T-Shirt",
-    price: 29.99,
-    availability: "In Stock",
-    description:
-      "Experience comfort and style with our Premium Cotton T-Shirt. Made from 100% organic cotton, this shirt offers breathability and softness for all-day wear. Perfect for casual outings or layering, it's a versatile addition to any wardrobe.",
-    longDescription:
-      "Our Premium Cotton T-Shirt is the epitome of comfort and style. Crafted from 100% organic cotton, this shirt offers unparalleled breathability and softness, ensuring you stay comfortable throughout the day. The fabric is pre-shrunk to maintain its perfect fit wash after wash. With reinforced seams and a tailored cut, this T-shirt offers both durability and a flattering silhouette. Available in a range of colors and sizes, it's the perfect versatile piece for casual outings, layering, or even as a comfortable base for your work attire. The ethical production process ensures that you're not only investing in quality but also supporting sustainable fashion practices. Elevate your basics with this must-have Premium Cotton T-Shirt.",
-    rating: 4.5,
-    reviewCount: 128,
-    colors: ["blue", "red", "green", "black"],
-    sizes: ["XS", "S", "M", "L", "XL"],
-    images: {
-      blue: [
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1618354691438-25bc04584c23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-      ],
-      red: [
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1618354691438-25bc04584c23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-      ],
-      green: [
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1618354691438-25bc04584c23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-      ],
-      black: [
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-        "https://images.unsplash.com/photo-1618354691438-25bc04584c23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80",
-      ],
+    id: productById.id,
+    name: "Premium T-Shirt",
+    variations: {
+      blue: {
+        XS: {
+          id: 8,
+          price: 29.99,
+          images: [
+            "https://htmediagroup.vn/wp-content/uploads/2021/12/Ao-pijama-6-min.jpg",
+          ],
+        },
+        S: {
+          id: 9,
+          price: 30.99,
+          images: [
+            "https://images.unsplash.com/photo-1583050157107-2fc2d242a9f7?fit=max&fm=jpg",
+          ],
+        },
+        M: {
+          id: 10,
+          price: 31.99,
+          images: [
+            "https://images.unsplash.com/photo-1603020340937-8f8f9d9b66b0",
+          ],
+        },
+        L: {
+          id: 1,
+          price: 32.99,
+          images: [
+            "https://images.unsplash.com/photo-1599333711355-96f5d5c92c61",
+          ],
+        },
+        XL: {
+          id: 2,
+          price: 33.99,
+          images: [
+            "https://images.unsplash.com/photo-1601018008784-c1b98c6f8f8a",
+          ],
+        },
+      },
+      red: {
+        XS: {
+          id: 3,
+          price: 32.99,
+          images: ["https://images.unsplash.com/photo-1574853516184"],
+        },
+        S: {
+          id: 4,
+          price: 33.99,
+          images: ["https://images.unsplash.com/photo-1605917566783"],
+        },
+        M: {
+          id: 5,
+          price: 34.99,
+          images: ["https://images.unsplash.com/photo-1547686835-92d16c272084"],
+        },
+        L: {
+          id: 6,
+          price: 35.99,
+          images: ["https://images.unsplash.com/photo-1571064844052"],
+        },
+        XL: {
+          id: 7,
+          price: 36.99,
+          images: ["https://images.unsplash.com/photo-1599985095489"],
+        },
+      },
     },
-    reviews: [
-      { id: 1, user: "John D.", rating: 5, comment: "Great quality and fit!" },
-      {
-        id: 2,
-        user: "Sarah M.",
-        rating: 4,
-        comment: "Nice shirt, but runs a bit small.",
-      },
-      {
-        id: 3,
-        user: "Mike R.",
-        rating: 5,
-        comment: "Excellent product, will buy again!",
-      },
-    ],
+    colors: ["blue", "red"],
+    sizes: ["XS", "S", "M", "L", "XL"],
   };
 
-  const handleColorChange = (color) => {
-    setSelectedColor(color);
-    setCurrentImageIndex(0);
+  const [selectedColor, setSelectedColor] = useState("blue");
+  const [selectedSize, setSelectedSize] = useState("XS");
+  const [quantity, setQuantity] = useState(1);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+
+  const { allImages, imageStartIndex } = useMemo(() => {
+    const images = [];
+    const startIndex = {};
+
+    let imageCounter = 0;
+
+    product.colors.forEach((color) => {
+      const variations = product.variations[color];
+      Object.keys(variations).forEach((size) => {
+        variations[size].images.forEach((image) => {
+          images.push({ color, image });
+        });
+      });
+      startIndex[color] = imageCounter;
+      imageCounter = images.length;
+    });
+
+    return { allImages: images, imageStartIndex: startIndex };
+  }, [product.colors, product.variations]);
+
+  const handleIncrement = () => setQuantity((prev) => Math.min(99, prev + 1));
+  const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
+
+  const handleAddToCart = () => {
+    const selectedVariation = product.variations[selectedColor][selectedSize];
+    const ChoosedVariation = `${productById.id}-${selectedVariation.id}`;
+    console.log(selectedVariation);
+
+    const cartItem = {
+      id: ChoosedVariation,
+      name: product.name,
+      color: selectedColor,
+      size: selectedSize,
+      image: selectedVariation.images[0],
+      price: selectedVariation.price,
+    };
+
+    addItem(cartItem, quantity);
   };
 
-  const handleSizeChange = (size) => {
-    setSelectedSize(size);
-  };
+  useEffect(() => {
+    setCarouselIndex(imageStartIndex[selectedColor] || 0);
+  }, [selectedColor, imageStartIndex]);
 
   return (
     <div className="ProductDetail">
       <div className="headerBreadcums h-32 bg-blueOcean"></div>
-      <div className="grid grid-cols-5 px-20 py-10">
-        <div className="caroselImage col-span-3">
-          <div class="carousel w-full h-1/2">
-            <div id="slide1" class="carousel-item relative w-full">
-              <img
-                src="https://bizweb.dktcdn.net/thumb/large/100/315/239/products/z5616001785640-385dfc08de280dd31e02df6fa93c7023-1720509041933.jpg"
-                class="w-full"
-              />
-              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                <a href="#slide4" class="btn btn-circle">
-                  ❮
-                </a>
-                <a href="#slide2" class="btn btn-circle">
-                  ❯
-                </a>
-              </div>
+      <div className="grid grid-cols-5 gap-6 px-20 py-10">
+        <div className="col-span-3">
+          {product.variations[selectedColor] &&
+          product.variations[selectedColor][selectedSize] &&
+          product.variations[selectedColor][selectedSize].images ? (
+            <Carousel
+              autoPlay={true}
+              navButtonsAlwaysVisible
+              index={carouselIndex}
+            >
+              {allImages.map((item, index) => (
+                <img
+                  key={index}
+                  src={item.image}
+                  alt={`Product in ${item.color}`}
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    e.target.src = "https://placehold.co/600x400";
+                  }}
+                />
+              ))}
+            </Carousel>
+          ) : (
+            <div className="text-center">
+              <p>No images available for the selected color and size.</p>
             </div>
-            <div id="slide2" class="carousel-item relative w-full">
-              <img
-                src="https://cdn.boo.vn/media/catalog/product/1/_/1.2.02.3.18.002.123.23-10200011-bst-1.jpg"
-                class="w-full"
-              />
-              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                <a href="#slide1" class="btn btn-circle">
-                  ❮
-                </a>
-                <a href="#slide3" class="btn btn-circle">
-                  ❯
-                </a>
-              </div>
-            </div>
-            <div id="slide3" class="carousel-item relative w-full">
-              <img
-                src="https://cdn.boo.vn/media/catalog/product/1/_/1.2.02.3.21.002.223.23.10200011_2__5.jpg"
-                class="w-full"
-              />
-              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                <a href="#slide2" class="btn btn-circle">
-                  ❮
-                </a>
-                <a href="#slide4" class="btn btn-circle">
-                  ❯
-                </a>
-              </div>
-            </div>
-            <div id="slide4" class="carousel-item relative w-full">
-              <img
-                src="https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp"
-                class="w-full"
-              />
-              <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                <a href="#slide3" class="btn btn-circle">
-                  ❮
-                </a>
-                <a href="#slide1" class="btn btn-circle">
-                  ❯
-                </a>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
+
         <div className="properties pl-10 col-span-2">
-          <h1 className="mb-4 font-poppins text-5xl">Tên sản phẩm</h1>{" "}
-          {/* Add bottom margin */}
-          <p className="mb-4 font-poppins text-gray-500 text-xl">Giá</p>{" "}
-          {/* Add bottom margin */}
+          <h1 className="mb-4 font-bold text-5xl">{product.name}</h1>
+          <p className="mb-4 text-xl font-semibold text-gray-700">
+            ${product.variations[selectedColor][selectedSize].price.toFixed(2)}
+          </p>
           <div className="rating mb-4 flex items-center text-gray-500">
-            {" "}
-            {/* Add bottom margin */}
             <Rating
               style={{ maxWidth: 150 }}
               readOnly
-              value={product.averageRating}
+              value={4.5}
               itemStyles={{
                 itemShapes: Star,
                 activeFillColor: "#ffb700",
                 inactiveFillColor: "#fbf1a9",
               }}
-            />{" "}
-            <div className="px-4">|</div>{" "}
-            <div className="customerReview text-xl">
-              {product.reviewCount} Customer Review
-            </div>
+            />
+            <div className="px-4">|</div>
+            <div className="customerReview text-xl">120 Customer Reviews</div>
           </div>
-          <div className="size">
-            <h2 className="text-lg font-semibold mb-2">Size</h2>{" "}
-            {/* Add margin-bottom */}
-            <div className="flex space-x-2">
-              {product.sizes.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => handleSizeChange(size)}
-                  className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    selectedSize === size
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-gray-800"
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="color mb-6">
-            {" "}
-            {/* Add margin-bottom to space out from previous section */}
-            <h2 className="text-lg font-semibold mb-2">Color</h2>{" "}
-            {/* Add margin-bottom */}
-            <div className="flex space-x-5">
+
+          {/* Color Selector */}
+          <div className="colors flex items-center mb-4">
+            <div className="font-semibold text-gray-600">Color:</div>
+            <div className="ml-4 flex gap-2">
               {product.colors.map((color) => (
-                <button
+                <div
                   key={color}
-                  onClick={() => handleColorChange(color)}
-                  className={`w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                    selectedColor === color
-                      ? "ring-2 ring-blue-500 ring-offset-2"
-                      : ""
+                  className={`cursor-pointer w-8 h-8 border border-gray-300 rounded-full ${
+                    selectedColor === color ? "ring-2 ring-blue-500" : ""
                   }`}
                   style={{ backgroundColor: color }}
-                  aria-label={`Select ${color} color`}
-                ></button>
+                  onClick={() => setSelectedColor(color)}
+                />
               ))}
             </div>
           </div>
-          <div className="ActionButton space-x-7">
-            <div className="QuantityChooser">
+
+          {/* Size Selector */}
+          <div className="sizes mb-4">
+            <div className="font-semibold text-gray-600">Size:</div>
+            <div className="flex gap-2">
+              {product.sizes.map((size) => (
+                <div
+                  key={size}
+                  className={`cursor-pointer px-4 py-2 border border-gray-300 rounded-lg ${
+                    selectedSize === size ? "bg-blue-500 text-white" : ""
+                  }`}
+                  onClick={() => setSelectedSize(size)}
+                >
+                  {size}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quantity Selector with +/- buttons */}
+          <div className="quantity mb-4">
+            <div className="font-semibold text-gray-600 mb-2">Quantity:</div>
+            <div className="flex items-center">
               <button
-                onClick={decreaseQuantity}
-                className="btn rounded-sm btn-sm"
+                className="px-3 py-1 bg-gray-300 text-black rounded-l-lg"
+                onClick={handleDecrement}
               >
                 -
               </button>
-
               <input
-                type="text"
+                type="number"
+                min={1}
+                max={99}
                 value={quantity}
-                readOnly
-                className="input input-sm w-16 text-center"
+                onChange={(e) => {
+                  const newValue = parseInt(e.target.value, 10);
+                  if (!isNaN(newValue)) {
+                    setQuantity(Math.max(1, Math.min(99, newValue)));
+                  }
+                }}
+                className="text-center border-t border-b border-gray-300 w-12"
               />
-
               <button
-                onClick={increaseQuantity}
-                className="btn btn-sm rounded-sm"
+                className="px-3 py-1 bg-gray-300 text-black rounded-r-lg"
+                onClick={handleIncrement}
               >
                 +
               </button>
             </div>
-            <div className="btn rounded-lg border border-black px-12">
-              Add To Cart
-            </div>
-            <div className="btn rounded-lg border border-black px-12">
-              Share
-            </div>
+          </div>
+
+          {/* Add to Cart Button */}
+          <div>
+            <button
+              onClick={handleAddToCart}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
       </div>
