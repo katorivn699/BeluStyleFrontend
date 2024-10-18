@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
-import { RegisterUser } from "../../service/AuthService";
+import { RegisterUser } from "../../service/authService.js";
 import { GoogleLoginButton } from "../buttons/Button";
 import { toast, Zoom } from "react-toastify";
 
 export function RegisterForm() {
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
@@ -136,11 +141,18 @@ export function RegisterForm() {
             })}
           />
           {errors.confirmPassword && (
-            <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+            <p className="text-red-500 text-sm">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
         <div className="agreeTerm flex flex-row">
-          <input type="checkbox" id="rememberMe" required className="mr-2 checkbox" />
+          <input
+            type="checkbox"
+            id="rememberMe"
+            required
+            className="mr-2 checkbox"
+          />
           <p className="text-left text-xl">
             By continuing, you agree to the{" "}
             <Link className="underline font-semibold">Terms of Use</Link> and{" "}
