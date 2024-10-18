@@ -102,7 +102,6 @@ export const BuyNow = () => {
   return (
     <>
       <Link>
-        <div className="btn bg-blueOcean w-44 rounded-lg ">Buy now</div>
       <Button variant="contained" size="large"><Link to={"/shop"}>Buy Now</Link></Button>
       </Link>
     </>

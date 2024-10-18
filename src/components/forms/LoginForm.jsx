@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
-import { LoginUser } from "../../service/authService";
+import { LoginUser } from "../../service/AuthService";
 import { GoogleLoginButton, LoginBtn } from "../buttons/Button";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 import { Divider } from "@mui/material";

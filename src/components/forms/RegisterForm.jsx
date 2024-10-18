@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
-import { RegisterUser } from "../../service/authService.js";
+import { RegisterUser } from "../../service/AuthService";
 import { GoogleLoginButton } from "../buttons/Button";
 import { toast, Zoom } from "react-toastify";
 
