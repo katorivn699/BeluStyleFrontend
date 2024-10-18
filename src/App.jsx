@@ -22,10 +22,27 @@ import {
 } from "./routes/ProtectedRoute";
 import { ErrorNotFound } from "./pages/NotFound/404NotFound";
 import RegisterSuccess from "./pages/Register/RegisterSuccess";
+import LoginForStaffAndAdmin from "./pages/LoginForStaffAndAdmin";
+import Dashboard from "./pages/Dashboard";
+import DashboardLayout from "./layouts/DashboardLayout";
+import DashboardCategories from "./pages/DashboardCategories";
+import DashboardCreateCategory from "./pages/DashboardCreateCategory";
+import DashboardEditCategory from "./pages/DashboardEditCategory";
+import PrivateRoute from "./routes/PrivateRoute";
+import Dashboardbrands from "./pages/DashboardBrands";
+import DashboardBrands from "./pages/DashboardBrands";
+import DashboardCreateBrand from "./pages/DashboardCreateBrand";
+import DashboardEditBrand from "./pages/DashboardEditBrand";
 
 function App() {
   const location = useLocation();
   const [theme] = useState(localStorage.getItem("theme") || "light");
+
+  const [isOpen, setIsOpen] = useState(true);
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -123,6 +140,91 @@ function App() {
           <Route path="/register/success" element={<RegisterSuccess />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />
           <Route path="*" element={<ErrorNotFound />} />
+
+          <Route
+            path="/LoginForStaffAndAdmin"
+            element={<LoginForStaffAndAdmin />}
+          />
+
+          {/* Protect the Dashboard route */}
+          <Route
+            path="/Dashboard"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <Dashboard />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Categories"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardCategories />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Categories/Create"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardCreateCategory />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Categories/Edit/:categoryId"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardEditCategory />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Brands"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardBrands />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Brands/Create"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardCreateBrand />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Brands/Edit/:brandId"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardEditBrand />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route path="/Dashboard/Logout" element={<Logout />} />
         </Routes>
       </div>
       <ToastContainer

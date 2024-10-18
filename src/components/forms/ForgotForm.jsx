@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ForgotBtn } from "../buttons/Button";
-import { HandleForgotPassword } from "../../service/AuthService";
+import { HandleForgotPassword } from "../../service/authService.js";
 
 export function ForgotForm() {
   const {
@@ -13,11 +13,10 @@ export function ForgotForm() {
 
   const navigate = useNavigate();
 
-
   const onSubmit = async (data) => {
     try {
       console.log(data);
-      await HandleForgotPassword(data, navigate); 
+      await HandleForgotPassword(data, navigate);
     } catch (error) {
       console.error("Error during login:", error.message);
     }
@@ -26,12 +25,12 @@ export function ForgotForm() {
   return (
     <div>
       <h2 className="font-poppins text-5xl mb-6 text-left">Forgot password</h2>{" "}
-      <p className="font-poppins text-1xl mb-6 text-left text-gray-600">Please enter your email to reset the password</p>
+      <p className="font-poppins text-1xl mb-6 text-left text-gray-600">
+        Please enter your email to reset the password
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label className="block mb-2 text-gray-500 text-xl">
-            Your email
-          </label>
+          <label className="block mb-2 text-gray-500 text-xl">Your email</label>
           <input
             type="text"
             tabIndex={1}

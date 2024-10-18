@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
-import { LoginUser } from "../../service/AuthService";
+import { LoginUser } from "../../service/authService";
 import { GoogleLoginButton, LoginBtn } from "../buttons/Button";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 
@@ -50,10 +50,14 @@ export function LoginForm() {
             type="text"
             tabIndex={1}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg" // Increase padding and font size
-            {...register("username", { required: "username can't blank", pattern: {
-              value: "[a-zA-Z0-9]+$",
-              message: "Only letters and numbers are allowed. No special characters or email (no '@' allowed)."
-            } })}
+            {...register("username", {
+              required: "username can't blank",
+              pattern: {
+                value: "[a-zA-Z0-9]+$",
+                message:
+                  "Only letters and numbers are allowed. No special characters or email (no '@' allowed).",
+              },
+            })}
           />
           {errors.username && (
             <p className="text-red-500 text-sm">{errors.username.message}</p>
@@ -70,11 +74,11 @@ export function LoginForm() {
             >
               {showPassword ? (
                 <>
-                  <BiSolidHide className="mr-1 text-3xl text-gray-500"/> Hide
+                  <BiSolidHide className="mr-1 text-3xl text-gray-500" /> Hide
                 </>
               ) : (
                 <>
-                  <BiSolidShow className="mr-1 text-3xl text-gray-500"/> Show
+                  <BiSolidShow className="mr-1 text-3xl text-gray-500" /> Show
                 </>
               )}
             </button>
@@ -83,10 +87,15 @@ export function LoginForm() {
             type={showPassword ? "text" : "password"}
             tabIndex={2}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg text-gray-700" // Increase padding and font size
-            {...register("password", { required: "Password is required", pattern: {
-              value: "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-              message: "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character."
-            } })}
+            {...register("password", {
+              required: "Password is required",
+              pattern: {
+                value:
+                  "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+                message:
+                  "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+              },
+            })}
           />
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
@@ -132,8 +141,7 @@ export function LoginForm() {
       <div className="otherLogin flex flex-col pt-10">
         <div class="divider">Or continue with</div>
         <div className="loginWithGoogle flex pt-10 justify-center">
-          <GoogleLoginButton signIn={signIn}
-          />
+          <GoogleLoginButton signIn={signIn} />
         </div>
       </div>
     </div>

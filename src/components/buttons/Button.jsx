@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { FaCartPlus, FaShareAlt } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
-import { HandleLoginGoogle } from "../../service/AuthService";
 import { Link, useNavigate } from "react-router-dom";
+import { HandleLoginGoogle } from "../../service/authService.js";
 
 export function AddToCart({ onClick, tabindex = "0" }) {
   return (
@@ -68,7 +68,7 @@ export function ForgotBtn({ onClick, tabindex = "0" }) {
   );
 }
 
-export function GoogleLoginButton({signIn}) {
+export function GoogleLoginButton({ signIn }) {
   const navigate = useNavigate();
 
   const login = useGoogleLogin({
@@ -126,7 +126,9 @@ export function BtnTheme() {
 export const BuyNow = () => {
   return (
     <>
-      <Link><div className="btn bg-blueOcean w-44 rounded-lg ">Buy now</div></Link>
+      <Link>
+        <div className="btn bg-blueOcean w-44 rounded-lg ">Buy now</div>
+      </Link>
     </>
-  )
+  );
 };

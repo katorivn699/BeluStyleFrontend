@@ -2,11 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import { toast, Zoom } from "react-toastify";
 import { apiClient } from "../core/api"; // Import apiClient from your api.js
 
-export const LoginUser = async (
-  data,
-  navigate,
-  signIn
-) => {
+export const LoginUser = async (data, navigate, signIn) => {
   const loginPromise = apiClient.post("/api/auth/login", {
     username: data.username,
     passwordHash: data.password,
@@ -42,7 +38,7 @@ export const LoginUser = async (
     signIn({
       auth: {
         token: response.data.token,
-        type: 'Bearer',
+        type: "Bearer",
       },
       userState: {
         username: data.username,
@@ -105,11 +101,7 @@ export const HandleForgotPassword = async (data, navigate) => {
   }
 };
 
-export const HandleLoginGoogle = async (
-  accessToken,
-  navigate,
-  signIn
-) => {
+export const HandleLoginGoogle = async (accessToken, navigate, signIn) => {
   try {
     const response = await apiClient.get(
       `/api/auth/google-callback?token=${accessToken}`
@@ -118,7 +110,7 @@ export const HandleLoginGoogle = async (
     signIn({
       auth: {
         token: response.data.token,
-        type: 'Bearer',
+        type: "Bearer",
       },
       userState: {
         username: user.username,
@@ -131,5 +123,62 @@ export const HandleLoginGoogle = async (
     navigate("/");
   } catch (error) {
     console.error("Error in HandleLoginGoogle:", error);
+  }
+};
+
+export const loginForStaffAndAdmin = async (data, navigate, signIn) => {
+  const loginPromise = apiClient.post("/api/auth/login-for-staff-and-admin", {
+    username: data.username,
+    passwordHash: data.password,
+  });
+
+  toast.promise(
+    loginPromise,
+    {
+      pending: "Logging in...",
+      success: "Login successful!",
+      error: {
+        render({ data }) {
+          if (data.response) {
+            const errorMessage =
+              data.response.data?.message ||
+              "An error occurred. Please try again.";
+            return errorMessage;
+          }
+          return "An error occurred. Please try again.";
+        },
+      },
+    },
+    {
+      position: "bottom-center",
+      transition: Zoom,
+    }
+  );
+
+  try {
+    const response = await loginPromise;
+    const user = jwtDecode(response.data.token);
+
+    console.log(response.data.token);
+    console.log(user);
+
+    signIn({
+      auth: {
+        token: response.data.token,
+        type: "Bearer",
+      },
+      userState: {
+        username: data.username,
+        userFullName: user.fullName,
+        userImage: user.image,
+        role: user.role?.[0]?.authority,
+      },
+    });
+
+    navigate("/Dashboard");
+  } catch (error) {
+    throw new Error(
+      error.response?.data.message || "An error occurred. Please try again."
+    );
   }
 };
