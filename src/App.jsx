@@ -18,6 +18,7 @@ import Footer from "./components/footer/CustomerFooter";
 import ProductDetailPage from "./pages/Home/ProductDetail";
 import {
   CustomerProtectedRoute,
+  LoggedProtectedRoute,
   RegisterProtectedRoute,
 } from "./routes/ProtectedRoute";
 import { ErrorNotFound } from "./pages/NotFound/404NotFound";
@@ -32,6 +33,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import DashboardBrands from "./pages/Dashboard/DashboardBrands";
 import DashboardCreateBrand from "./pages/Dashboard/DashboardCreateBrand";
 import DashboardEditBrand from "./pages/Dashboard/DashboardEditBrand";
+import UserProfile from "./pages/User/UserSettings.jsx";
 
 function App() {
   const location = useLocation();
@@ -63,7 +65,8 @@ function App() {
       path === "/register" ||
       path === "/forgotPassword" ||
       path === "/forgotPassword/success" ||
-      path === "/register/confirm-registration"
+      path === "/register/confirm-registration"||
+      path === "/reset-password"
     ) {
       return <NavLogin />;
     }
@@ -102,7 +105,8 @@ function App() {
       path === "/register" ||
       path === "/forgotPassword" ||
       path === "/forgotPassword/success" ||
-      path === "/register/confirm-registration"
+      path === "/register/confirm-registration" ||
+      path === "/user/information"
     ) {
       return "pt-[90px]";
     }
@@ -120,9 +124,9 @@ function App() {
           <Route
             path="/login"
             element={
-              <CustomerProtectedRoute>
+              <LoggedProtectedRoute>
                 <Login />
-              </CustomerProtectedRoute>
+              </LoggedProtectedRoute>
             }
           />
           <Route path="/register" element={<Register />} />
@@ -139,6 +143,15 @@ function App() {
           />
           <Route path="/register/success" element={<RegisterSuccess />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />
+          <Route path="/reset-password" element={<ProductDetailPage />} />
+          <Route
+            path="/user/information"
+            element={
+              <CustomerProtectedRoute>
+                <UserProfile />
+              </CustomerProtectedRoute>
+            }
+          />
           <Route path="*" element={<ErrorNotFound />} />
 
           <Route

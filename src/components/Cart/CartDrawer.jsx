@@ -106,7 +106,7 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
             Subtotal
           </Typography>
           <Typography variant="body1" color="primary" fontWeight="bold">
-            {cartTotal}$
+            {cartTotal.toFixed(2)}$
           </Typography>
         </Box>
 
