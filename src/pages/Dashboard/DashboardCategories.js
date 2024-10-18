@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { FaFilter, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import DeleteConfirmationModal from "../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
-
-import { apiClient } from "../core/api";
+import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
+import CategoryDrawer from "../../components/drawer/DashboardCategoryDrawer"; // Import CategoryDrawer
+import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
-import BrandDrawer from "../components/drawer/DashboardBrandDrawer";
+import userAuthHeader from "react-auth-kit/hooks/useAuthHeader"; // Import useAuthUser
 
-const DashboardBrands = () => {
-  const [brands, setbrands] = useState([]); // State to store brands
+const DashboardCategories = () => {
+  const [categories, setCategories] = useState([]); // State to store categories
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [brandToDelete, setbrandToDelete] = useState(null); // State to delete brands
+  const [categoryToDelete, setCategoryToDelete] = useState(null); // State to delete categories
   const [isOpen, setIsOpen] = useState(false); // Manage modal open state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Manage drawer open state
-  const [selectedbrand, setSelectedbrand] = useState(null); // State for the selected brand for drawer
+  const [selectedCategory, setSelectedCategory] = useState(null); // State for the selected category for drawer
   const navigate = useNavigate();
 
   const authUser = useAuthUser(); // Get the current user
@@ -22,17 +22,18 @@ const DashboardBrands = () => {
   const varToken = localStorage.getItem("_auth");
 
   useEffect(() => {
+    // Fetch categories with quantities from API
     apiClient
-      .get("/api/brands", {
+      .get("/api/categories", {
         headers: {
           Authorization: "Bearer " + varToken,
         },
       })
       .then((response) => {
-        setbrands(response.data); // Set the fetched data to brands state
+        setCategories(response.data); // Set the fetched data to categories state
       })
       .catch((error) => {
-        console.error("Error fetching brands:", error);
+        console.error("Error fetching categories:", error);
       });
   }, []); // Empty dependency array means this useEffect runs once when the component mounts
 
@@ -44,8 +45,8 @@ const DashboardBrands = () => {
     }
   };
 
-  const openDeleteModal = (brand) => {
-    setbrandToDelete(brand);
+  const openDeleteModal = (category) => {
+    setCategoryToDelete(category);
     setIsOpen(true); // Open the modal
   };
 
@@ -54,23 +55,27 @@ const DashboardBrands = () => {
   };
 
   const handleDelete = () => {
-    if (brandToDelete) {
+    if (categoryToDelete) {
       apiClient
-        .delete(`/api/brands/${brandToDelete.brandId}`, {
+        .delete(`/api/categories/${categoryToDelete.categoryId}`, {
           headers: {
             Authorization: "Bearer " + varToken,
           },
         })
         .then(() => {
-          setbrands(brands.filter((c) => c.brandId !== brandToDelete.brandId));
+          setCategories(
+            categories.filter(
+              (c) => c.categoryId !== categoryToDelete.categoryId
+            )
+          );
           setIsOpen(false); // Close the modal after deletion
         })
-        .catch((error) => console.error("Error deleting brand:", error));
+        .catch((error) => console.error("Error deleting category:", error));
     }
   };
 
-  const openDrawer = (brand) => {
-    setSelectedbrand(brand);
+  const openDrawer = (category) => {
+    setSelectedCategory(category);
     setIsDrawerOpen(true);
   };
 
@@ -78,22 +83,25 @@ const DashboardBrands = () => {
     setIsDrawerOpen(false);
   };
 
-  const handleEdit = (brand) => {
-    navigate(`/Dashboard/Brands/Edit/${brand.brandId}`); // Use navigate to go to the edit page
+  const handleEdit = (category) => {
+    navigate(`/Dashboard/Categories/Edit/${category.categoryId}`); // Use navigate to go to the edit page
   };
 
-  const handleDeleteFromDrawer = (brand) => {
-    openDeleteModal(brand);
+  const handleDeleteFromDrawer = (category) => {
+    openDeleteModal(category);
   };
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-4xl font-bold mb-6">Brands</h1>
+        <h1 className="text-4xl font-bold mb-6">Categories</h1>
         <div className="flex ">
           {userRole === "ADMIN" && ( // Show delete button only for Admin
             <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
-              <Link to="/Dashboard/Brands/Create" className="flex items-center">
+              <Link
+                to="/Dashboard/Categories/Create"
+                className="flex items-center"
+              >
                 <FaPlus className="mr-2" /> Create New
               </Link>
             </button>
@@ -105,8 +113,8 @@ const DashboardBrands = () => {
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
             <tr>
-              <th className="px-4 py-2 text-left">Website</th>
-              <th className="px-4 py-2 text-left">Brand Name</th>
+              <th className="px-4 py-2 text-left">Image</th>
+              <th className="px-4 py-2 text-left">Category Name</th>
               <th className="px-4 py-2 text-left">Description</th>
               <th className="px-4 py-2 text-left">Total Quantity</th>
               <th className="px-4 py-2 text-left">Action</th>
@@ -114,25 +122,22 @@ const DashboardBrands = () => {
           </thead>
 
           <tbody>
-            {brands.map((brand) => (
-              <tr key={brand.brandId} className="hover:bg-gray-50">
+            {categories.map((category) => (
+              <tr key={category.categoryId} className="hover:bg-gray-50">
                 <td className="px-4 py-2">
-                  <a
-                    href={brand.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 underline"
-                  >
-                    {brand.websiteUrl}
-                  </a>
+                  <img
+                    src={category.imageUrl}
+                    alt={category.categoryName}
+                    className="h-12 w-12"
+                  />
                 </td>
-                <td className="px-4 py-2">{brand.brandName}</td>
-                <td className="px-4 py-2">{brand.brandDescription}</td>
-                <td className="px-4 py-2">{brand.totalQuantity}</td>
+                <td className="px-4 py-2">{category.categoryName}</td>
+                <td className="px-4 py-2">{category.categoryDescription}</td>
+                <td className="px-4 py-2">{category.totalQuantity}</td>
                 <td className="relative">
                   <div className="w-max flex border align-middle border-gray-300 rounded-md overflow-hidden">
                     <button
-                      onClick={() => toggleDropdown(brand.brandId)}
+                      onClick={() => toggleDropdown(category.categoryId)}
                       className="flex items-center border-l-gray-300 justify-center px-3 py-2 text-gray-500 hover:bg-gray-200"
                     >
                       <FaEdit />
@@ -140,23 +145,23 @@ const DashboardBrands = () => {
                     <div className="w-max bg-gray-300"></div>
                     {userRole === "ADMIN" && ( // Show delete button only for Admin
                       <button
-                        onClick={() => openDeleteModal(brand)}
+                        onClick={() => openDeleteModal(category)}
                         className="flex items-center justify-center px-3 py-2 text-red-500 hover:bg-gray-200"
                       >
                         <FaTrash />
                       </button>
                     )}
                   </div>
-                  {openDropdown === brand.brandId && (
+                  {openDropdown === category.categoryId && (
                     <div className="absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-50">
                       <button
-                        onClick={() => openDrawer(brand)} // Open drawer on click
+                        onClick={() => openDrawer(category)} // Open drawer on click
                         className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-center"
                       >
                         <FaEye className="mr-2" /> Show
                       </button>
                       <Link
-                        to={`/Dashboard/Brands/Edit/${brand.brandId}`}
+                        to={`/Dashboard/Categories/Edit/${category.categoryId}`}
                         className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-center"
                       >
                         <FaEdit className="mr-2" /> Edit
@@ -175,14 +180,14 @@ const DashboardBrands = () => {
         isOpen={isOpen}
         onClose={handleClose}
         onConfirm={handleDelete}
-        name={brandToDelete?.brandName || ""}
+        name={categoryToDelete?.categoryName || ""}
       />
 
-      {/* brand Drawer */}
-      <BrandDrawer
+      {/* Category Drawer */}
+      <CategoryDrawer
         isOpen={isDrawerOpen}
         onClose={closeDrawer}
-        brand={selectedbrand || {}} // Pass selected brand to drawer
+        category={selectedCategory || {}} // Pass selected category to drawer
         onEdit={handleEdit}
         onDelete={handleDeleteFromDrawer}
       />
@@ -190,4 +195,4 @@ const DashboardBrands = () => {
   );
 };
 
-export default DashboardBrands;
+export default DashboardCategories;

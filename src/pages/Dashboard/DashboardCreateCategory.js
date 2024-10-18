@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiClient } from "../core/api";
+import { apiClient } from "../../core/api";
 
 const DashboardCreateCategory = () => {
   const [categoryName, setCategoryName] = useState("");

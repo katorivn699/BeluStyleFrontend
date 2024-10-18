@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
-import { loginForStaffAndAdmin } from "../service/AuthService";
+import { loginForStaffAndAdmin } from "../../service/AuthService";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 
 const LoginForStaffAndAdmin = () => {

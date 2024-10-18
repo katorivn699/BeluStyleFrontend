@@ -69,14 +69,48 @@ export function LoginBtn({ onClick, tabindex = "0" }) {
 
 export function ForgotBtn({ onClick, tabindex = "0" }) {
   return (
-    <button
-      type="submit"
+    <Button 
+      variant="outlined" // Dùng outlined để có border
       onClick={onClick}
       tabIndex={tabindex}
-      className="w-full bg-gray-200 text-white p-4 rounded-full text-xl hover:bg-black hover:text-white transition-colors duration-300 ease-in-out"
+      type="submit"
+      sx={{
+        width: "100%", 
+        color: "#000", 
+        backgroundColor: "#fff", 
+        borderRadius: "50px", 
+        borderColor: "#000", 
+        fontSize: "1.25rem", 
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+        },
+      }}
     >
       Reset password
-    </button>
+    </Button>
+  );
+}
+export function RegisterBtn({ onClick, tabindex = "0" }) {
+  return (
+    <Button 
+      variant="outlined" // Dùng outlined để có border
+      onClick={onClick}
+      tabIndex={tabindex}
+      type="submit"
+      sx={{
+        width: "100%", 
+        color: "#000", 
+        backgroundColor: "#fff", 
+        borderRadius: "50px", 
+        borderColor: "#000", 
+        fontSize: "1.25rem", 
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+        },
+      }}
+    >
+      Register
+    </Button>
   );
 }
 

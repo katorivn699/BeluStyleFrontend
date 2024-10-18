@@ -1,6 +1,6 @@
 import React from "react";
-import MainLayout from "../layouts/MainLayout";
-import success from "../assets/images/success.svg";
+import MainLayout from "../../layouts/MainLayout";
+import success from "../../assets/images/success.svg";
 
 function ForgotSuccess(){
     return(

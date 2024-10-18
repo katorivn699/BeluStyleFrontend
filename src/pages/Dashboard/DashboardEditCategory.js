@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { apiClient } from "../core/api";
+import { apiClient } from "../../core/api";
 
 const DashboardEditCategory = () => {
   const { categoryId } = useParams(); // Get the category ID from the URL

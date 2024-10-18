@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Home } from "./pages/Home/Home";
 import { Navbar } from "./components/navbars/Navbar";
-import { Login } from "./pages/Login";
+import { Login } from "./pages/Login/Login";
 import { NavLogin } from "./components/navbars/UserAccessBar";
 import { Shop } from "./pages/Home/Shop";
 import { About } from "./pages/Home/About";
 import Register from "./pages/Register/Register";
-import ForgotPassword from "./pages/ForgotPassword";
+import ForgotPassword from "./pages/Forgot/ForgotPassword";
 import { ConfirmRegister } from "./pages/Register/ConfirmRegister";
 import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Logout from "./pages/Logout";
-import ForgotSuccess from "./pages/ForgotPasswordSuccess";
+import Logout from "./pages/Login/Logout";
+import ForgotSuccess from "./pages/Forgot/ForgotPasswordSuccess";
 import "@smastrom/react-rating/style.css";
 import Footer from "./components/footer/CustomerFooter";
 import ProductDetailPage from "./pages/Home/ProductDetail";
@@ -22,17 +22,16 @@ import {
 } from "./routes/ProtectedRoute";
 import { ErrorNotFound } from "./pages/NotFound/404NotFound";
 import RegisterSuccess from "./pages/Register/RegisterSuccess";
-import LoginForStaffAndAdmin from "./pages/LoginForStaffAndAdmin";
-import Dashboard from "./pages/Dashboard";
+import LoginForStaffAndAdmin from "./pages/Login/LoginForStaffAndAdmin";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import DashboardLayout from "./layouts/DashboardLayout";
-import DashboardCategories from "./pages/DashboardCategories";
-import DashboardCreateCategory from "./pages/DashboardCreateCategory";
-import DashboardEditCategory from "./pages/DashboardEditCategory";
+import DashboardCategories from "./pages/Dashboard/DashboardCategories";
+import DashboardCreateCategory from "./pages/Dashboard/DashboardCreateCategory";
+import DashboardEditCategory from "./pages/Dashboard/DashboardEditCategory";
 import PrivateRoute from "./routes/PrivateRoute";
-import Dashboardbrands from "./pages/DashboardBrands";
-import DashboardBrands from "./pages/DashboardBrands";
-import DashboardCreateBrand from "./pages/DashboardCreateBrand";
-import DashboardEditBrand from "./pages/DashboardEditBrand";
+import DashboardBrands from "./pages/Dashboard/DashboardBrands";
+import DashboardCreateBrand from "./pages/Dashboard/DashboardCreateBrand";
+import DashboardEditBrand from "./pages/Dashboard/DashboardEditBrand";
 
 function App() {
   const location = useLocation();
@@ -55,7 +54,8 @@ function App() {
       path === "/shop" ||
       path === "/about" ||
       path === "/contact" ||
-      path.startsWith("/shop/product/")
+      path.startsWith("/shop/product/") ||
+      path === "/user/information"
     ) {
       return <Navbar />;
     } else if (
