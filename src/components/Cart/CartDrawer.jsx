@@ -1,17 +1,19 @@
 import React, { useEffect, useRef } from "react";
 import { useCart } from "react-use-cart"; // Import from react-use-cart
-import { Drawer, List, ListItem, ListItemText, Button } from "@mui/material";
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  Typography,
+  Box,
+  Divider,
+} from "@mui/material";
 
 const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
   const drawerRef = useRef(null); // Reference for the drawer
-  const {
-    isEmpty,
-    items,
-    removeItem,
-    updateItemQuantity,
-    emptyCart,
-    cartTotal,
-  } = useCart(); // Get cart hooks and functions from react-use-cart
+  const { isEmpty, items, removeItem, emptyCart, cartTotal } = useCart(); // Get cart hooks and functions from react-use-cart
 
   // Function to handle click outside to close the drawer
   const handleClickOutside = (event) => {
@@ -27,87 +29,108 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isCartOpen]);
+  });
 
   return (
     <Drawer
       anchor="right"
       open={isCartOpen}
       onClose={() => toggleCartDrawer(false)}
-      sx={{ width: '400px' }}  // Increase the drawer width here
+      sx={{
+        width: "500px", 
+        padding: "20px",
+      }}
     >
-      <div ref={drawerRef} className="p-4 w-[400px]"> {/* Increase width here */}
-        <h2 className="font-bold text-xl">Giỏ Hàng</h2>
+      <div ref={drawerRef} className="p-4">
+        <Typography variant="h5" className="font-bold" gutterBottom>
+          Shopping Cart
+        </Typography>
 
         {isEmpty ? (
-          <p>Giỏ hàng của bạn đang trống.</p>
+          <Typography variant="body1">Giỏ hàng của bạn đang trống.</Typography>
         ) : (
           <List>
             {items.map((item) => (
-              <ListItem key={`${item.id}-${item.variationId}`}>
-                <ListItemText
-                  primary={`Sản phẩm: ${item.name}`}
-                  secondary={`Số lượng: ${item.quantity}, Giá: ${item.price}`}
+              <ListItem
+                key={`${item.id}-${item.variationId}`}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "10px 0",
+                }}
+              >
+                {/* Product Image */}
+                <img
+                  src={item.image} // Assuming item has an image property
+                  alt={item.name}
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    marginRight: "15px",
+                  }}
                 />
-                {/* Decrease Quantity Button */}
-                <Button
-                  onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
-                  size="small"
-                  color="primary"
-                >
-                  -
-                </Button>
-                {/* Increase Quantity Button */}
-                <Button
-                  onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
-                  size="small"
-                  color="primary"
-                >
-                  +
-                </Button>
+                <Box>
+                  {/* Product Name */}
+                  <Typography variant="body1" color="text.primary">
+                    {item.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {item.color} - {item.size}
+                  </Typography>
+                  {/* Quantity and Price */}
+                  <Typography variant="body2" color="text.secondary">
+                    {item.quantity} x {item.price}$
+                  </Typography>
+                </Box>
+
                 {/* Remove Item Button */}
                 <Button
                   onClick={() => removeItem(item.id)}
                   size="small"
                   color="secondary"
+                  sx={{ marginLeft: "auto" }}
                 >
-                  Xóa
+                  <Typography variant="body2">Xóa</Typography>
                 </Button>
               </ListItem>
             ))}
           </List>
         )}
 
-        {/* Total Price */}
-        <div className="pt-4">
-          <p className="font-semibold">Tổng Tiền: {cartTotal} $</p>
-        </div>
+        <Divider sx={{ my: 2 }} />
 
-        {/* Checkout Button */}
-        <div className="pt-4">
+        {/* Subtotal and Checkout */}
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="body1" color="text.primary" fontWeight="bold">
+            Subtotal
+          </Typography>
+          <Typography variant="body1" color="primary" fontWeight="bold">
+            {cartTotal}$
+          </Typography>
+        </Box>
+
+        {/* Checkout Buttons */}
+        <Box display="flex" justifyContent="space-between" marginTop="16px">
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => emptyCart()}
+            fullWidth
+            sx={{ marginRight: "8px" }}
+          >
+            Cart
+          </Button>
           <Button
             variant="contained"
             color="primary"
-            fullWidth
             onClick={() => alert("Chuyển tới trang thanh toán")}
+            fullWidth
           >
-            Thanh Toán
+            Checkout
           </Button>
-        </div>
-
-        {/* Empty Cart Button */}
-        {!isEmpty && (
-          <div className="pt-2">
-            <Button
-              variant="outlined"
-              color="secondary"
-              fullWidth
-              onClick={() => emptyCart()}
-            >
-              Xóa Tất Cả
-            </Button>
-          </div>
-        )}
+        </Box>
       </div>
     </Drawer>
   );

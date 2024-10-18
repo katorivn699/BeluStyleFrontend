@@ -7,43 +7,21 @@ import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import LoggedMenu from "../menus/LoggedMenu";
 import GuessMenu from "../menus/GuessMenu";
-import userDefault from "../../assets/images/userdefault.webp";
 import CartDrawer from "../Cart/CartDrawer";
 import { Badge, IconButton } from "@mui/material";
 
 export function Navbar() {
   const dropdownRef = useRef(null);
   const isAuth = useIsAuthenticated();
-  const authUser = useAuthUser();
 
-  const [isMenuOpen, setIsMenuOpen] = useState({ guess: false, logged: false });
   const [isCartOpen, setIsCartOpen] = useState(false); // State for CartDrawer
 
   const { totalItems } = useCart();
-
-  const toggleMenu = (menuType) => {
-    setIsMenuOpen((prev) => ({
-      guess: menuType === "guess" ? !prev.guess : false,
-      logged: menuType === "logged" ? !prev.logged : false,
-    }));
-  };
 
   const toggleCartDrawer = (open) => () => {
     setIsCartOpen(open); // Open or close the CartDrawer
   };
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsMenuOpen({ guess: false, logged: false });
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 p-2 md:p-4 z-50 bg-white">
@@ -73,19 +51,7 @@ export function Navbar() {
         <div className="nav-right items-center justify-end flex space-x-4 md:space-x-10 pr-4 md:pr-10">
           {isAuth ? (
             <div className="dropdown dropdown-bottom" ref={dropdownRef}>
-              <div
-                tabIndex={0}
-                role="button"
-                className="cursor-pointer hover:text-base-300 transition duration-300 pb-1"
-                onClick={() => toggleMenu("logged")}
-              >
-                <img
-                  src={authUser.userImage ? authUser.userImage : userDefault}
-                  className="rounded-full w-6 md:w-8 h-6 md:h-8 object-cover"
-                  alt="Profile"
-                />
-              </div>
-              <LoggedMenu isMenuOpen={isMenuOpen.logged} />
+              <LoggedMenu/>
             </div>
           ) : (
             <GuessMenu />

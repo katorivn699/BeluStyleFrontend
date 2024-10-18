@@ -3,10 +3,11 @@ import Carousel from "react-material-ui-carousel";
 import { Rating, Star } from "@smastrom/react-rating";
 import { useCart } from "react-use-cart";
 import { useParams } from "react-router-dom";
+import { Tabs, Tab, Box } from "@mui/material";
 
 const ProductDetailPage = () => {
   const { addItem } = useCart();
-  const productById = useParams(); 
+  const productById = useParams();
 
   const product = {
     id: productById.id,
@@ -79,12 +80,19 @@ const ProductDetailPage = () => {
     },
     colors: ["blue", "red"],
     sizes: ["XS", "S", "M", "L", "XL"],
+    description: "This premium T-shirt is made from high-quality cotton, offering a perfect fit and comfort. Designed for everyday wear and easy to pair with various outfits.",
+    reviews: [
+      { user: "John Doe", rating: 5, comment: "Amazing product, great quality!" },
+      { user: "Jane Smith", rating: 4, comment: "Very comfortable and fits well." },
+    ],
   };
 
   const [selectedColor, setSelectedColor] = useState("blue");
   const [selectedSize, setSelectedSize] = useState("XS");
   const [quantity, setQuantity] = useState(1);
   const [carouselIndex, setCarouselIndex] = useState(0);
+
+  const [activeTab, setActiveTab] = useState(0); // State to handle active tab
 
   const { allImages, imageStartIndex } = useMemo(() => {
     const images = [];
@@ -112,7 +120,6 @@ const ProductDetailPage = () => {
   const handleAddToCart = () => {
     const selectedVariation = product.variations[selectedColor][selectedSize];
     const ChoosedVariation = `${productById.id}-${selectedVariation.id}`;
-    console.log(selectedVariation);
 
     const cartItem = {
       id: ChoosedVariation,
@@ -232,13 +239,8 @@ const ProductDetailPage = () => {
                 min={1}
                 max={99}
                 value={quantity}
-                onChange={(e) => {
-                  const newValue = parseInt(e.target.value, 10);
-                  if (!isNaN(newValue)) {
-                    setQuantity(Math.max(1, Math.min(99, newValue)));
-                  }
-                }}
-                className="text-center border-t border-b border-gray-300 w-12"
+                readOnly
+                className="px-4 py-1 border-t border-b border-gray-300 text-center"
               />
               <button
                 className="px-3 py-1 bg-gray-300 text-black rounded-r-lg"
@@ -249,17 +251,40 @@ const ProductDetailPage = () => {
             </div>
           </div>
 
-          {/* Add to Cart Button */}
-          <div>
-            <button
-              onClick={handleAddToCart}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-            >
-              Add to Cart
-            </button>
-          </div>
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg w-full mt-4"
+            onClick={handleAddToCart}
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
+
+      {/* Tabs for Description and Reviews */}
+      <Tabs
+        value={activeTab}
+        onChange={(e, newValue) => setActiveTab(newValue)}
+        aria-label="Product details"
+      >
+        <Tab label="Description" />
+        <Tab label="Reviews" />
+      </Tabs>
+      <Box p={3}>
+        {activeTab === 0 && <div>{product.description}</div>}
+        {activeTab === 1 && (
+          <div>
+            {product.reviews.map((review, index) => (
+              <div key={index} className="mb-4">
+                <h4 className="font-semibold">{review.user}</h4>
+                <Rating readOnly style={{
+                  width:100
+                }} value={review.rating} />
+                <p>{review.comment}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </Box>
     </div>
   );
 };
