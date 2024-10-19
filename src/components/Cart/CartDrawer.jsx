@@ -9,15 +9,17 @@ import {
   Box,
   Divider,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Drawerbtn } from "../buttons/Button";
 
 const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
-  const drawerRef = useRef(null); // Reference for the drawer
-  const { isEmpty, items, removeItem, emptyCart, cartTotal } = useCart(); // Get cart hooks and functions from react-use-cart
+  const drawerRef = useRef(null); 
+  const { isEmpty, items, removeItem, emptyCart, cartTotal } = useCart();
+  const navigate = useNavigate();
 
-  // Function to handle click outside to close the drawer
   const handleClickOutside = (event) => {
     if (drawerRef.current && !drawerRef.current.contains(event.target)) {
-      toggleCartDrawer(false)(); // Close the drawer when clicked outside
+      toggleCartDrawer(false)(); 
     }
   };
 
@@ -30,17 +32,29 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
     };
   });
 
+  const handleClickCart = () => {
+    toggleCartDrawer(false)();
+    navigate("/cart");
+  }
+
+  const handleClickCheckout = () => {
+    toggleCartDrawer(false)();
+    navigate("/checkout")
+  }
+
   return (
     <Drawer
       anchor="right"
       open={isCartOpen}
+      role="presentation"
       onClose={() => toggleCartDrawer(false)}
-      sx={{
-        width: "500px", 
-        padding: "20px",
+      PaperProps={{
+        sx: { width: "25%",
+        padding: "15px"
+        }
       }}
     >
-      <div ref={drawerRef} className="p-4">
+      <div ref={drawerRef} className="p-10">
         <Typography variant="h5" className="font-bold" gutterBottom>
           Shopping Cart
         </Typography>
@@ -111,25 +125,11 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
         </Box>
 
         {/* Checkout Buttons */}
-        <Box display="flex" justifyContent="space-between" marginTop="16px">
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => emptyCart()}
-            fullWidth
-            sx={{ marginRight: "8px" }}
-          >
-            Cart
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => alert("Chuyển tới trang thanh toán")}
-            fullWidth
-            disabled={isEmpty}
-          >
-            Checkout
-          </Button>
+        <Box display="flex" justifyContent="space-between" marginTop="16px" sx={{
+          gap: "16px"
+        }}>
+          <Drawerbtn context={"Cart"} handleClick={handleClickCart}/>
+          <Drawerbtn context={"Checkout"} handleClick={handleClickCheckout} isEmpty={isEmpty}/>
         </Box>
       </div>
     </Drawer>

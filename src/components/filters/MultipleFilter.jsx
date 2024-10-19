@@ -1,6 +1,5 @@
+import { Rating } from "@mui/material";
 import React, { useState } from "react";
-import { Rating } from "@smastrom/react-rating"; // Assuming this is the package used for the Rating component
-import { Star } from "@smastrom/react-rating";  // Star shape if needed for itemShapes
 
 const FilterComponent = ({ onFilter }) => {
   const [category, setCategory] = useState("");
@@ -167,15 +166,8 @@ const FilterComponent = ({ onFilter }) => {
           <label className="block text-sm font-medium mb-1">Rating</label>
           <div className="flex justify-center">
             <Rating
-              style={{ maxWidth: 200 }}
-              readOnly={false} // Now it's interactive
-              value={rating}
+              defaultValue={rating}
               onChange={(newRating) => setRating(newRating)} // Update rating state
-              itemStyles={{
-                itemShapes: Star,
-                activeFillColor: "#ffb700",
-                inactiveFillColor: "#fbf1a9",
-              }}
             />
           </div>
         </div>

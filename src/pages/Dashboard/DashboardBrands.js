@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import { FaFilter, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
-
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
 import BrandDrawer from "../../components/drawer/DashboardBrandDrawer";
 
 const DashboardBrands = () => {
   const [brands, setbrands] = useState([]); // State to store brands
-  const [openDropdown, setOpenDropdown] = useState(null);
   const [brandToDelete, setbrandToDelete] = useState(null); // State to delete brands
   const [isOpen, setIsOpen] = useState(false); // Manage modal open state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Manage drawer open state
@@ -18,7 +16,6 @@ const DashboardBrands = () => {
 
   const authUser = useAuthUser(); // Get the current user
   const userRole = authUser.role; // Get the user's role
-
   const varToken = localStorage.getItem("_auth");
 
   useEffect(() => {
@@ -35,14 +32,6 @@ const DashboardBrands = () => {
         console.error("Error fetching brands:", error);
       });
   }, []); // Empty dependency array means this useEffect runs once when the component mounts
-
-  const toggleDropdown = (productId) => {
-    if (openDropdown === productId) {
-      setOpenDropdown(null);
-    } else {
-      setOpenDropdown(productId);
-    }
-  };
 
   const openDeleteModal = (brand) => {
     setbrandToDelete(brand);
@@ -79,11 +68,7 @@ const DashboardBrands = () => {
   };
 
   const handleEdit = (brand) => {
-    navigate(`/Dashboard/Brands/Edit/${brand.brandId}`); // Use navigate to go to the edit page
-  };
-
-  const handleDeleteFromDrawer = (brand) => {
-    openDeleteModal(brand);
+    navigate(`/Dashboard/Brands/${brand.brandId}`); // Use navigate to go to the edit page
   };
 
   return (
@@ -91,7 +76,7 @@ const DashboardBrands = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-4xl font-bold mb-6">Brands</h1>
         <div className="flex ">
-          {userRole === "ADMIN" && ( // Show delete button only for Admin
+          {userRole === "ADMIN" && ( // Show create button only for Admin
             <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
               <Link to="/Dashboard/Brands/Create" className="flex items-center">
                 <FaPlus className="mr-2" /> Create New
@@ -129,39 +114,23 @@ const DashboardBrands = () => {
                 <td className="px-4 py-2">{brand.brandName}</td>
                 <td className="px-4 py-2">{brand.brandDescription}</td>
                 <td className="px-4 py-2">{brand.totalQuantity}</td>
-                <td className="relative">
-                  <div className="w-max flex border align-middle border-gray-300 rounded-md overflow-hidden">
+                <td className="px-4 py-2 flex space-x-2">
+                  <button
+                    onClick={() => openDrawer(brand)}
+                    className="text-green-500 cursor-pointer"
+                  >
+                    <FaEye />
+                  </button>
+                  <Link to={`/Dashboard/Brands/${brand.brandId}`}>
+                    <FaEdit className="text-blue-500 cursor-pointer" />
+                  </Link>
+                  {userRole === "ADMIN" && ( // Show delete button only for Admin
                     <button
-                      onClick={() => toggleDropdown(brand.brandId)}
-                      className="flex items-center border-l-gray-300 justify-center px-3 py-2 text-gray-500 hover:bg-gray-200"
+                      onClick={() => openDeleteModal(brand)}
+                      className="text-red-500 cursor-pointer"
                     >
-                      <FaEdit />
+                      <FaTrash />
                     </button>
-                    <div className="w-max bg-gray-300"></div>
-                    {userRole === "ADMIN" && ( // Show delete button only for Admin
-                      <button
-                        onClick={() => openDeleteModal(brand)}
-                        className="flex items-center justify-center px-3 py-2 text-red-500 hover:bg-gray-200"
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
-                  </div>
-                  {openDropdown === brand.brandId && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-50">
-                      <button
-                        onClick={() => openDrawer(brand)} // Open drawer on click
-                        className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-center"
-                      >
-                        <FaEye className="mr-2" /> Show
-                      </button>
-                      <Link
-                        to={`/Dashboard/Brands/Edit/${brand.brandId}`}
-                        className="flex items-center px-4 py-2 hover:bg-gray-100 w-full text-center"
-                      >
-                        <FaEdit className="mr-2" /> Edit
-                      </Link>
-                    </div>
                   )}
                 </td>
               </tr>
@@ -184,7 +153,6 @@ const DashboardBrands = () => {
         onClose={closeDrawer}
         brand={selectedbrand || {}} // Pass selected brand to drawer
         onEdit={handleEdit}
-        onDelete={handleDeleteFromDrawer}
       />
     </>
   );
