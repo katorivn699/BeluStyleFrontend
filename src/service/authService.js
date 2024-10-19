@@ -35,6 +35,7 @@ export const LoginUser = async (data, navigate, signIn) => {
     const response = await loginPromise;
 
     const user = jwtDecode(response.data.token);
+    console.log(user);
     signIn({
       auth: {
         token: response.data.token,
@@ -84,8 +85,8 @@ export const RegisterUser = async (data, navigate) => {
 
 export const HandleForgotPassword = async (data, navigate) => {
   try {
-    const response = await apiClient.post("/api/auth/forgotPassword", {
-      email: data,
+    const response = await apiClient.post("/api/auth/forgot-password", {
+      email: data.email,
     });
 
     const token = response.data.token;

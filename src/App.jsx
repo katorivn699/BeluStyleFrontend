@@ -13,13 +13,9 @@ import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Logout from "./pages/Login/Logout";
 import ForgotSuccess from "./pages/Forgot/ForgotPasswordSuccess";
-import "@smastrom/react-rating/style.css";
 import Footer from "./components/footer/CustomerFooter";
 import ProductDetailPage from "./pages/Home/ProductDetail";
-import {
-  CustomerProtectedRoute,
-  RegisterProtectedRoute,
-} from "./routes/ProtectedRoute";
+import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { ErrorNotFound } from "./pages/NotFound/404NotFound";
 import RegisterSuccess from "./pages/Register/RegisterSuccess";
 import LoginForStaffAndAdmin from "./pages/Login/LoginForStaffAndAdmin";
@@ -32,6 +28,9 @@ import PrivateRoute from "./routes/PrivateRoute";
 import DashboardBrands from "./pages/Dashboard/DashboardBrands";
 import DashboardCreateBrand from "./pages/Dashboard/DashboardCreateBrand";
 import DashboardEditBrand from "./pages/Dashboard/DashboardEditBrand";
+import UserProfile from "./pages/User/UserSettings.jsx";
+import CartPage from "./pages/CartAndPay/Cart.jsx";
+import CheckoutPage from "./pages/CartAndPay/Checkout.jsx";
 import DashboardWarehouse from "./pages/Dashboard/DashboardWarehouse";
 import DashboardWarehouseDetail from "./pages/Dashboard/DashboardWarehouseDetail";
 import DashboardAccounts from "./pages/Dashboard/DashboardAccount";
@@ -60,7 +59,9 @@ function App() {
       path === "/about" ||
       path === "/contact" ||
       path.startsWith("/shop/product/") ||
-      path === "/user/information"
+      path === "/user/information" ||
+      path === "/cart" ||
+      path === "/checkout"
     ) {
       return <Navbar />;
     } else if (
@@ -68,7 +69,8 @@ function App() {
       path === "/register" ||
       path === "/forgotPassword" ||
       path === "/forgotPassword/success" ||
-      path === "/register/confirm-registration"
+      path === "/register/confirm-registration" ||
+      path === "/reset-password"
     ) {
       return <NavLogin />;
     }
@@ -83,7 +85,9 @@ function App() {
       path === "/shop" ||
       path === "/about" ||
       path === "/contact" ||
-      path.startsWith("/shop/product/")
+      path.startsWith("/shop/product/") ||
+      path === "/cart" ||
+      path === "/checkout"
     ) {
       return (
         <div className="pt-10">
@@ -91,12 +95,11 @@ function App() {
         </div>
       );
     }
-    return null; // For login, register, forgot password, etc. no footer
+    return null;
   };
 
   const applyPadding = () => {
     const path = location.pathname;
-    // Apply padding to all routes except 404 page
     if (
       path === "/" ||
       path === "/shop" ||
@@ -107,11 +110,14 @@ function App() {
       path === "/register" ||
       path === "/forgotPassword" ||
       path === "/forgotPassword/success" ||
-      path === "/register/confirm-registration"
+      path === "/register/confirm-registration" ||
+      path === "/user/information" ||
+      path === "/cart" ||
+      path === "/checkout"
     ) {
       return "pt-[90px]";
     }
-    return ""; // No padding for ErrorNotFound or other specific routes
+    return "";
   };
 
   return (
@@ -125,25 +131,68 @@ function App() {
           <Route
             path="/login"
             element={
-              <CustomerProtectedRoute>
+              <ProtectedRoute types={["GUEST"]}>
                 <Login />
-              </CustomerProtectedRoute>
+              </ProtectedRoute>
             }
           />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgotPassword" element={<ForgotPassword />} />
-          <Route path="/logout" element={<Logout />} />
+          <Route
+            path="/register"
+            element={
+              <ProtectedRoute types={["GUEST"]}>
+                <Register />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/forgotPassword"
+            element={
+              <ProtectedRoute types={["GUEST"]}>
+                <ForgotPassword />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logout"
+            element={
+              <ProtectedRoute types={["CUSTOMER"]}>
+                <Logout />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/forgotPassword/success" element={<ForgotSuccess />} />
           <Route
             path="/register/confirm-registration"
             element={
-              <RegisterProtectedRoute>
+              <ProtectedRoute types={["REGISTER"]}>
                 <ConfirmRegister />
-              </RegisterProtectedRoute>
+              </ProtectedRoute>
             }
           />
           <Route path="/register/success" element={<RegisterSuccess />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />
+          <Route path="/reset-password" element={
+            <ProtectedRoute types={["REGISTER", "CUSTOMER"]}>
+            <ProductDetailPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/cart" element={<CartPage />} />
+          <Route
+            path="/user/information"
+            element={
+              <ProtectedRoute types={["CUSTOMER"]}>
+                <UserProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute types={["CUSTOMER"]}>
+                <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<ErrorNotFound />} />
 
           <Route

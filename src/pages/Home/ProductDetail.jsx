@@ -1,9 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Carousel from "react-material-ui-carousel";
-import { Rating, Star } from "@smastrom/react-rating";
 import { useCart } from "react-use-cart";
 import { useParams } from "react-router-dom";
-import { Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box, Rating } from "@mui/material";
 
 const ProductDetailPage = () => {
   const { addItem } = useCart();
@@ -80,10 +79,21 @@ const ProductDetailPage = () => {
     },
     colors: ["blue", "red"],
     sizes: ["XS", "S", "M", "L", "XL"],
-    description: "This premium T-shirt is made from high-quality cotton, offering a perfect fit and comfort. Designed for everyday wear and easy to pair with various outfits.",
+    description:
+      "This premium T-shirt is made from high-quality cotton, offering a perfect fit and comfort. Designed for everyday wear and easy to pair with various outfits.",
+      avgRating: 4.5,
+      totalRating: 100,
     reviews: [
-      { user: "John Doe", rating: 5, comment: "Amazing product, great quality!" },
-      { user: "Jane Smith", rating: 4, comment: "Very comfortable and fits well." },
+      {
+        user: "John Doe",
+        rating: 5,
+        comment: "Amazing product, great quality!",
+      },
+      {
+        user: "Jane Smith",
+        rating: 4,
+        comment: "Very comfortable and fits well.",
+      },
     ],
   };
 
@@ -151,15 +161,30 @@ const ProductDetailPage = () => {
               index={carouselIndex}
             >
               {allImages.map((item, index) => (
-                <img
+                <div
                   key={index}
-                  src={item.image}
-                  alt={`Product in ${item.color}`}
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    e.target.src = "https://placehold.co/600x400";
+                  style={{
+                    width: "auto",
+                    height: "400px",
+                    display: "flex",
+                    justifyContent: "center", // căn giữa theo chiều ngang
+                    alignItems: "center", // căn giữa theo chiều dọc
+                    backgroundColor: "#f0f0f0", // thêm màu nền để dễ thấy khung
                   }}
-                />
+                >
+                  <img
+                    src={item.image}
+                    alt={`Product in ${item.color}`}
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                    }}
+                    onError={(e) => {
+                      e.target.src = "https://placehold.co/600x400";
+                    }}
+                  />
+                </div>
               ))}
             </Carousel>
           ) : (
@@ -176,17 +201,11 @@ const ProductDetailPage = () => {
           </p>
           <div className="rating mb-4 flex items-center text-gray-500">
             <Rating
-              style={{ maxWidth: 150 }}
               readOnly
-              value={4.5}
-              itemStyles={{
-                itemShapes: Star,
-                activeFillColor: "#ffb700",
-                inactiveFillColor: "#fbf1a9",
-              }}
+              value={product.avgRating}
             />
             <div className="px-4">|</div>
-            <div className="customerReview text-xl">120 Customer Reviews</div>
+            <div className="customerReview text-xl">{product.totalRating} Customer Reviews</div>
           </div>
 
           {/* Color Selector */}
@@ -276,9 +295,13 @@ const ProductDetailPage = () => {
             {product.reviews.map((review, index) => (
               <div key={index} className="mb-4">
                 <h4 className="font-semibold">{review.user}</h4>
-                <Rating readOnly style={{
-                  width:100
-                }} value={review.rating} />
+                <Rating
+                  readOnly
+                  style={{
+                    width: 100,
+                  }}
+                  value={review.rating}
+                />
                 <p>{review.comment}</p>
               </div>
             ))}
