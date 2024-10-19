@@ -36,7 +36,7 @@ const DashboardCreateBrand = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Create New Brand</h1>
+      <h1 className="text-4xl font-bold mb-6">Create New Brand</h1>
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"

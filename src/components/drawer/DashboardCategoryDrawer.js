@@ -45,6 +45,9 @@ const CategoryDrawer = ({ isOpen, onClose, category, onEdit, onDelete }) => {
           <strong>ID:</strong> {category.categoryId}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
+          <strong>Description:</strong> {category.categoryDescription}
+        </Typography>
+        <Typography variant="body1" sx={{ marginBottom: 1 }}>
           <strong>Total quantity:</strong> {category.totalQuantity}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
