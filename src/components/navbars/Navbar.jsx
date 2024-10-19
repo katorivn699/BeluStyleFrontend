@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { IoCartOutline, IoSearchOutline } from "react-icons/io5";
 import { useCart } from "react-use-cart"; // Import useCart
 import logo from "../../assets/images/logo.webp";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import LoggedMenu from "../menus/LoggedMenu";
 import GuessMenu from "../menus/GuessMenu";
 import CartDrawer from "../Cart/CartDrawer";

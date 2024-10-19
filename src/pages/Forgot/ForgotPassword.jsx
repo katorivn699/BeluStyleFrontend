@@ -1,5 +1,5 @@
-import { ForgotForm } from "../components/forms/ForgotForm";
-import { UserForm } from "../layouts/LRFCLayout";
+import { ForgotForm } from "../../components/forms/ForgotForm";
+import { UserForm } from "../../layouts/LRFCLayout";
 
 
 function ForgotPassword() {

@@ -3,8 +3,9 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 import { RegisterUser } from "../../service/AuthService";
-import { GoogleLoginButton } from "../buttons/Button";
+import { GoogleLoginButton, RegisterBtn } from "../buttons/Button";
 import { toast, Zoom } from "react-toastify";
+import { Divider } from "@mui/material";
 
 export function RegisterForm() {
   const {
@@ -159,16 +160,10 @@ export function RegisterForm() {
             <Link className="underline font-semibold">Privacy Policy</Link>
           </p>
         </div>
-        <button
-          type="submit"
-          tabIndex={3}
-          className="w-full btn btn-active hover:btn-neutral rounded-full text-xl transition-colors duration-300 ease-in-out"
-        >
-          Register
-        </button>
+        <RegisterBtn/>
       </form>
       <div className="otherLogin flex flex-col pt-10">
-        <div className="divider">Or</div>
+        <Divider>Or</Divider>
         <div className="loginWithGoogle flex pt-5 justify-center">
           <GoogleLoginButton />
         </div>

@@ -80,10 +80,19 @@ const ProductDetailPage = () => {
     },
     colors: ["blue", "red"],
     sizes: ["XS", "S", "M", "L", "XL"],
-    description: "This premium T-shirt is made from high-quality cotton, offering a perfect fit and comfort. Designed for everyday wear and easy to pair with various outfits.",
+    description:
+      "This premium T-shirt is made from high-quality cotton, offering a perfect fit and comfort. Designed for everyday wear and easy to pair with various outfits.",
     reviews: [
-      { user: "John Doe", rating: 5, comment: "Amazing product, great quality!" },
-      { user: "Jane Smith", rating: 4, comment: "Very comfortable and fits well." },
+      {
+        user: "John Doe",
+        rating: 5,
+        comment: "Amazing product, great quality!",
+      },
+      {
+        user: "Jane Smith",
+        rating: 4,
+        comment: "Very comfortable and fits well.",
+      },
     ],
   };
 
@@ -151,15 +160,30 @@ const ProductDetailPage = () => {
               index={carouselIndex}
             >
               {allImages.map((item, index) => (
-                <img
+                <div
                   key={index}
-                  src={item.image}
-                  alt={`Product in ${item.color}`}
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    e.target.src = "https://placehold.co/600x400";
+                  style={{
+                    width: "auto",
+                    height: "400px",
+                    display: "flex",
+                    justifyContent: "center", // căn giữa theo chiều ngang
+                    alignItems: "center", // căn giữa theo chiều dọc
+                    backgroundColor: "#f0f0f0", // thêm màu nền để dễ thấy khung
                   }}
-                />
+                >
+                  <img
+                    src={item.image}
+                    alt={`Product in ${item.color}`}
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                    }}
+                    onError={(e) => {
+                      e.target.src = "https://placehold.co/600x400";
+                    }}
+                  />
+                </div>
               ))}
             </Carousel>
           ) : (
@@ -276,9 +300,13 @@ const ProductDetailPage = () => {
             {product.reviews.map((review, index) => (
               <div key={index} className="mb-4">
                 <h4 className="font-semibold">{review.user}</h4>
-                <Rating readOnly style={{
-                  width:100
-                }} value={review.rating} />
+                <Rating
+                  readOnly
+                  style={{
+                    width: 100,
+                  }}
+                  value={review.rating}
+                />
                 <p>{review.comment}</p>
               </div>
             ))}

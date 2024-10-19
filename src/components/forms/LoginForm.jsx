@@ -52,7 +52,11 @@ export function LoginForm() {
             tabIndex={1}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg" // Increase padding and font size
             {...register("username", {
-              required: "username can't blank",
+              required: "Username can't be blank", // Thông báo khi trường bị bỏ trống
+              minLength: {
+                value: 7,
+                message: "Username must be at least 7 characters", // Thông báo yêu cầu ít nhất 7 ký tự
+              },
               pattern: {
                 value: "[a-zA-Z0-9]+$",
                 message:
@@ -96,6 +100,10 @@ export function LoginForm() {
                 message:
                   "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
               },
+              minLength: {
+                value : 7,
+                message: "Password must be at least 7 characters"
+              }
             })}
           />
           {errors.password && (

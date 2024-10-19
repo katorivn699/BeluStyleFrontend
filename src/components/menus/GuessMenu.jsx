@@ -52,7 +52,7 @@ const GuessMenu = () => {
           <FiUsers className="mr-2 text-xl" />
           <p>Register</p>
         </MenuItem>
-        <MenuItem onClick={handleMenuClose} component={Link} to="/forgot-password">
+        <MenuItem onClick={handleMenuClose} component={Link} to="/forgotPassword">
           <AiOutlineLock className="mr-2 text-xl" />
           <p>Forgot Password</p>
         </MenuItem>

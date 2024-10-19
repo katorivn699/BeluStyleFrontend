@@ -1,22 +1,48 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { apiClient } from "../core/api";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { apiClient } from "../../core/api";
 
-const DashboardCreateBrand = () => {
+const DashboardEditBrand = () => {
+  const { brandId } = useParams(); // Get the brand ID from the URL
   const [brandName, setBrandName] = useState("");
   const [brandDescription, setBrandDescription] = useState("");
-  const [websiteUrl, setWebsiteUrl] = useState(null); // State for the image
+  const [websiteUrl, setWebsiteUrl] = useState(""); // State for the image
   const navigate = useNavigate();
 
   const varToken = localStorage.getItem("_auth");
+
+  // Fetch brand data when the component mounts
+  useEffect(() => {
+    const fetchBrand = async () => {
+      try {
+        const response = await apiClient.get(`/api/brands/${brandId}`, {
+          headers: {
+            Authorization: "Bearer " + varToken,
+          },
+        });
+
+        const { brandName, brandDescription, websiteUrl } = response.data;
+
+        setBrandName(brandName);
+        setBrandDescription(brandDescription);
+        setWebsiteUrl(websiteUrl);
+      } catch (error) {
+        console.error("Error fetching brand data:", error);
+      }
+    };
+
+    fetchBrand();
+  }, [brandId, varToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await apiClient.post(
+      // Send the updated brand data to the backend
+      await apiClient.put(
         "/api/brands",
         {
+          brandId,
           brandName,
           brandDescription,
           websiteUrl, // Send the image URL
@@ -30,13 +56,13 @@ const DashboardCreateBrand = () => {
 
       navigate("/Dashboard/Brands");
     } catch (error) {
-      console.error("Error creating brand:", error);
+      console.error("Error updating brand:", error);
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Create New Brand</h1>
+      <h1 className="text-3xl font-bold mb-4">Edit Brand</h1>
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
@@ -74,9 +100,10 @@ const DashboardCreateBrand = () => {
             required
           />
 
+          {/* Image upload input */}
           <label
             className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="brandDescription"
+            htmlFor="brandImage"
           >
             Website URL
           </label>
@@ -95,7 +122,7 @@ const DashboardCreateBrand = () => {
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Save
+            Update
           </button>
         </div>
       </form>
@@ -103,4 +130,4 @@ const DashboardCreateBrand = () => {
   );
 };
 
-export default DashboardCreateBrand;
+export default DashboardEditBrand;

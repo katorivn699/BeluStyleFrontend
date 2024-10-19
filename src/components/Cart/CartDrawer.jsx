@@ -4,7 +4,6 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemText,
   Button,
   Typography,
   Box,
@@ -107,7 +106,7 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
             Subtotal
           </Typography>
           <Typography variant="body1" color="primary" fontWeight="bold">
-            {cartTotal}$
+            {cartTotal.toFixed(2)}$
           </Typography>
         </Box>
 
@@ -127,6 +126,7 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
             color="primary"
             onClick={() => alert("Chuyển tới trang thanh toán")}
             fullWidth
+            disabled={isEmpty}
           >
             Checkout
           </Button>
