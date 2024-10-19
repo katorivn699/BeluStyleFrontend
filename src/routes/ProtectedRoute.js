@@ -3,46 +3,36 @@ import { useEffect, useState } from "react";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import { Navigate } from "react-router-dom";
 
-const CustomerProtectedRoute = ({ children }) => {
+export const ProtectedRoute = ({ 
+  children, 
+  types = "", 
+}) => {
   const isAuth = useIsAuthenticated();
-
-  // Kiểm tra nếu người dùng đã đăng nhập, chuyển hướng về trang chủ
-  if (!isAuth) {
-    return <Navigate to="/" />;
-  }
-
-  // Nếu chưa đăng nhập, render các children
-  return children;
-};
-
-const LoggedProtectedRoute = ({ children }) => {
-  const isAuth = useIsAuthenticated();
-
-  if (isAuth) {
-    return <Navigate to="/" />;
-  }
-
-  return children;
-};
-
-
-const RegisterProtectedRoute = ({ children }) => {
-  const [isCheckingEmail, setIsCheckingEmail] = useState(true);
-  let email = localStorage.getItem("mail");
+  const [isCheckingEmail, setIsCheckingEmail] = useState(
+    types.includes("REGISTER")
+  );
+  const email = localStorage.getItem("mail");
 
   useEffect(() => {
-    setIsCheckingEmail(false); 
-  }, []);
+    if (types.includes("REGISTER")) {
+      setIsCheckingEmail(false);
+    }
+  }, [types]);
 
-  if (isCheckingEmail) {
-    return <CircularProgress />;
+  if (types.includes("GUEST") && !isAuth) {
+    return children;
+  }
+  if (types.includes("CUSTOMER") && isAuth) {
+    return children; 
+  }
+  if (types.includes("REGISTER")) {
+    if (isCheckingEmail) {
+      return <CircularProgress />; 
+    }
+    if (email) {
+      return children;
+    }
   }
 
-  if (!email) {
-    return <Navigate to="/" />;
-  }
-
-  return children;
+  return <Navigate to="/" />;
 };
-
-export { CustomerProtectedRoute, RegisterProtectedRoute, LoggedProtectedRoute };

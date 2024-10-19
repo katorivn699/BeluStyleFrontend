@@ -58,6 +58,7 @@ export function LoginBtn({ onClick, tabindex = "0" }) {
         borderColor: "#000",
         textTransform: 'none', 
         fontSize: "1.25rem", 
+        fontFamily: "Poppins",
         "&:hover": {
           backgroundColor: "#f5f5f5",
         },
@@ -83,6 +84,7 @@ export function ForgotBtn({ onClick, tabindex = "0" }) {
         borderRadius: "50px", 
         borderColor: "#000", 
         fontSize: "1.25rem", 
+        fontFamily: "Poppins",
         "&:hover": {
           backgroundColor: "#f5f5f5",
         },
@@ -104,8 +106,10 @@ export function RegisterBtn({ onClick, tabindex = "0" }) {
         color: "#000", 
         backgroundColor: "#fff", 
         borderRadius: "50px", 
+        textTransform: 'none',
         borderColor: "#000", 
         fontSize: "1.25rem", 
+        fontFamily: "Poppins",
         "&:hover": {
           backgroundColor: "#f5f5f5",
         },
@@ -116,7 +120,7 @@ export function RegisterBtn({ onClick, tabindex = "0" }) {
   );
 }
 
-export function GoogleLoginButton({ signIn }) {
+export function LoginGooglebtn({ signIn }) {
   const navigate = useNavigate();
 
   const login = useGoogleLogin({
@@ -147,3 +151,40 @@ export const BuyNow = () => {
     </>
   );
 };
+
+export const CheckOut = ({context, handleClick, isEmpty}) => {
+  return(
+    <>
+      <Button variant="contained" size="large" sx={{
+        borderRadius: "10px",
+        textTransform: 'none',
+        width: "200px",
+        backgroundColor: "white",
+        color: "black",
+        border: "solid black 1px" 
+      }}
+      onClick={handleClick}
+      disabled={isEmpty}
+      >{context}</Button>
+    </>
+  )
+}
+
+export const Drawerbtn = ({context, handleClick, isEmpty}) => {
+  return(
+    <Button
+            variant="contained"
+            onClick={() => handleClick()}
+            fullWidth
+            disabled={isEmpty}
+            sx={{
+              backgroundColor: "white",
+              color: "black",
+              border: "black solid 1px",
+              borderRadius: "30px"
+            }}
+          >
+            {context}
+          </Button>
+  )
+}

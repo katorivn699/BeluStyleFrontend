@@ -1,9 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Carousel from "react-material-ui-carousel";
-import { Rating, Star } from "@smastrom/react-rating";
 import { useCart } from "react-use-cart";
 import { useParams } from "react-router-dom";
-import { Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box, Rating } from "@mui/material";
 
 const ProductDetailPage = () => {
   const { addItem } = useCart();
@@ -82,6 +81,8 @@ const ProductDetailPage = () => {
     sizes: ["XS", "S", "M", "L", "XL"],
     description:
       "This premium T-shirt is made from high-quality cotton, offering a perfect fit and comfort. Designed for everyday wear and easy to pair with various outfits.",
+      avgRating: 4.5,
+      totalRating: 100,
     reviews: [
       {
         user: "John Doe",
@@ -200,17 +201,11 @@ const ProductDetailPage = () => {
           </p>
           <div className="rating mb-4 flex items-center text-gray-500">
             <Rating
-              style={{ maxWidth: 150 }}
               readOnly
-              value={4.5}
-              itemStyles={{
-                itemShapes: Star,
-                activeFillColor: "#ffb700",
-                inactiveFillColor: "#fbf1a9",
-              }}
+              value={product.avgRating}
             />
             <div className="px-4">|</div>
-            <div className="customerReview text-xl">120 Customer Reviews</div>
+            <div className="customerReview text-xl">{product.totalRating} Customer Reviews</div>
           </div>
 
           {/* Color Selector */}

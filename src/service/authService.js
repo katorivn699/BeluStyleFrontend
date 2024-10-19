@@ -35,6 +35,7 @@ export const LoginUser = async (data, navigate, signIn) => {
     const response = await loginPromise;
 
     const user = jwtDecode(response.data.token);
+    console.log(user);
     signIn({
       auth: {
         token: response.data.token,
