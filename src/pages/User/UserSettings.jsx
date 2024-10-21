@@ -47,8 +47,8 @@ export const UserProfile = () => {
       }
     };
 
-    fetchUserInfo(); // Gọi hàm lấy thông tin khi component render lần đầu
-  }, [authHeader]); // Thêm authHeader vào dependency array
+    fetchUserInfo();
+  }, [authHeader]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

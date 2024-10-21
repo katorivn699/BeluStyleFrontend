@@ -1,4 +1,4 @@
-export const RadioCommon = ({ value, current, handleChecked, context }) => {
+const RadioCommon = ({ value, current, handleChecked, context }) => {
   return (
     <div className="selection">
       <label className="inline-flex items-center cursor-pointer">
@@ -17,3 +17,5 @@ export const RadioCommon = ({ value, current, handleChecked, context }) => {
     </div>
   );
 };
+
+export default RadioCommon;

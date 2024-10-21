@@ -110,12 +110,11 @@ const CartPage = () => {
                 <TableHead
                   sx={{
                     backgroundColor: "#297FFD",
-                    fontWeight: "bold",
                   }}
                 >
                   <TableRow>
-                    {columns.map((header) => (
-                      <TableCell>{header.headerName}</TableCell>
+                    {columns.map((header, index) => (
+                      <TableCell key={index}>{header.headerName}</TableCell>
                     ))}
                     <TableCell></TableCell>
                   </TableRow>

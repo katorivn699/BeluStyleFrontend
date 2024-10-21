@@ -25,9 +25,15 @@ export function RegisterForm() {
   const validationSchema = Yup.object({
     username: Yup.string()
       .required("Username is required")
-      .min(7, "Username must be at least 7 characters"),
+      .min(7, "Username must be at least 7 characters")
+      .matches(
+        /^[a-zA-Z0-9]*$/,
+        "Username cannot contain special characters or spaces"
+      ),
     fullname: Yup.string().required("Full name is required"),
-    email: Yup.string().email("Invalid email address").required("Email is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
@@ -35,10 +41,10 @@ export function RegisterForm() {
         /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,}$/,
         "Password must contain at least one number and be at least 8 characters long"
       ),
-      // .matches(
-      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-      //   "Password must contain one uppercase, one lowercase, and one number"
-      // ),
+    // .matches(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+    //   "Password must contain one uppercase, one lowercase, and one number"
+    // ),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Please confirm your password"),
@@ -72,7 +78,9 @@ export function RegisterForm() {
         {({ isSubmitting }) => (
           <Form className="space-y-6">
             <div>
-              <label className="block mb-2 text-gray-500 text-xl">Username</label>
+              <label className="block mb-2 text-gray-500 text-xl">
+                Username
+              </label>
               <Field
                 type="text"
                 name="username"
@@ -85,7 +93,9 @@ export function RegisterForm() {
               />
             </div>
             <div>
-              <label className="block mb-2 text-gray-500 text-xl">Full name</label>
+              <label className="block mb-2 text-gray-500 text-xl">
+                Full name
+              </label>
               <Field
                 type="text"
                 name="fullname"
@@ -144,7 +154,9 @@ export function RegisterForm() {
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xl text-gray-500">Confirm Password</label>
+                <label className="text-xl text-gray-500">
+                  Confirm Password
+                </label>
                 <button
                   type="button"
                   className="flex items-center text-gray-500 text-xl"
@@ -183,7 +195,8 @@ export function RegisterForm() {
               />
               <p className="text-left text-xl">
                 By continuing, you agree to the{" "}
-                <Link className="underline font-semibold">Terms of Use</Link> and{" "}
+                <Link className="underline font-semibold">Terms of Use</Link>{" "}
+                and{" "}
                 <Link className="underline font-semibold">Privacy Policy</Link>
               </p>
             </div>
