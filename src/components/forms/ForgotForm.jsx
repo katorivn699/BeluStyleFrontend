@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { ForgotBtn } from "../buttons/Button";
+import { AuthCommonBtn, ForgotBtn } from "../buttons/Button";
 import { HandleForgotPassword } from "../../service/AuthService";
 
 export function ForgotForm() {
@@ -23,7 +23,7 @@ export function ForgotForm() {
   };
 
   return (
-    <div>
+    <div className="pt-28">
       <h2 className="font-poppins text-5xl mb-6 text-left">Forgot password</h2>{" "}
       <p className="font-poppins text-1xl mb-6 text-left text-gray-600">
         Please enter your email to reset the password
@@ -34,14 +34,14 @@ export function ForgotForm() {
           <input
             type="text"
             tabIndex={1}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg" // Increase padding and font size
+            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg"
             {...register("email", { required: "Email is required" })}
           />
           {errors.email && (
             <p className="text-red-500 text-sm">{errors.email.message}</p>
           )}
         </div>
-        <ForgotBtn tabindex="2"></ForgotBtn>
+        <AuthCommonBtn  context="Reset Password" type="submit" />
       </form>
     </div>
   );

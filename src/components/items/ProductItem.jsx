@@ -10,7 +10,6 @@ const ProductItem = ({ product }) => {
   } else if (product.saleType === "fixed amount") {
     discountedPrice = product.productPrice - product.saleValue;
   }
-  console.log(product.averageRating);
 
   return (
     <div className="w-full max-w-[350px] bg-base-200 rounded-lg overflow-hidden shadow-md p-4 mx-auto">

@@ -188,3 +188,54 @@ export const Drawerbtn = ({context, handleClick, isEmpty}) => {
           </Button>
   )
 }
+
+export const ResetPasswordBtn = ({tabIndex = 0}) => {
+  return(
+    <Button 
+      variant="outlined"
+      tabIndex={tabIndex}
+      type="submit"
+      sx={{
+        width: "100%", 
+        color: "#000", 
+        backgroundColor: "#fff", 
+        borderRadius: "50px", 
+        borderColor: "#000",
+        textTransform: 'none', 
+        fontSize: "1.25rem", 
+        fontFamily: "Poppins",
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+        },
+      }}
+    >
+      Confirm Password
+    </Button>
+  )
+}
+
+export const AuthCommonBtn = ({tabIndex = 0, handleClick, context, type}) => {
+  return(
+    <Button 
+      variant="outlined"
+      tabIndex={tabIndex}
+      onClick={handleClick}
+      type={type}
+      sx={{
+        width: "100%", 
+        color: "#ffffff", 
+        backgroundColor: "#648DDB", 
+        borderRadius: "50px", 
+        textTransform: 'none', 
+        fontSize: "1.25rem", 
+        fontFamily: "Poppins",
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+          color: "#000000",
+        },
+      }}
+    >
+      {context}
+    </Button>
+  )
+}

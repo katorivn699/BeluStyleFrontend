@@ -16,7 +16,6 @@ import userDefault from "../../assets/images/userdefault.webp";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const LoggedMenu = () => {
-  // State để quản lý việc mở/đóng menu và vị trí anchorEl
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const authUser = useAuthUser();

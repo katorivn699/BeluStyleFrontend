@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { toast, Zoom } from "react-toastify";
-import { apiClient } from "../core/api"; 
+import { apiClient } from "../core/api";
 
 export const LoginUser = async (data, navigate, signIn) => {
   const loginPromise = apiClient.post("/api/auth/login", {
@@ -124,6 +124,29 @@ export const HandleLoginGoogle = async (accessToken, navigate, signIn) => {
     navigate("/");
   } catch (error) {
     console.error("Error in HandleLoginGoogle:", error);
+  }
+};
+
+export const ResetPassword = async (password, email, token, navigate) => {
+  try {
+    const response = await apiClient.post("/api/auth/reset-password", {
+      email: email,
+      newPassword: password,
+      token: token,
+    });
+    toast.success(response.data.message, {
+      position: "bottom-center",
+      transition: Zoom,
+    });
+    navigate("/reset-password/success");
+  } catch (error) {
+    const errorMessage = error.response
+      ? error.response.data.message
+      : error.message;
+    toast.error(`Reset password error: ${errorMessage}`, {
+      position: "bottom-center",
+      transition: Zoom,
+    });
   }
 };
 

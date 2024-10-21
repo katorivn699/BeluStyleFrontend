@@ -7,6 +7,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import { CiUser } from "react-icons/ci";
+import { ListItemIcon, ListItemText } from "@mui/material";
 
 const GuessMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -28,7 +29,7 @@ const GuessMenu = () => {
         onClick={handleMenuOpen}
         color="inherit"
       >
-        <CiUser className="text-4xl"/>
+        <CiUser className="text-4xl" />
       </IconButton>
       <Menu
         id="guess-menu"
@@ -45,16 +46,26 @@ const GuessMenu = () => {
         }}
       >
         <MenuItem onClick={handleMenuClose} component={Link} to="/login">
-          <FaRegUser className="mr-2 text-xl" />
-          <p>Login</p>
+          <ListItemIcon sx={{ fontSize: "1.70rem", minWidth: "40px" }}>
+            <FaRegUser className="text-3xl" />
+          </ListItemIcon>
+          <ListItemText primary="Login" />
         </MenuItem>
         <MenuItem onClick={handleMenuClose} component={Link} to="/register">
-          <FiUsers className="mr-2 text-xl" />
-          <p>Register</p>
+          <ListItemIcon sx={{ fontSize: "1.70rem", minWidth: "40px" }}>
+            <FiUsers className="text-3xl" />
+          </ListItemIcon>
+          <ListItemText primary="Register"/>
         </MenuItem>
-        <MenuItem onClick={handleMenuClose} component={Link} to="/forgotPassword">
-          <AiOutlineLock className="mr-2 text-xl" />
-          <p>Forgot Password</p>
+        <MenuItem
+          onClick={handleMenuClose}
+          component={Link}
+          to="/forgotPassword"
+        >
+          <ListItemIcon sx={{ fontSize: "1.7rem", minWidth: "40px" }}>
+            <AiOutlineLock className="text-3xl" />
+          </ListItemIcon>
+          <ListItemText primary="Forgot Password" />
         </MenuItem>
       </Menu>
     </>

@@ -9,7 +9,7 @@ import { About } from "./pages/Home/About";
 import Register from "./pages/Register/Register";
 import ForgotPassword from "./pages/Forgot/ForgotPassword";
 import { ConfirmRegister } from "./pages/Register/ConfirmRegister";
-import { ToastContainer, Zoom } from "react-toastify";
+import { toast, ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Logout from "./pages/Login/Logout";
 import ForgotSuccess from "./pages/Forgot/ForgotPasswordSuccess";
@@ -31,6 +31,11 @@ import DashboardEditBrand from "./pages/Dashboard/DashboardEditBrand";
 import UserProfile from "./pages/User/UserSettings.jsx";
 import CartPage from "./pages/CartAndPay/Cart.jsx";
 import CheckoutPage from "./pages/CartAndPay/Checkout.jsx";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import useSignOut from "react-auth-kit/hooks/useSignOut";
+import { jwtDecode } from "jwt-decode";
+import ResetPasswordPage from "./pages/ResetPassword/ResetPassword.jsx";
+import ResetSuccessPage from "./pages/ResetPassword/ResetSuccess.jsx";
 import DashboardWarehouse from "./pages/Dashboard/DashboardWarehouse";
 import DashboardWarehouseDetail from "./pages/Dashboard/DashboardWarehouseDetail";
 import DashboardAccounts from "./pages/Dashboard/DashboardAccount";
@@ -39,7 +44,8 @@ import DashboardStockTransactions from "./pages/Dashboard/DashboardStockTransact
 
 function App() {
   const location = useLocation();
-  const [theme] = useState(localStorage.getItem("theme") || "light");
+  const authHeader = useAuthHeader();
+  const signOut = useSignOut();
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -48,8 +54,20 @@ function App() {
   };
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+    const token = authHeader?.split(" ")[1];
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000; 
+
+      if (decodedToken.exp < currentTime) {
+        toast.info('Your session has expired. Please log in again.', {
+          position: "top-center",
+          transition: Zoom,
+        })
+        signOut();
+      }
+    }
+  }, [authHeader, signOut]);
 
   const renderNavbar = () => {
     const path = location.pathname;
@@ -70,7 +88,8 @@ function App() {
       path === "/forgotPassword" ||
       path === "/forgotPassword/success" ||
       path === "/register/confirm-registration" ||
-      path === "/reset-password"
+      path === "/reset-password"||
+      path === "/reset-password/success"
     ) {
       return <NavLogin />;
     }
@@ -113,7 +132,9 @@ function App() {
       path === "/register/confirm-registration" ||
       path === "/user/information" ||
       path === "/cart" ||
-      path === "/checkout"
+      path === "/checkout"||
+      path === "/reset-password"||
+      path === "/reset-password/success"
     ) {
       return "pt-[90px]";
     }
@@ -153,6 +174,22 @@ function App() {
             }
           />
           <Route
+            path="/reset-password"
+            element={
+              <ProtectedRoute types={["GUEST"]}>
+                <ResetPasswordPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reset-password/success"
+            element={
+              <ProtectedRoute types={["GUEST"]}>
+                <ResetSuccessPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/logout"
             element={
               <ProtectedRoute types={["CUSTOMER"]}>
@@ -171,11 +208,6 @@ function App() {
           />
           <Route path="/register/success" element={<RegisterSuccess />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />
-          <Route path="/reset-password" element={
-            <ProtectedRoute types={["REGISTER", "CUSTOMER"]}>
-            <ProductDetailPage />
-            </ProtectedRoute>
-          } />
           <Route path="/cart" element={<CartPage />} />
           <Route
             path="/user/information"
