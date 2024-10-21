@@ -49,6 +49,9 @@ const BrandDrawer = ({ isOpen, onClose, brand, onEdit, onDelete }) => {
           <strong>ID:</strong> {brand.brandId}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
+          <strong>Description:</strong> {brand.brandDescription}
+        </Typography>
+        <Typography variant="body1" sx={{ marginBottom: 1 }}>
           <strong>Total quantity:</strong> {brand.totalQuantity}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>

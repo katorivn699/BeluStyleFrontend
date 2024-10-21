@@ -36,6 +36,11 @@ import useSignOut from "react-auth-kit/hooks/useSignOut";
 import { jwtDecode } from "jwt-decode";
 import ResetPasswordPage from "./pages/ResetPassword/ResetPassword.jsx";
 import ResetSuccessPage from "./pages/ResetPassword/ResetSuccess.jsx";
+import DashboardWarehouse from "./pages/Dashboard/DashboardWarehouse";
+import DashboardWarehouseDetail from "./pages/Dashboard/DashboardWarehouseDetail";
+import DashboardAccounts from "./pages/Dashboard/DashboardAccount";
+import DashboardEditAccount from "./pages/Dashboard/DashboardEditAccount";
+import DashboardStockTransactions from "./pages/Dashboard/DashboardStockTransactions.js";
 
 function App() {
   const location = useLocation();
@@ -262,7 +267,7 @@ function App() {
           />
 
           <Route
-            path="/Dashboard/Categories/Edit/:categoryId"
+            path="/Dashboard/Categories/:categoryId"
             element={
               <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
                 <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
@@ -295,11 +300,66 @@ function App() {
           />
 
           <Route
-            path="/Dashboard/Brands/Edit/:brandId"
+            path="/Dashboard/Brands/:brandId"
             element={
               <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
                 <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
                   <DashboardEditBrand />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Warehouse"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardWarehouse />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Warehouse/:stockId"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardWarehouseDetail />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Accounts"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardAccounts />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Accounts/:userId"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardEditAccount />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/StockTransactions"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardStockTransactions />
                 </DashboardLayout>
               </PrivateRoute>
             }

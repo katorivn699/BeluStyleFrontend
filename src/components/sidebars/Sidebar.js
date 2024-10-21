@@ -1,4 +1,5 @@
 import React from "react";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import {
   FaTags,
   FaList,
@@ -8,12 +9,16 @@ import {
   FaWarehouse,
   FaCog,
   FaSignOutAlt,
+  FaFileInvoice,
 } from "react-icons/fa";
 import { FaBorderAll, FaCircleUser, FaGaugeHigh } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = ({ isOpen }) => {
   const location = useLocation(); // Get current route
+
+  const authUser = useAuthUser(); // Get the current user
+  const userRole = authUser.role; // Get the user's role
 
   // Function to check if the current link is active
   const isActive = (path) => location.pathname === path;
@@ -64,18 +69,20 @@ const Sidebar = ({ isOpen }) => {
             </Link>
           </li>
 
-          {/* Customers Link */}
-          <li>
-            <Link
-              to="/Dashboard/Customers"
-              className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Customers") ? "bg-blue-500 text-white" : ""
-              } p-2 rounded-md`}
-            >
-              <FaCircleUser className="mr-2" />
-              Customers
-            </Link>
-          </li>
+          {/* Accounts Link */}
+          {userRole === "ADMIN" && (
+            <li>
+              <Link
+                to="/Dashboard/Accounts?"
+                className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
+                  isActive("/Accounts") ? "bg-blue-500 text-white" : ""
+                } p-2 rounded-md`}
+              >
+                <FaCircleUser className="mr-2" />
+                Accounts
+              </Link>
+            </li>
+          )}
 
           {/* Categories Link */}
           <li>
@@ -171,21 +178,21 @@ const Sidebar = ({ isOpen }) => {
             </Link>
           </li>
 
-          {/* Divider */}
-          <hr className="my-4 border-gray-300" />
-
-          {/* Settings Link */}
+          {/* Transaction Link */}
           <li>
             <Link
-              to="/Dashboard/Setting"
+              to="/Dashboard/StockTransactions"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Setting") ? "bg-blue-500 text-white" : ""
+                isActive("/StockTransactions") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
-              <FaCog className="mr-2" />
-              Settings
+              <FaFileInvoice className="mr-2" />
+              Stock Transactions
             </Link>
           </li>
+
+          {/* Divider */}
+          <hr className="my-4 border-gray-300" />
 
           {/* Logout Link */}
           <li>
