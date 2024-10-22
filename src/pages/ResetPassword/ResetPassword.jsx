@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 import { Link, useLocation, useNavigate} from "react-router-dom";
 import * as Yup from "yup";
-import InputField from "../../components/inputs/InputField";
+import {InputField} from "../../components/inputs/InputField";
 import { ResetPassword } from "../../service/AuthService";
 import { AuthCommonBtn } from "../../components/buttons/Button";
 
