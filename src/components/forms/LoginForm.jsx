@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 import { LoginUser } from "../../service/AuthService";
 import { Checkbox, Divider, FormControlLabel } from "@mui/material";
-import InputField from "../inputs/InputField";
+import { InputField } from "../inputs/InputField";
 import { LoginBtn, LoginGooglebtn } from "../buttons/Button";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
 
@@ -17,14 +17,6 @@ const LoginSchema = Yup.object().shape({
   password: Yup.string()
     .required("Password is required")
     .min(7, "Password must be at least 7 characters")
-    // .matches(
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-    //   "Password must contain one uppercase, one lowercase, and one number"
-    // ),
-    .matches(
-      /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,}$/,
-      "Password must contain at least one number and be at least 8 characters long"
-    ),
 });
 
 export function LoginForm() {
@@ -67,7 +59,6 @@ export function LoginForm() {
               placeholder="Enter your username"
               tabIndex={1}
             />
-
             {/* Password Input */}
             <div>
               <div className="flex items-center justify-between mb-2">

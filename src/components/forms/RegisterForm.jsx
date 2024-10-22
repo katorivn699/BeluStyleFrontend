@@ -37,14 +37,14 @@ export function RegisterForm() {
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
-      .matches(
-        /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,}$/,
-        "Password must contain at least one number and be at least 8 characters long"
-      ),
-    // .matches(
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-    //   "Password must contain one uppercase, one lowercase, and one number"
-    // ),
+      // .matches(
+      //   /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,}$/,
+      //   "Password must contain at least one number and be at least 8 characters long"
+      // ),
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+      "Password must contain one uppercase, one lowercase, and one number"
+    ),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Please confirm your password"),

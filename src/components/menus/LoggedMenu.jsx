@@ -32,6 +32,8 @@ const LoggedMenu = () => {
     setAnchorEl(null);
   };
 
+  const profileImageUrl = `${authUser.userImage}?t=${new Date().getTime()}`;
+
   return (
     <>
       {/* IconButton để mở menu */}
@@ -42,7 +44,7 @@ const LoggedMenu = () => {
         color="inherit"
       >
         <img
-          src={authUser.userImage ? authUser.userImage : userDefault}
+          src={profileImageUrl ? profileImageUrl : userDefault}
           className="rounded-full w-6 md:w-8 h-6 md:h-8 object-cover"
           alt="Profile"
           onError={(e) => {

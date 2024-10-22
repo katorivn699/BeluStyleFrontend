@@ -64,24 +64,28 @@ const CheckoutPage = () => {
                 value="COD"
                 current={paymentMethod}
                 handleChecked={handlePaymentMethodChange}
+                id="Payment"
               />
               <RadioCommon
                 context="Payment via PayOS"
                 value="PayOs"
                 current={paymentMethod}
                 handleChecked={handlePaymentMethodChange}
+                id="Payment"
               />
               <RadioCommon
                 context="Payment via VNPay"
                 value="VNPAY"
                 current={paymentMethod}
                 handleChecked={handlePaymentMethodChange}
+                id="Payment"
               />
               <RadioCommon
                 context="Bank transfer"
                 value="TRANSFER"
                 current={paymentMethod}
                 handleChecked={handlePaymentMethodChange}
+                id="Payment"
               />
             </div>
           </div>
