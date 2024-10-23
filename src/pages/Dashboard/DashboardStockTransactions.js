@@ -19,10 +19,7 @@ const DashboardStockTransactions = () => {
       .catch((error) => {
         console.error("Error fetching stock transactions:", error);
       });
-  }, [varToken]);
-
-  const displayValue = (value) =>
-    value !== null && value !== undefined ? value : "null";
+  }, []);
 
   return (
     <div>
@@ -48,56 +45,40 @@ const DashboardStockTransactions = () => {
             {transactions.map((transaction) => (
               <tr key={transaction.transactionId} className="hover:bg-gray-50">
                 <td className="px-4 py-2 whitespace-nowrap">
-                  {displayValue(transaction.transactionId)}
+                  {transaction.transactionId}
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap">
-                  {displayValue(transaction.stock?.stockName)}
+                  {transaction.stock.stockName}
                 </td>
                 <td className="px-4 py-2 truncate">
-                  {displayValue(
-                    transaction.productVariation?.product?.productName
-                  )}
+                  {transaction.productVariation.product.productName}
                 </td>
                 <td className="px-4 py-2">
-                  {displayValue(
-                    transaction.productVariation?.product?.category
-                      ?.categoryName
-                  )}
+                  {transaction.productVariation.product.category.categoryName}
                 </td>
                 <td className="px-4 py-2">
-                  {displayValue(
-                    transaction.productVariation?.product?.brand?.brandName
-                  )}
+                  {transaction.productVariation.product.brand.brandName}
                 </td>
                 <td className="px-4 py-2">
-                  {displayValue(transaction.productVariation?.size?.sizeName)}
+                  {transaction.productVariation.size.sizeName}
                 </td>
                 <td className="px-4 py-2">
                   <span
                     className="inline-block w-4 h-4 mr-2 rounded-full border-gray-200 border-2"
                     style={{
                       backgroundColor:
-                        transaction.productVariation?.color?.hexCode ||
-                        "transparent",
+                        transaction.productVariation.color.hexCode,
                     }}
                   ></span>
-                  {displayValue(transaction.productVariation?.color?.colorName)}
+                  {transaction.productVariation.color.colorName}
                 </td>
                 <td className="px-4 py-2">
-                  $
-                  {transaction.productVariation?.productPrice?.toFixed(2) ||
-                    "null"}
+                  ${transaction.productVariation.productPrice.toFixed(2)}
                 </td>
-                <td className="px-4 py-2">
-                  {displayValue(transaction.quantity)}
-                </td>
-                <td className="px-4 py-2">
-                  {displayValue(transaction.transactionType)}
-                </td>
+                <td className="px-4 py-2">{transaction.quantity}</td>
+                <td className="px-4 py-2">{transaction.transactionType}</td>
                 <td className="px-4 py-2 whitespace-nowrap">
-                  {displayValue(
-                    new Date(transaction.transactionDate).toLocaleDateString()
-                  )}
+                  {new Date(transaction.transactionDate).toLocaleDateString()}
                 </td>
               </tr>
             ))}

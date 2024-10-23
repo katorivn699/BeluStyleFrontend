@@ -10,7 +10,6 @@ import {
   FaCog,
   FaSignOutAlt,
   FaFileInvoice,
-  FaStar,
 } from "react-icons/fa";
 import { FaBorderAll, FaCircleUser, FaGaugeHigh } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
@@ -148,7 +147,7 @@ const Sidebar = ({ isOpen }) => {
                 isActive("/Brands") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
-              <FaStar className="mr-2" />
+              <FaGift className="mr-2" />
               Brands
             </Link>
           </li>

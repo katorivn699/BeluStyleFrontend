@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
-import { toast, Zoom } from "react-toastify";
 
 const DashboardEditCategory = () => {
   const { categoryId } = useParams(); // Get the category ID from the URL
@@ -81,19 +80,12 @@ const DashboardEditCategory = () => {
           headers: {
             Authorization: "Bearer " + varToken,
           },
-        },
-        toast.success("Update category successfully", {
-          position: "bottom-right",
-          transition: Zoom,
-        })
+        }
       );
 
       navigate("/Dashboard/Categories");
     } catch (error) {
-      toast.error("Update category failed", {
-        position: "bottom-right",
-        transition: Zoom,
-      });
+      console.error("Error updating category:", error);
     }
   };
 

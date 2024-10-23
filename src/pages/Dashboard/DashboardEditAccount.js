@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
-import { toast, Zoom } from "react-toastify";
 
 const DashboardEditAccount = () => {
   const { userId } = useParams();
@@ -31,8 +30,16 @@ const DashboardEditAccount = () => {
 
   const handleSave = () => {
     const updatedUser = {
+      ...user,
       enable, // Only updating enable status
     };
+
+    // If user is STAFF or ADMIN, include other fields in the update
+    if (!isCustomer) {
+      updatedUser.username = user.username; // Ensure username is not changed
+      updatedUser.email = user.email; // Include other fields as necessary
+      updatedUser.role = user.role;
+    }
 
     apiClient
       .put(`/api/admin/${userId}`, updatedUser, {
@@ -40,19 +47,12 @@ const DashboardEditAccount = () => {
           Authorization: "Bearer " + varToken,
         },
       })
-      .then(
-        (response) =>
-          toast.success(response.data, {
-            position: "bottom-right",
-            transition: Zoom,
-          }),
-        navigate("/Dashboard/Accounts") // Redirect to accounts page
-      )
+      .then(() => {
+        alert("User updated successfully!");
+        navigate("/Dashboard/Accounts"); // Redirect to accounts page
+      })
       .catch((error) => {
-        toast.error("Update user failed", {
-          position: "bottom-right",
-          transition: Zoom,
-        });
+        console.error("Error updating user:", error);
       });
   };
 
@@ -66,7 +66,7 @@ const DashboardEditAccount = () => {
         <input
           type="text"
           value={user.username}
-          readOnly // Always read-only
+          readOnly // Always read-only for customers
           className="mt-2 border border-gray-300 rounded-lg p-2 w-full"
         />
       </div>
@@ -75,7 +75,7 @@ const DashboardEditAccount = () => {
         <input
           type="email"
           value={user.email}
-          readOnly // Always read-only
+          readOnly // Always read-only for customers
           className="mt-2 border border-gray-300 rounded-lg p-2 w-full"
         />
       </div>
@@ -99,21 +99,20 @@ const DashboardEditAccount = () => {
           {enable ? "Enable" : "Disable"}
         </button>
       </div>
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className="mt-4 px-4 py-2 bg-gray-300 text-black rounded-lg"
-        >
-          Go Back
-        </button>
-        {/* Conditionally show the "Save Changes" button for customers */}
-        <button
-          onClick={handleSave}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
-          Save Changes
-        </button>
-      </div>
+
+      <button
+        onClick={handleSave}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+      >
+        Save Changes
+      </button>
+
+      <button
+        onClick={() => navigate(-1)}
+        className="mt-4 px-4 py-2 bg-gray-300 text-black rounded-lg"
+      >
+        Go Back
+      </button>
     </div>
   );
 };

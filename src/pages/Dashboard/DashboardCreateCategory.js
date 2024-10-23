@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
-import { toast, Zoom } from "react-toastify";
 
 const DashboardCreateCategory = () => {
   const [categoryName, setCategoryName] = useState("");
@@ -18,58 +17,46 @@ const DashboardCreateCategory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("image", categoryImage);
+    try {
+      // Upload the image to ImgBB
+      const formData = new FormData();
+      formData.append("image", categoryImage);
 
-    const uploadPromise = fetch(
-      "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+      const uploadResponse = await fetch(
+        "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-    toast.promise(
-      uploadPromise
-        .then((uploadResponse) => uploadResponse.json())
-        .then(async (uploadData) => {
-          if (uploadData.success) {
-            const imageUrl = uploadData.data.display_url; // Get the image URL
+      const uploadData = await uploadResponse.json();
 
-            // Send the category data to the backend
-            await apiClient.post(
-              "/api/categories",
-              {
-                categoryName,
-                categoryDescription,
-                imageUrl, // Send the image URL
-              },
-              {
-                headers: {
-                  Authorization: "Bearer " + varToken,
-                },
-              }
-            );
+      if (uploadData.success) {
+        const imageUrl = uploadData.data.display_url; // Get the image URL
 
-            navigate("/Dashboard/Categories");
-          } else {
-            throw new Error("Image upload failed");
+        // Send the category data to the backend
+        await apiClient.post(
+          "/api/categories",
+          {
+            categoryName,
+            categoryDescription,
+            imageUrl, // Send the image URL
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + varToken,
+            },
           }
-        })
-        .catch((error) => {
-          console.error("Error creating category:", error);
-          throw error; // Re-throw to trigger toast.promise error message
-        }),
-      {
-        pending: "Uploading image and creating category...",
-        success: "Category created successfully!",
-        error: "Failed to create category. Please try again.",
-      },
-      {
-        position: "bottom-right",
-        transition: Zoom,
+        );
+
+        navigate("/Dashboard/Categories");
+      } else {
+        console.error("Error uploading image:", uploadData.error);
       }
-    );
+    } catch (error) {
+      console.error("Error creating category:", error);
+    }
   };
 
   return (

@@ -25,13 +25,13 @@ function App() {
     const token = authHeader?.split(" ")[1];
     if (token) {
       const decodedToken = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
+      const currentTime = Date.now() / 1000; 
 
       if (decodedToken.exp < currentTime) {
-        toast.info("Your session has expired. Please log in again.", {
+        toast.info('Your session has expired. Please log in again.', {
           position: "top-center",
           transition: Zoom,
-        });
+        })
         signOut();
       }
     }
@@ -75,8 +75,8 @@ function App() {
       path === "/register/confirm-registration" ||
       path === "/user/information" ||
       path === "/cart" ||
-      path === "/checkout" ||
-      path === "/reset-password" ||
+      path === "/checkout"||
+      path === "/reset-password"||
       path === "/reset-password/success"
     ) {
       return "pt-[90px]";
@@ -86,7 +86,7 @@ function App() {
 
   return (
     <>
-      {showNavbar ? <Navbar /> : <NavLogin />}
+      {showNavbar ? <Navbar/> : <NavLogin/>}
       <div className={applyPadding()}>
         <AppRoutes toggleSidebar={toggleSidebar} isOpen={isOpen} />
       </div>
@@ -101,7 +101,7 @@ function App() {
         theme="colored"
         transition={Zoom}
       />
-      {showFooter && <Footer />}
+      {showFooter && <Footer/> }
     </>
   );
 }

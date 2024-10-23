@@ -4,18 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import DashboardAccountDrawer from "../../components/drawer/DashboardAccountDrawer";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
-import { toast, Zoom } from "react-toastify";
 
 const DashboardAccounts = () => {
   const [users, setUsers] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(10);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [userToDelete, setUserToDelete] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
   const authUser = useAuthUser();
@@ -36,7 +32,6 @@ const DashboardAccounts = () => {
       .then((response) => {
         setUsers(response.data.content);
         setTotalPages(response.data.totalPages);
-        setPageSize(response.data.size);
       })
       .catch((error) => {
         console.error("Error fetching users:", error);
@@ -67,46 +62,14 @@ const DashboardAccounts = () => {
   const getRoleStyle = (role) => {
     switch (role) {
       case "ADMIN":
-        return "text-red-600 bg-red-100 px-4 py-2 rounded-md inline-block font-bold text-center w-32";
+        return "text-red-700 bg-red-100 font-bold";
       case "STAFF":
-        return "text-yellow-600 bg-yellow-100 px-4 py-2 rounded-md inline-block font-bold text-center w-32";
+        return "text-yellow-700 bg-yellow-100";
       case "CUSTOMER":
-        return "text-teal-600 bg-teal-100 px-4 py-2 rounded-md inline-block font-bold text-center w-32";
+        return "text-green-700 bg-green-100";
       default:
         return "";
     }
-  };
-
-  const openDeleteModal = (userToDelete) => {
-    setUserToDelete(userToDelete);
-    setIsOpen(true);
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
-  const handleDelete = () => {
-    apiClient
-      .delete(`/api/admin/${userToDelete.userId}`, {
-        headers: {
-          Authorization: "Bearer " + varToken,
-        },
-      })
-      .then((response) => {
-        fetchUsers(currentPage, pageSize);
-        handleClose();
-        toast.success(response.data, {
-          position: "bottom-right",
-          transition: Zoom,
-        });
-      })
-      .catch((error) => {
-        toast.error("Delete user failed", {
-          position: "bottom-right",
-          transition: Zoom,
-        });
-      });
   };
 
   const renderPageNumbers = () => {
@@ -133,7 +96,7 @@ const DashboardAccounts = () => {
         <h1 className="text-4xl font-bold mb-6">Accounts</h1>
         <Link to="/Dashboard/Accounts/Create">
           <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
-            <FaPlus className="mr-2" /> Create A New Staff Account
+            <FaPlus className="mr-2" /> Create New
           </button>
         </Link>
       </div>
@@ -150,55 +113,44 @@ const DashboardAccounts = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map(
-              (user) =>
-                user.role === "ADMIN" || (
-                  <tr key={user.username} className="hover:bg-gray-50">
-                    <td className="px-4 py-2">{user.username}</td>
-                    <td className="px-4 py-2">{user.email}</td>
-                    <td
-                      className={`px-4 py-2 font-bold ${getRoleStyle(
-                        user.role
-                      )}`}
-                    >
-                      {user.role}
-                    </td>
-                    {user.enable ? (
-                      <td className="px-4 py-2 text-emerald-600 font-bold">
-                        Enable
-                      </td>
-                    ) : (
-                      <td className="px-4 py-2 text-rose-600 font-bold">
-                        Disable
-                      </td>
-                    )}
-                    <td className="px-4 py-2 flex space-x-2">
-                      {(user.role === "STAFF" ||
-                        user.username === currentUser) && (
-                        <span
-                          className="w-6 h-6 flex justify-center items-center"
-                          onClick={() => handleViewUser(user.userId)}
-                        >
-                          <FaEye
-                            className={`cursor-pointer ${
-                              user.username === currentUser
-                                ? "text-orange-500"
-                                : "text-green-500"
-                            }`}
-                          />
-                        </span>
-                      )}
-                      <Link to={`/Dashboard/Accounts/Edit/${user.userId}`}>
-                        <FaEdit className="text-blue-500 cursor-pointer" />
-                      </Link>
-                      <FaTrash
-                        className="text-red-500 cursor-pointer"
-                        onClick={() => openDeleteModal(user)}
+            {users.map((user) => (
+              <tr key={user.username} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{user.username}</td>
+                <td className="px-4 py-2">{user.email}</td>
+                <td
+                  className={`px-4 py-2 font-bold ${getRoleStyle(user.role)}`}
+                >
+                  {user.role}
+                </td>
+                {user.enable ? (
+                  <td className="px-4 py-2 text-emerald-600 font-bold">
+                    Enable
+                  </td>
+                ) : (
+                  <td className="px-4 py-2 text-rose-600 font-bold">Disable</td>
+                )}
+                <td className="px-4 py-2 flex space-x-2">
+                  <span
+                    className="w-6 h-6 flex justify-center items-center"
+                    onClick={() => handleViewUser(user.userId)} // Use username as ID
+                  >
+                    {user.role === "STAFF" || user.username === currentUser ? (
+                      <FaEye
+                        className={`cursor-pointer ${
+                          user.username === currentUser
+                            ? "text-orange-500"
+                            : "text-green-500"
+                        }`}
                       />
-                    </td>
-                  </tr>
-                )
-            )}
+                    ) : null}
+                  </span>
+                  <Link to={`/Dashboard/Accounts/${user.userId}`}>
+                    <FaEdit className="text-blue-500 cursor-pointer" />
+                  </Link>
+                  <FaTrash className="text-red-500 cursor-pointer" />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -227,13 +179,6 @@ const DashboardAccounts = () => {
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         userId={selectedUserId}
-      />
-
-      <DeleteConfirmationModal
-        isOpen={isOpen}
-        onClose={handleClose}
-        onConfirm={handleDelete}
-        name={userToDelete?.username || ""}
       />
     </>
   );

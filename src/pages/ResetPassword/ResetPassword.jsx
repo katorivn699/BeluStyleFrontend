@@ -2,9 +2,9 @@ import { UserForm } from "../../layouts/LRFCLayout";
 import { Formik, Form } from "formik";
 import { useEffect, useState } from "react";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate} from "react-router-dom";
 import * as Yup from "yup";
-import { InputField } from "../../components/inputs/InputField";
+import {InputField} from "../../components/inputs/InputField";
 import { ResetPassword } from "../../service/AuthService";
 import { AuthCommonBtn } from "../../components/buttons/Button";
 
@@ -19,9 +19,10 @@ const ResetPasswordPage = () => {
 
   useEffect(() => {
     if (token === undefined && email === undefined) {
-      setResetPassword(true);
+        setResetPassword(true);
     }
-  }, [email, token]);
+  },[email, token]);
+
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -30,7 +31,8 @@ const ResetPasswordPage = () => {
   const onSubmit = async (values, { setSubmitting }) => {
     try {
       await ResetPassword(values.password, email, token, navigate);
-    } catch (error) {}
+    } catch (error) {
+    }
   };
 
   const ResetPasswordSchema = Yup.object().shape({
@@ -105,7 +107,7 @@ const ResetPasswordPage = () => {
                   />
                 </div>
 
-                <AuthCommonBtn context="Confirm Password" type={"submit"} />
+                <AuthCommonBtn context="Confirm Password" type={"submit"}  />
               </Form>
             )}
           </Formik>
