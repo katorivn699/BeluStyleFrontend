@@ -55,8 +55,10 @@ export function LoginBtn({ onClick, tabindex = "0" }) {
         color: "#000", 
         backgroundColor: "#fff", 
         borderRadius: "50px", 
-        borderColor: "#000", 
+        borderColor: "#000",
+        textTransform: 'none', 
         fontSize: "1.25rem", 
+        fontFamily: "Poppins",
         "&:hover": {
           backgroundColor: "#f5f5f5",
         },
@@ -78,9 +80,11 @@ export function ForgotBtn({ onClick, tabindex = "0" }) {
         width: "100%", 
         color: "#000", 
         backgroundColor: "#fff", 
+        textTransform: 'none',
         borderRadius: "50px", 
         borderColor: "#000", 
         fontSize: "1.25rem", 
+        fontFamily: "Poppins",
         "&:hover": {
           backgroundColor: "#f5f5f5",
         },
@@ -102,8 +106,10 @@ export function RegisterBtn({ onClick, tabindex = "0" }) {
         color: "#000", 
         backgroundColor: "#fff", 
         borderRadius: "50px", 
+        textTransform: 'none',
         borderColor: "#000", 
         fontSize: "1.25rem", 
+        fontFamily: "Poppins",
         "&:hover": {
           backgroundColor: "#f5f5f5",
         },
@@ -114,7 +120,7 @@ export function RegisterBtn({ onClick, tabindex = "0" }) {
   );
 }
 
-export function GoogleLoginButton({ signIn }) {
+export function LoginGooglebtn({ signIn }) {
   const navigate = useNavigate();
 
   const login = useGoogleLogin({
@@ -136,8 +142,100 @@ export const BuyNow = () => {
   return (
     <>
       <Link>
-      <Button variant="contained" size="large"><Link to={"/shop"}>Buy Now</Link></Button>
+      <Button variant="contained" size="large" sx={{
+        borderRadius: "10px",
+        textTransform: 'none',
+        width: "200px"
+      }}><Link to={"/shop"}>Buy Now</Link></Button>
       </Link>
     </>
   );
 };
+
+export const CheckOut = ({context, handleClick, isEmpty}) => {
+  return(
+    <>
+      <Button variant="contained" size="large" sx={{
+        borderRadius: "10px",
+        textTransform: 'none',
+        width: "200px",
+        backgroundColor: "white",
+        color: "black",
+        border: "solid black 1px" 
+      }}
+      onClick={handleClick}
+      disabled={isEmpty}
+      >{context}</Button>
+    </>
+  )
+}
+
+export const Drawerbtn = ({context, handleClick, isEmpty}) => {
+  return(
+    <Button
+            variant="contained"
+            onClick={() => handleClick()}
+            fullWidth
+            disabled={isEmpty}
+            sx={{
+              backgroundColor: "white",
+              color: "black",
+              border: "black solid 1px",
+              borderRadius: "30px"
+            }}
+          >
+            {context}
+          </Button>
+  )
+}
+
+export const ResetPasswordBtn = ({tabIndex = 0}) => {
+  return(
+    <Button 
+      variant="outlined"
+      tabIndex={tabIndex}
+      type="submit"
+      sx={{
+        width: "100%", 
+        color: "#000", 
+        backgroundColor: "#fff", 
+        borderRadius: "50px", 
+        borderColor: "#000",
+        textTransform: 'none', 
+        fontSize: "1.25rem", 
+        fontFamily: "Poppins",
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+        },
+      }}
+    >
+      Confirm Password
+    </Button>
+  )
+}
+
+export const AuthCommonBtn = ({tabIndex = 0, handleClick, context, type}) => {
+  return(
+    <Button 
+      variant="outlined"
+      tabIndex={tabIndex}
+      onClick={handleClick}
+      type={type}
+      sx={{
+        width: "100%", 
+        color: "#ffffff", 
+        backgroundColor: "#648DDB", 
+        borderRadius: "50px", 
+        textTransform: 'none', 
+        fontSize: "1.25rem", 
+        fontFamily: "Poppins",
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+          color: "#000000",
+        },
+      }}
+    >
+      {context}
+    </Button>
+  )
+}

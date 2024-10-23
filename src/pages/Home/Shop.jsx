@@ -34,7 +34,7 @@ export function Shop() {
 
   return (
     <MainLayout>
-      <div className="Shop">
+      <div className="Shop pb-10">
         <div className="headerPage relative text-center">
           <img className="w-screen h-40 object-cover" src={bg} alt="Background" />
           <div className="headerName w-full absolute top-0 left-0 flex flex-col items-center justify-center h-full">

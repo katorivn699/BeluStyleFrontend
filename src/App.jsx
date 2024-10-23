@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
-import { Home } from "./pages/Home/Home";
+import { useLocation } from "react-router-dom";
 import { Navbar } from "./components/navbars/Navbar";
-import { Login } from "./pages/Login/Login";
 import { NavLogin } from "./components/navbars/UserAccessBar";
-import { Shop } from "./pages/Home/Shop";
-import { About } from "./pages/Home/About";
-import Register from "./pages/Register/Register";
-import ForgotPassword from "./pages/Forgot/ForgotPassword";
-import { ConfirmRegister } from "./pages/Register/ConfirmRegister";
-import { ToastContainer, Zoom } from "react-toastify";
+import { toast, ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Logout from "./pages/Login/Logout";
-import ForgotSuccess from "./pages/Forgot/ForgotPasswordSuccess";
-import "@smastrom/react-rating/style.css";
 import Footer from "./components/footer/CustomerFooter";
 import ProductDetailPage from "./pages/Home/ProductDetail";
 import {
@@ -30,18 +20,18 @@ import DashboardCreateCategory from "./pages/Dashboard/DashboardCreateCategory";
 import DashboardEditCategory from "./pages/Dashboard/DashboardEditCategory";
 import PrivateRoute from "./routes/PrivateRoute";
 import DashboardBrands from "./pages/Dashboard/DashboardBrands";
+import DashboardCreateBrand from "./pages/Dashboard/DashboardCreateBrand";
 import DashboardEditBrand from "./pages/Dashboard/DashboardEditBrand";
 import DashboardWarehouse from "./pages/Dashboard/DashboardWarehouse";
 import DashboardWarehouseDetail from "./pages/Dashboard/DashboardWarehouseDetail";
 import DashboardAccounts from "./pages/Dashboard/DashboardAccount";
 import DashboardEditAccount from "./pages/Dashboard/DashboardEditAccount";
 import DashboardStockTransactions from "./pages/Dashboard/DashboardStockTransactions.js";
-import DashboardCreateStaffAccount from "./pages/Dashboard/DashboardCreateStaffAccount.js";
-import DashboardSales from "./pages/Dashboard/DashboardSales.js";
 
 function App() {
   const location = useLocation();
-  const [theme] = useState(localStorage.getItem("theme") || "light");
+  const authHeader = useAuthHeader();
+  const signOut = useSignOut();
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -50,54 +40,46 @@ function App() {
   };
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+    const token = authHeader?.split(" ")[1];
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
 
-  const renderNavbar = () => {
-    const path = location.pathname;
-    if (
-      path === "/" ||
-      path === "/shop" ||
-      path === "/about" ||
-      path === "/contact" ||
-      path.startsWith("/shop/product/") ||
-      path === "/user/information"
-    ) {
-      return <Navbar />;
-    } else if (
-      path === "/login" ||
-      path === "/register" ||
-      path === "/forgotPassword" ||
-      path === "/forgotPassword/success" ||
-      path === "/register/confirm-registration"
-    ) {
-      return <NavLogin />;
+      if (decodedToken.exp < currentTime) {
+        toast.info("Your session has expired. Please log in again.", {
+          position: "top-center",
+          transition: Zoom,
+        });
+        signOut();
+      }
     }
-    return null;
-  };
+  }, [authHeader, signOut]);
 
-  const renderFooter = () => {
-    const path = location.pathname;
-    // Define routes that should show the footer
-    if (
-      path === "/" ||
-      path === "/shop" ||
-      path === "/about" ||
-      path === "/contact" ||
-      path.startsWith("/shop/product/")
-    ) {
-      return (
-        <div className="pt-10">
-          <Footer />
-        </div>
-      );
-    }
-    return null; // For login, register, forgot password, etc. no footer
-  };
+  const showNavbar =
+    location.pathname !== "/login" &&
+    location.pathname !== "/register" &&
+    location.pathname !== "/forgotPassword" &&
+    location.pathname !== "/register/confirm-registration" &&
+    location.pathname !== "/register/success" &&
+    location.pathname !== "/forgotPassword/success" &&
+    location.pathname !== "/reset-password/success" &&
+    location.pathname !== "/reset-password" &&
+    location.pathname !== "/LoginForStaffAndAdmin";
+
+  const showFooter =
+    location.pathname !== "/login" &&
+    location.pathname !== "/register" &&
+    location.pathname !== "/forgotPassword" &&
+    location.pathname !== "/register/confirm-registration" &&
+    location.pathname !== "/register/success" &&
+    location.pathname !== "/forgotPassword/success" &&
+    location.pathname !== "/reset-password/success" &&
+    location.pathname !== "/reset-password" &&
+    location.pathname !== "/LoginForStaffAndAdmin" &&
+    location.pathname !== "/user/information";
 
   const applyPadding = () => {
     const path = location.pathname;
-    // Apply padding to all routes except 404 page
     if (
       path === "/" ||
       path === "/shop" ||
@@ -108,196 +90,23 @@ function App() {
       path === "/register" ||
       path === "/forgotPassword" ||
       path === "/forgotPassword/success" ||
-      path === "/register/confirm-registration"
+      path === "/register/confirm-registration" ||
+      path === "/user/information" ||
+      path === "/cart" ||
+      path === "/checkout" ||
+      path === "/reset-password" ||
+      path === "/reset-password/success"
     ) {
       return "pt-[90px]";
     }
-    return ""; // No padding for ErrorNotFound or other specific routes
+    return "";
   };
 
   return (
     <>
-      {renderNavbar()}
+      {showNavbar ? <Navbar /> : <NavLogin />}
       <div className={applyPadding()}>
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/about" element={<About />} />
-          <Route
-            path="/login"
-            element={
-              <CustomerProtectedRoute>
-                <Login />
-              </CustomerProtectedRoute>
-            }
-          />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgotPassword" element={<ForgotPassword />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/forgotPassword/success" element={<ForgotSuccess />} />
-          <Route
-            path="/register/confirm-registration"
-            element={
-              <RegisterProtectedRoute>
-                <ConfirmRegister />
-              </RegisterProtectedRoute>
-            }
-          />
-          <Route path="/register/success" element={<RegisterSuccess />} />
-          <Route path="/shop/product/:id" element={<ProductDetailPage />} />
-          <Route path="*" element={<ErrorNotFound />} />
-
-          <Route
-            path="/LoginForStaffAndAdmin"
-            element={<LoginForStaffAndAdmin />}
-          />
-
-          {/* Protect the Dashboard route */}
-          <Route
-            path="/Dashboard"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <Dashboard />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Categories"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardCategories />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Categories/Create"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardCreateCategory />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Categories/Edit/:categoryId"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardEditCategory />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Brands"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardBrands />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Accounts/Create"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardCreateStaffAccount />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Brands/Edit/:brandId"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardEditBrand />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Warehouse"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardWarehouse />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Warehouse/:stockId"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardWarehouseDetail />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Accounts"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardAccounts />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Accounts/Edit/:userId"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardEditAccount />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/StockTransactions"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardStockTransactions />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/Dashboard/Sales"
-            element={
-              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
-                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardSales />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route path="/Dashboard/Logout" element={<Logout />} />
-        </Routes>
+        <AppRoutes toggleSidebar={toggleSidebar} isOpen={isOpen} />
       </div>
       <ToastContainer
         autoClose={2500}
@@ -310,7 +119,7 @@ function App() {
         theme="colored"
         transition={Zoom}
       />
-      {renderFooter()}
+      {showFooter && <Footer />}
     </>
   );
 }

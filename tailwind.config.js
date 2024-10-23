@@ -36,6 +36,7 @@ module.exports = {
       }
     },
   },
+  important: '#root',
   plugins: [
   ],
   daisyui: {

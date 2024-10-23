@@ -1,12 +1,40 @@
-import React, { useState } from "react";
-import { Rating } from "@smastrom/react-rating"; // Assuming this is the package used for the Rating component
-import { Star } from "@smastrom/react-rating";  // Star shape if needed for itemShapes
+import { Rating } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import RadioCommon from "../inputs/Radio";
+import { getBrand, getCategory } from "../../service/ShopService";
 
 const FilterComponent = ({ onFilter }) => {
   const [category, setCategory] = useState("");
   const [brand, setBrand] = useState("");
-  const [priceOrder, setPriceOrder] = useState(""); // "lowToHigh" or "highToLow"
-  const [rating, setRating] = useState(0);  // Changed to handle numeric ratings
+  const [priceOrder, setPriceOrder] = useState("");
+  const [rating, setRating] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getCategory();
+      setCategories(categories);
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      const brandList = await getBrand();
+      setBrands(brandList);
+    };
+    fetchBrands();
+  }, []);
+
+  const handleReset = () => {
+    setBrand("");
+    setCategory("");
+    setPriceOrder("");
+    setRating(0);
+  }
+
 
   const handleFilter = (e) => {
     e.preventDefault();
@@ -19,163 +47,100 @@ const FilterComponent = ({ onFilter }) => {
   };
 
   return (
-    <div className="FilterContainer p-4 border rounded-md">
+    <div className="FilterContainer p-4 border rounded-md font-poppins">
       <form onSubmit={handleFilter}>
         {/* Category Filter */}
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Category</label>
+          <label className="block text-2xl pb-4 font-medium mb-1">Category</label>
           <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value=""
-                checked={category === ""}
-                onChange={() => setCategory("")}
-                className="mr-2 radio"
-              />
-              All Categories
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="Tops"
-                checked={category === "Tops"}
-                onChange={() => setCategory("Tops")}
-                className="mr-2 radio"
-              />
-              Tops
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="Bottoms"
-                checked={category === "Bottoms"}
-                onChange={() => setCategory("Bottoms")}
-                className="mr-2 radio"
-              />
-              Bottoms
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="Shoes"
-                checked={category === "Shoes"}
-                onChange={() => setCategory("Shoes")}
-                className="mr-2 radio"
-              />
-              Shoes
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="Accessories"
-                checked={category === "Accessories"}
-                onChange={() => setCategory("Accessories")}
-                className="mr-2 radio"
-              />
-              Accessories
-            </label>
+            <RadioCommon
+              context="All Categories"
+              current={category}
+              value=""
+              id="category"
+              handleChecked={() => setCategory("")}
+            />
+            {categories.length > 0 ? (
+              categories.map((categoryItem) => (
+                <RadioCommon
+                  context={categoryItem.categoryName}
+                  current={category}
+                  id="category"
+                  value={categoryItem.categoryName}
+                  handleChecked={() => setCategory(categoryItem.categoryName)}
+                />
+              ))
+            ) : (
+              <div className="errorLoad">Error to loading category</div>
+            )}
           </div>
         </div>
 
         {/* Brand Filter */}
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Brand</label>
+          <label className="block text-2xl pb-4 font-medium mb-1">Brand</label>
           <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value=""
-                checked={brand === ""}
-                onChange={() => setBrand("")}
-                className="mr-2 radio"
-              />
-              All Brands
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="Cloudzy"
-                checked={brand === "Cloudzy"}
-                onChange={() => setBrand("Cloudzy")}
-                className="mr-2 radio"
-              />
-              Cloudzy
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="SkyWear"
-                checked={brand === "SkyWear"}
-                onChange={() => setBrand("SkyWear")}
-                className="mr-2 radio"
-              />
-              SkyWear
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="UrbanStyle"
-                checked={brand === "UrbanStyle"}
-                onChange={() => setBrand("UrbanStyle")}
-                className="mr-2 radio"
-              />
-              UrbanStyle
-            </label>
+            <RadioCommon
+              context="All Brands"
+              current={brand}
+              value=""
+              id="brand"
+              handleChecked={() => setBrand("")}
+            />
+            {brands.length > 0 ? (
+              brands.map((brandItem) => (
+                <RadioCommon
+                  context={brandItem.brandName}
+                  current={brand}
+                  value={brandItem.brandName}
+                  id="brand"
+                  handleChecked={() => setBrand(brandItem.brandName)}
+                />
+              ))
+            ) : (
+              <div className="error">
+                <p>Error to fetching brand list!</p>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Price Filter */}
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Price</label>
+          <label className="block text-2xl pb-4 font-medium mb-1">Price</label>
           <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value=""
-                checked={priceOrder === ""}
-                onChange={() => setPriceOrder("")}
-                className="mr-2 radio"
-              />
-              No Preference
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="lowToHigh"
-                checked={priceOrder === "lowToHigh"}
-                onChange={() => setPriceOrder("lowToHigh")}
-                className="mr-2 radio"
-              />
-              Low to High
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="highToLow"
-                checked={priceOrder === "highToLow"}
-                onChange={() => setPriceOrder("highToLow")}
-                className="mr-2 radio"
-              />
-              High to Low
-            </label>
+            <RadioCommon
+              context="No Preference"
+              current={priceOrder}
+              value=""
+              id="price"
+              handleChecked={() => setPriceOrder("")}
+            />
+            <RadioCommon
+              context="Low to High"
+              current={priceOrder}
+              value="asc"
+              id="price"
+              handleChecked={() => setPriceOrder("asc")}
+            />
+            <RadioCommon
+              context="High to Low"
+              current={priceOrder}
+              value="desc"
+              id="price"
+              handleChecked={() => setPriceOrder("desc")}
+            />
           </div>
         </div>
 
         {/* Rating Filter */}
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Rating</label>
+          <label className="block text-2xl pb-4 font-medium mb-1">Rating</label>
           <div className="flex justify-center">
             <Rating
-              style={{ maxWidth: 200 }}
-              readOnly={false} // Now it's interactive
+              defaultValue={0}
               value={rating}
-              onChange={(newRating) => setRating(newRating)} // Update rating state
-              itemStyles={{
-                itemShapes: Star,
-                activeFillColor: "#ffb700",
-                inactiveFillColor: "#fbf1a9",
-              }}
+              onChange={(e, newRating) => setRating(newRating)}
             />
           </div>
         </div>
@@ -184,9 +149,15 @@ const FilterComponent = ({ onFilter }) => {
         <div>
           <button
             type="submit"
-            className="w-full p-2 bg-blue-600 text-white rounded-md"
+            className="w-1/2 py-2 bg-blue-600 text-white rounded-md"
           >
             Apply Filters
+          </button>
+          <button
+            className="w-1/2 py-2 bg-red-600 text-white rounded-md"
+            onClick={handleReset}
+          >
+            Reset Filter
           </button>
         </div>
       </form>

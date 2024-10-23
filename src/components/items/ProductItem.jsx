@@ -1,6 +1,6 @@
+import { Rating } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Rating, Star } from "@smastrom/react-rating";
 
 const ProductItem = ({ product }) => {
   let discountedPrice = product.saleType;
@@ -41,24 +41,18 @@ const ProductItem = ({ product }) => {
             </p>
           )}
 
-          {/* Product Rating */}
           <div className="flex items-center">
             <Rating
-              style={{ maxWidth: 100 }}
+              name="half-rating-read"
+              value={product.rating}
+              precision={0.5}
               readOnly
-              value={product.averageRating}
-              itemStyles={{
-                itemShapes: Star,
-                activeFillColor: "#ffb700",
-                inactiveFillColor: "#fbf1a9",
-              }}
             />
             <span className="ml-2 text-gray-600 text-sm">
               ({product.totalRating})
             </span>
           </div>
 
-          {/* Sale Badge */}
           {product.saleValue > 0 && (
             <div className="mt-2 bg-red-100 text-red-700 text-sm font-bold py-1 px-2 rounded text-center">
               {product.saleType === "percentage"

@@ -1,30 +1,38 @@
-import { useEffect } from "react";
+import { CircularProgress } from "@mui/material";
+import { useEffect, useState } from "react";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const CustomerProtectedRoute = ({ children }) => {
+export const ProtectedRoute = ({ 
+  children, 
+  types = "", 
+}) => {
   const isAuth = useIsAuthenticated();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (isAuth) {
-      navigate("/");
-    }
-  }, [isAuth, navigate]);
-  return children;
-};
-
-const RegisterProtectedRoute = ({ children }) => {
-  let email = localStorage.getItem("mail");
-  const navigate = useNavigate();
+  const [isCheckingEmail, setIsCheckingEmail] = useState(
+    types.includes("REGISTER")
+  );
+  const email = localStorage.getItem("mail");
 
   useEffect(() => {
-    if (!email) {
-      if (navigate(-1) === false) {
-        navigate("/");
-      }
+    if (types.includes("REGISTER")) {
+      setIsCheckingEmail(false);
     }
-  }, [email, navigate]);
-  return children;
-};
+  }, [types]);
 
-export { CustomerProtectedRoute, RegisterProtectedRoute };
+  if (types.includes("GUEST") && !isAuth) {
+    return children;
+  }
+  if (types.includes("CUSTOMER") && isAuth) {
+    return children; 
+  }
+  if (types.includes("REGISTER")) {
+    if (isCheckingEmail) {
+      return <CircularProgress />; 
+    }
+    if (email) {
+      return children;
+    }
+  }
+
+  return <Navigate to="/" />;
+};
