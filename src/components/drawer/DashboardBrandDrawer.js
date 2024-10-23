@@ -36,6 +36,11 @@ const BrandDrawer = ({ isOpen, onClose, brand, onEdit, onDelete }) => {
         <Typography variant="h6" component="div" sx={{ marginBottom: 2 }}>
           <strong>Name:</strong> {brand.brandName}
         </Typography>
+        <img
+          src={brand.logoUrl}
+          alt={brand.brandName}
+          style={{ width: "100%", height: "auto" }}
+        />
         <a
           href={brand.websiteUrl}
           target="_blank"

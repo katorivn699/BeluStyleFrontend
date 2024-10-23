@@ -30,13 +30,14 @@ import DashboardCreateCategory from "./pages/Dashboard/DashboardCreateCategory";
 import DashboardEditCategory from "./pages/Dashboard/DashboardEditCategory";
 import PrivateRoute from "./routes/PrivateRoute";
 import DashboardBrands from "./pages/Dashboard/DashboardBrands";
-import DashboardCreateBrand from "./pages/Dashboard/DashboardCreateBrand";
 import DashboardEditBrand from "./pages/Dashboard/DashboardEditBrand";
 import DashboardWarehouse from "./pages/Dashboard/DashboardWarehouse";
 import DashboardWarehouseDetail from "./pages/Dashboard/DashboardWarehouseDetail";
 import DashboardAccounts from "./pages/Dashboard/DashboardAccount";
 import DashboardEditAccount from "./pages/Dashboard/DashboardEditAccount";
 import DashboardStockTransactions from "./pages/Dashboard/DashboardStockTransactions.js";
+import DashboardCreateStaffAccount from "./pages/Dashboard/DashboardCreateStaffAccount.js";
+import DashboardSales from "./pages/Dashboard/DashboardSales.js";
 
 function App() {
   const location = useLocation();
@@ -186,7 +187,7 @@ function App() {
           />
 
           <Route
-            path="/Dashboard/Categories/:categoryId"
+            path="/Dashboard/Categories/Edit/:categoryId"
             element={
               <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
                 <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
@@ -208,18 +209,18 @@ function App() {
           />
 
           <Route
-            path="/Dashboard/Brands/Create"
+            path="/Dashboard/Accounts/Create"
             element={
               <PrivateRoute requiredRoles={["ADMIN"]}>
                 <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
-                  <DashboardCreateBrand />
+                  <DashboardCreateStaffAccount />
                 </DashboardLayout>
               </PrivateRoute>
             }
           />
 
           <Route
-            path="/Dashboard/Brands/:brandId"
+            path="/Dashboard/Brands/Edit/:brandId"
             element={
               <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
                 <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
@@ -263,7 +264,7 @@ function App() {
           />
 
           <Route
-            path="/Dashboard/Accounts/:userId"
+            path="/Dashboard/Accounts/Edit/:userId"
             element={
               <PrivateRoute requiredRoles={["ADMIN"]}>
                 <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
@@ -276,9 +277,20 @@ function App() {
           <Route
             path="/Dashboard/StockTransactions"
             element={
-              <PrivateRoute requiredRoles={["ADMIN"]}>
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
                 <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
                   <DashboardStockTransactions />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/Dashboard/Sales"
+            element={
+              <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+                <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+                  <DashboardSales />
                 </DashboardLayout>
               </PrivateRoute>
             }
