@@ -5,28 +5,10 @@ import { NavLogin } from "./components/navbars/UserAccessBar";
 import { toast, ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/footer/CustomerFooter";
-import ProductDetailPage from "./pages/Home/ProductDetail";
-import {
-  CustomerProtectedRoute,
-  RegisterProtectedRoute,
-} from "./routes/ProtectedRoute";
-import { ErrorNotFound } from "./pages/NotFound/404NotFound";
-import RegisterSuccess from "./pages/Register/RegisterSuccess";
-import LoginForStaffAndAdmin from "./pages/Login/LoginForStaffAndAdmin";
-import Dashboard from "./pages/Dashboard/Dashboard";
-import DashboardLayout from "./layouts/DashboardLayout";
-import DashboardCategories from "./pages/Dashboard/DashboardCategories";
-import DashboardCreateCategory from "./pages/Dashboard/DashboardCreateCategory";
-import DashboardEditCategory from "./pages/Dashboard/DashboardEditCategory";
-import PrivateRoute from "./routes/PrivateRoute";
-import DashboardBrands from "./pages/Dashboard/DashboardBrands";
-import DashboardCreateBrand from "./pages/Dashboard/DashboardCreateBrand";
-import DashboardEditBrand from "./pages/Dashboard/DashboardEditBrand";
-import DashboardWarehouse from "./pages/Dashboard/DashboardWarehouse";
-import DashboardWarehouseDetail from "./pages/Dashboard/DashboardWarehouseDetail";
-import DashboardAccounts from "./pages/Dashboard/DashboardAccount";
-import DashboardEditAccount from "./pages/Dashboard/DashboardEditAccount";
-import DashboardStockTransactions from "./pages/Dashboard/DashboardStockTransactions.js";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import useSignOut from "react-auth-kit/hooks/useSignOut";
+import { jwtDecode } from "jwt-decode";
+import AppRoutes from "./routes/AppRoutes.js";
 
 function App() {
   const location = useLocation();
