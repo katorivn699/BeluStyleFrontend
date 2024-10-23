@@ -5,6 +5,7 @@ import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmation
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
 import BrandDrawer from "../../components/drawer/DashboardBrandDrawer";
+import { toast, Zoom } from "react-toastify";
 
 const DashboardBrands = () => {
   const [brands, setbrands] = useState([]); // State to store brands
@@ -26,7 +27,7 @@ const DashboardBrands = () => {
         },
       })
       .then((response) => {
-        setbrands(response.data); // Set the fetched data to brands state
+        setbrands(response.data);
       })
       .catch((error) => {
         console.error("Error fetching brands:", error);
@@ -42,7 +43,7 @@ const DashboardBrands = () => {
     setIsOpen(false); // Close the modal
   };
 
-  const handleDelete = () => {
+  const handleDelete = (brandToDelete) => {
     if (brandToDelete) {
       apiClient
         .delete(`/api/brands/${brandToDelete.brandId}`, {
@@ -50,11 +51,20 @@ const DashboardBrands = () => {
             Authorization: "Bearer " + varToken,
           },
         })
-        .then(() => {
+        .then((response) => {
           setbrands(brands.filter((c) => c.brandId !== brandToDelete.brandId));
           setIsOpen(false); // Close the modal after deletion
+          toast.success(response.data, {
+            position: "bottom-right",
+            transition: Zoom,
+          });
         })
-        .catch((error) => console.error("Error deleting brand:", error));
+        .catch((response) =>
+          toast.error(response.data, {
+            position: "bottom-right",
+            transition: Zoom,
+          })
+        );
     }
   };
 
@@ -90,6 +100,7 @@ const DashboardBrands = () => {
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
             <tr>
+              <th className="px-4 py-2 text-left">Logo</th>
               <th className="px-4 py-2 text-left">Website</th>
               <th className="px-4 py-2 text-left">Brand Name</th>
               <th className="px-4 py-2 text-left">Description</th>
@@ -101,6 +112,13 @@ const DashboardBrands = () => {
           <tbody>
             {brands.map((brand) => (
               <tr key={brand.brandId} className="hover:bg-gray-50">
+                <td className="px-4 py-2">
+                  <img
+                    src={brand.logoUrl}
+                    alt={brand.brandName}
+                    style={{ width: "50px", height: "auto" }} // Display logo
+                  />
+                </td>
                 <td className="px-4 py-2">
                   <a
                     href={brand.websiteUrl}
@@ -121,7 +139,7 @@ const DashboardBrands = () => {
                   >
                     <FaEye />
                   </button>
-                  <Link to={`/Dashboard/Brands/${brand.brandId}`}>
+                  <Link to={`/Dashboard/Brands/Edit/${brand.brandId}`}>
                     <FaEdit className="text-blue-500 cursor-pointer" />
                   </Link>
                   {userRole === "ADMIN" && ( // Show delete button only for Admin
@@ -143,7 +161,7 @@ const DashboardBrands = () => {
       <DeleteConfirmationModal
         isOpen={isOpen}
         onClose={handleClose}
-        onConfirm={handleDelete}
+        onConfirm={() => handleDelete(brandToDelete)}
         name={brandToDelete?.brandName || ""}
       />
 
@@ -153,6 +171,7 @@ const DashboardBrands = () => {
         onClose={closeDrawer}
         brand={selectedbrand || {}} // Pass selected brand to drawer
         onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     </>
   );
