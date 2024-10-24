@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { apiClient } from "../../core/api"; // Assuming you have an API client setup
+import { FaPlus } from "react-icons/fa";
 
 const DashboardWarehouseDetail = () => {
   const { stockId } = useParams();
@@ -64,68 +65,76 @@ const DashboardWarehouseDetail = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{stock.stockName}</h1>
+      {/* Header Section: Warehouse Name and Import Button */}
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <h1 className="text-4xl font-bold">{stock.stockName}</h1>
           <p className="text-lg text-gray-600">{stock.stockAddress}</p>
         </div>
-
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border border-gray-300 rounded"
-          />
-          <select
-            value={selectedBrand}
-            onChange={(e) => setSelectedBrand(e.target.value)}
-            className="ml-2 p-2 border border-gray-300 rounded"
-          >
-            <option value="">All Brands</option>
-            {[
-              ...new Set(
-                Object.values(groupedProducts).map(
-                  (group) => group.product.brand.brandName
-                )
-              ),
-            ].map((brand) => (
-              <option key={brand} value={brand}>
-                {brand}
-              </option>
-            ))}
-          </select>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="ml-2 p-2 border border-gray-300 rounded"
-          >
-            <option value="">All Categories</option>
-            {[
-              ...new Set(
-                Object.values(groupedProducts).map(
-                  (group) => group.product.category.categoryName
-                )
-              ),
-            ].map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-          <label className="ml-2 inline-flex items-center">
-            <input
-              type="checkbox"
-              checked={showOnlyLowStock}
-              onChange={() => setShowOnlyLowStock(!showOnlyLowStock)}
-              className="form-checkbox"
-            />
-            <span className="ml-2">Show Low Stock Only</span>
-          </label>
-        </div>
+        <Link to="/Dashboard/Warehouse/Import">
+          <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
+            <FaPlus className="mr-2" /> Import Product
+          </button>
+        </Link>
       </div>
 
+      {/* Filters Section: Search, Brand, Category, Low Stock */}
+      <div className="flex justify-end space-x-4 mb-6 w-full items-center">
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
+        />
+        <select
+          value={selectedBrand}
+          onChange={(e) => setSelectedBrand(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
+        >
+          <option value="">All Brands</option>
+          {[
+            ...new Set(
+              Object.values(groupedProducts).map(
+                (group) => group.product.brand.brandName
+              )
+            ),
+          ].map((brand) => (
+            <option key={brand} value={brand}>
+              {brand}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="p-2 border border-gray-300 rounded"
+        >
+          <option value="">All Categories</option>
+          {[
+            ...new Set(
+              Object.values(groupedProducts).map(
+                (group) => group.product.category.categoryName
+              )
+            ),
+          ].map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            checked={showOnlyLowStock}
+            onChange={() => setShowOnlyLowStock(!showOnlyLowStock)}
+            className="form-checkbox"
+          />
+          <span className="ml-2">Show Low Stock Only</span>
+        </label>
+      </div>
+
+      {/* Products Display Section */}
       <div>
         {filteredProducts.length > 0 ? (
           filteredProducts.map((group) => (

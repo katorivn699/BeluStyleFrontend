@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
+import { toast, Zoom } from "react-toastify";
 
 const DashboardEditBrand = () => {
-  const { brandId } = useParams(); // Get the brand ID from the URL
+  const { brandId } = useParams();
   const [brandName, setBrandName] = useState("");
   const [brandDescription, setBrandDescription] = useState("");
-  const [websiteUrl, setWebsiteUrl] = useState(""); // State for the image
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [brandImage, setBrandImage] = useState(null);
+  const [currentLogoUrl, setCurrentLogoUrl] = useState("");
   const navigate = useNavigate();
 
   const varToken = localStorage.getItem("_auth");
 
-  // Fetch brand data when the component mounts
   useEffect(() => {
     const fetchBrand = async () => {
       try {
@@ -21,11 +23,13 @@ const DashboardEditBrand = () => {
           },
         });
 
-        const { brandName, brandDescription, websiteUrl } = response.data;
+        const { brandName, brandDescription, websiteUrl, logoUrl } =
+          response.data;
 
         setBrandName(brandName);
         setBrandDescription(brandDescription);
         setWebsiteUrl(websiteUrl);
+        setCurrentLogoUrl(logoUrl);
       } catch (error) {
         console.error("Error fetching brand data:", error);
       }
@@ -34,18 +38,56 @@ const DashboardEditBrand = () => {
     fetchBrand();
   }, [brandId, varToken]);
 
+  const handleImageChange = (e) => {
+    setBrandImage(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Send the updated brand data to the backend
+      let logoUrl = currentLogoUrl;
+
+      if (brandImage) {
+        const formData = new FormData();
+        formData.append("image", brandImage);
+
+        await toast.promise(
+          fetch(
+            "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
+            {
+              method: "POST",
+              body: formData,
+            }
+          )
+            .then((uploadResponse) => uploadResponse.json())
+            .then((uploadData) => {
+              if (uploadData.success) {
+                logoUrl = uploadData.data.display_url;
+              } else {
+                throw new Error("Image upload failed");
+              }
+            }),
+          {
+            pending: "Uploading image...",
+            success: "Image uploaded successfully!",
+            error: "Image upload failed",
+          },
+          {
+            position: "bottom-right",
+            transition: Zoom,
+          }
+        );
+      }
+
       await apiClient.put(
         "/api/brands",
         {
           brandId,
           brandName,
           brandDescription,
-          websiteUrl, // Send the image URL
+          websiteUrl,
+          logoUrl,
         },
         {
           headers: {
@@ -54,9 +96,17 @@ const DashboardEditBrand = () => {
         }
       );
 
+      toast.success("Brand updated successfully", {
+        position: "bottom-right",
+        transition: Zoom,
+      });
+
       navigate("/Dashboard/Brands");
     } catch (error) {
-      console.error("Error updating brand:", error);
+      toast.error("Update brand failed", {
+        position: "bottom-right",
+        transition: Zoom,
+      });
     }
   };
 
@@ -100,10 +150,9 @@ const DashboardEditBrand = () => {
             required
           />
 
-          {/* Image upload input */}
           <label
             className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="brandImage"
+            htmlFor="websiteUrl"
           >
             Website URL
           </label>
@@ -113,9 +162,34 @@ const DashboardEditBrand = () => {
             value={websiteUrl}
             onChange={(e) => setWebsiteUrl(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter brand description"
+            placeholder="Enter website URL"
             required
           />
+
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
+            htmlFor="brandImage"
+          >
+            Logo (Leave blank to keep current logo)
+          </label>
+          <input
+            type="file"
+            id="brandImage"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+
+          {currentLogoUrl && (
+            <div className="mt-4">
+              <img
+                src={currentLogoUrl}
+                alt="Current Logo"
+                className="w-32 h-32 object-cover rounded"
+              />
+              <p className="text-gray-600 mt-2">Current Logo</p>
+            </div>
+          )}
         </div>
         <div className="flex items-center justify-center">
           <button
