@@ -79,10 +79,12 @@ const ProductDetailPage = () => {
     },
     colors: ["blue", "red"],
     sizes: ["XS", "S", "M", "L", "XL"],
+    saleType: "PERCENTAGE",
+    saleValue: 15,
     description:
       "This premium T-shirt is made from high-quality cotton, offering a perfect fit and comfort. Designed for everyday wear and easy to pair with various outfits.",
-      avgRating: 4.5,
-      totalRating: 100,
+    avgRating: 4.5,
+    totalRating: 100,
     reviews: [
       {
         user: "John Doe",
@@ -126,9 +128,29 @@ const ProductDetailPage = () => {
 
   const handleIncrement = () => setQuantity((prev) => Math.min(99, prev + 1));
   const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
+  const selectedVariation = product.variations[selectedColor][selectedSize];
+
+  const CalculateFinalPrice = () => {
+    if (!product.saleType || !product.saleValue) {
+      return selectedVariation.price; 
+    }
+  
+    if (product.saleType === "PERCENTAGE") {
+      return (
+        selectedVariation.price -
+        (selectedVariation.price * product.saleValue) / 100
+      );
+    }
+  
+    if (product.saleType === "FIXED") {
+      return selectedVariation.price - product.saleValue;
+    }
+  
+    return selectedVariation.price;
+  };
+  const finalPrice = CalculateFinalPrice(selectedVariation.price);
 
   const handleAddToCart = () => {
-    const selectedVariation = product.variations[selectedColor][selectedSize];
     const ChoosedVariation = `${productById.id}-${selectedVariation.id}`;
 
     const cartItem = {
@@ -151,7 +173,7 @@ const ProductDetailPage = () => {
     <div className="ProductDetail">
       <div className="headerBreadcums h-32 bg-blueOcean"></div>
       <div className="grid grid-cols-5 gap-6 px-20 py-10">
-        <div className="col-span-3">
+        <div className="col-span-3 place-items-center">
           {product.variations[selectedColor] &&
           product.variations[selectedColor][selectedSize] &&
           product.variations[selectedColor][selectedSize].images ? (
@@ -159,6 +181,9 @@ const ProductDetailPage = () => {
               autoPlay={true}
               navButtonsAlwaysVisible
               index={carouselIndex}
+              sx={{
+                width: "600px",
+              }}
             >
               {allImages.map((item, index) => (
                 <div
@@ -167,9 +192,9 @@ const ProductDetailPage = () => {
                     width: "auto",
                     height: "400px",
                     display: "flex",
-                    justifyContent: "center", // căn giữa theo chiều ngang
-                    alignItems: "center", // căn giữa theo chiều dọc
-                    backgroundColor: "#f0f0f0", // thêm màu nền để dễ thấy khung
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#f0f0f0",
                   }}
                 >
                   <img
@@ -197,15 +222,19 @@ const ProductDetailPage = () => {
         <div className="properties pl-10 col-span-2">
           <h1 className="mb-4 font-bold text-5xl">{product.name}</h1>
           <p className="mb-4 text-xl font-semibold text-gray-700">
-            ${product.variations[selectedColor][selectedSize].price.toFixed(2)}
+            ${finalPrice.toFixed(2)}
           </p>
+          {product.saleValue > 0 && (
+            <p className="mb-2 text-gray-500 line-through">
+              ${selectedVariation.price.toFixed(2)} {/* Giá gốc bị gạch */}
+            </p>
+          )}
           <div className="rating mb-4 flex items-center text-gray-500">
-            <Rating
-              readOnly
-              value={product.avgRating}
-            />
+            <Rating readOnly value={product.avgRating} />
             <div className="px-4">|</div>
-            <div className="customerReview text-xl">{product.totalRating} Customer Reviews</div>
+            <div className="customerReview text-xl">
+              {product.totalRating} Customer Reviews
+            </div>
           </div>
 
           {/* Color Selector */}
@@ -283,7 +312,9 @@ const ProductDetailPage = () => {
       <Tabs
         value={activeTab}
         onChange={(e, newValue) => setActiveTab(newValue)}
+        variant="fullWidth"
         aria-label="Product details"
+        centered
       >
         <Tab label="Description" />
         <Tab label="Reviews" />

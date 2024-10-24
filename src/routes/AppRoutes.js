@@ -32,6 +32,7 @@ import { Home } from "../pages/Home/Home"
 import Shop from "../pages/Home/Shop"
 import Logout from "../pages/Login/Logout"
 import Dashboard from "../pages/Dashboard/Dashboard"
+import UserChangePassword from "../pages/User/UserChangePassword"
 
 const AppRoutes = ({ toggleSidebar, isOpen}) => {
     return (
@@ -104,6 +105,14 @@ const AppRoutes = ({ toggleSidebar, isOpen}) => {
             element={
               <ProtectedRoute types={["CUSTOMER"]}>
                 <UserProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user/changePassword"
+            element={
+              <ProtectedRoute types={["CUSTOMER"]}>
+                <UserChangePassword />
               </ProtectedRoute>
             }
           />

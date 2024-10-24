@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SelectLocation from "../../service/ProviceService";
-import RadioCommon  from "../../components/inputs/Radio";
+import RadioCommon from "../../components/inputs/Radio";
 import { Button } from "@mui/material";
 import { useCart } from "react-use-cart";
 
@@ -12,7 +12,10 @@ const CheckoutPage = () => {
   });
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [houseNumber, setHouseNumber] = useState("");
-  const { items } = useCart();
+  const { items, cartTotal } = useCart();
+  const [saleApply, setSaleApply] = useState(0);
+  const [discountApply, setDiscountApply] = useState(0);
+  const [lastTotal, setLastTotal] = useState(0);
 
   const itemCheckout = items.map((item, index) => ({
     image: item.image,
@@ -41,7 +44,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="grid grid-cols-5 grid-rows-5 gap-4">
+    <div className="grid grid-cols-5 grid-rows-4 gap-4">
       <div className="col-span-3 row-span-5">
         <div className="shipAndPaymentMethod border-black border-2 m-16 p-10 font-poppins space-y-8">
           <h1 className="text-left text-2xl">Shipping Address</h1>
@@ -120,11 +123,11 @@ const CheckoutPage = () => {
         </div>
       </div>
       <div className="row-span-3 col-start-4 row-start-2 col-span-2">
-        <div className="sumary border-black border-2 mx-7 p-3 font-poppins space-y-8">
-          <h1 className="text-center font-bold font-poppins text-xl">
+        <div className="sumary border-black border-2 mx-7 font-poppins space-y-8">
+          <h1 className="text-center font-bold font-poppins p-3 text-xl">
             Order Sumary
           </h1>
-          <div className="listItem">
+          <div className="listItem p-5">
             {itemCheckout.map((item) => (
               <div className="item justify-between items-center flex">
                 <div className="itemLeft flex">
@@ -146,6 +149,28 @@ const CheckoutPage = () => {
                 <p className="font-bold">{item.price}$</p>
               </div>
             ))}
+          </div>
+          <div className="calculateTotal border-y-2 border-black">
+            <div className="subTotal p-5 flex justify-between">
+              <p>SubTotal</p>
+              <p>{cartTotal.toFixed(2)}$</p>
+            </div>
+            {saleApply >= 0 && (
+              <div className="saleFix p-5 flex justify-between">
+                <p>Sale</p>
+                <p>{saleApply.toFixed(2)}</p>
+              </div>
+            )}
+            {discountApply >= 0 && (
+              <div className="discountFix p-5 flex justify-between">
+                <p>Discount</p>
+                <p>{discountApply.toFixed(2)}</p>
+              </div>
+            )}
+          </div>
+          <div className="FixedTotal px-5 pb-5 flex justify-between">
+            <p className="text-blueOcean font-bold text-xl">Total</p>
+            <p className="text-blueOcean font-bold text-3xl">{lastTotal.toFixed(2)}$</p>
           </div>
         </div>
       </div>
