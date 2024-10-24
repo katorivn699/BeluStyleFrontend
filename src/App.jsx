@@ -9,6 +9,7 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
 import { jwtDecode } from "jwt-decode";
 import AppRoutes from "./routes/AppRoutes.js";
+import { Padding } from "@mui/icons-material";
 
 function App() {
   const location = useLocation();

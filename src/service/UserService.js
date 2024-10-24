@@ -1,4 +1,3 @@
-import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { apiClient } from "../core/api";
 import { toast, Zoom } from "react-toastify";
 
@@ -71,15 +70,20 @@ export const RequestDeleteAccount = (authHeader) => {
   })
 }
 
-export const ChangePassword = (data , authHeader, email) => {
-  apiClient.post("/api/auth/reset-password", {
-    mail: email,
-    NewPassword: data.newPassword,
-    OldPassword: data.currentPassword
-  }, {
-    headers: {
-      Authorization: authHeader
-    }
+export const ChangePassword = async (data, authHeader, email) => {
+  try {
+    const response = await apiClient.post("/api/auth/reset-password", {
+      email: email,
+      newPassword: data.newPassword,
+      oldPassword: data.currentPassword
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    toast.error("Error change password: " + error?.data?.message, {
+      position: "top-center",
+      transition: Zoom
+    })
   }
-)
+  
 }
