@@ -24,8 +24,6 @@ export const GetUserInfo = (authHeader) => {
 };
 
 export const UpdateUserInfo = (data, authHeader) => {
-  try {
-    console.log(authHeader);
     apiClient
       .put(
         "/api/account",
@@ -43,15 +41,45 @@ export const UpdateUserInfo = (data, authHeader) => {
         }
       )
       .then((response) => {
-        toast.success(response.data.message, {
+        return response;
+      })
+      .catch((error) => {
+        toast.error("Error Update User Info: " + error?.message, {
           position: "top-center",
           transition: Zoom,
         });
       });
-  } catch (error) {
-    toast.error("Error Update User Info: " + error.message, {
+};
+
+export const RequestDeleteAccount = (authHeader) => {
+  apiClient.post("/api/request-delete",
+    {},
+    {
+      headers: {
+        Authorization: authHeader,
+      },
+    }
+  )
+  .then((response) => {
+    return response;
+  })
+  .catch((error) => {
+    toast.error(error?.data?.message || "Error request delete account", {
       position: "top-center",
       transition: Zoom,
-    });
+    })
+  })
+}
+
+export const ChangePassword = (data , authHeader, email) => {
+  apiClient.post("/api/auth/reset-password", {
+    mail: email,
+    NewPassword: data.newPassword,
+    OldPassword: data.currentPassword
+  }, {
+    headers: {
+      Authorization: authHeader
+    }
   }
-};
+)
+}

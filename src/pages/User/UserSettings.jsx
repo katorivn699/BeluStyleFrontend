@@ -9,14 +9,17 @@ import {
   IconButton,
 } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import { GetUserInfo, UpdateUserInfo } from "../../service/UserService";
+import { GetUserInfo, RequestDeleteAccount, UpdateUserInfo } from "../../service/UserService";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import useSignIn from "react-auth-kit/hooks/useSignIn";
+import useSignOut from "react-auth-kit/hooks/useSignOut";
+import { useNavigate } from "react-router-dom";
+import UserChangePassword from "./UserChangePassword";
 
 export const UserProfile = () => {
   const authHeader = useAuthHeader();
+  const navigate = useNavigate();
+  const signOut = useSignOut();
   const [profileImage, setProfileImage] = useState(
     "/path/to/profile/picture.jpg"
   );
@@ -65,6 +68,22 @@ export const UserProfile = () => {
     setUserData({ ...userData, [name]: value });
   };
 
+  const handleRequestDelete = () => {
+    try {
+      const response = RequestDeleteAccount(authHeader);
+      toast.success(response?.data?.message || "Request delete account successfully!", {
+        position: "top-center",
+        transition: Zoom,
+      })
+      signOut();
+    } catch (error) {
+      toast.error(error?.data?.message || "Error request delete account!", {
+        position: "top-center",
+        transition: Zoom,
+      })
+    }
+  }
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -111,10 +130,6 @@ export const UserProfile = () => {
               userImage: imageUrl,
             };
             UpdateUserInfo(updatedUserData, authHeader);
-            const userState = localStorage.getItem("_auth_state");
-            userState.userImage = imageUrl;
-            localStorage.setItem("_auth_state", userState);
-
             resolve(updatedUserData);
           } else {
             reject(new Error("Failed to upload image"));
@@ -147,13 +162,14 @@ export const UserProfile = () => {
         };
         const response = UpdateUserInfo(updatedOriginImageData, authHeader);
         toast.success(
-          response.data.message || "Profile updated successfully!",
+          response || "Profile updated successfully!",
           {
             position: "top-center",
             transition: Zoom,
           }
         );
       } catch (error) {
+        console.log(error);
         toast.error("Error update profile: " + error, {
           position: "top-center",
           transition: Zoom,
@@ -266,17 +282,18 @@ export const UserProfile = () => {
           <Button
             type="submit"
             variant="contained"
-            color="primary"
             sx={{
               boxShadow: "none",
               width: "150px",
               textTransform: "none",
               borderRadius: "8px",
+              backgroundColor: "green"
             }}
             disabled={!hasChanges()} // Disable save button if no changes
           >
             Save
           </Button>
+          <UserChangePassword/>
           <Button
             variant="contained"
             color="error"
@@ -286,6 +303,7 @@ export const UserProfile = () => {
               textTransform: "none",
               borderRadius: "8px",
             }}
+            onClick={handleRequestDelete}
           >
             Delete account
           </Button>

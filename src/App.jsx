@@ -37,6 +37,10 @@ function App() {
     }
   }, [authHeader, signOut]);
 
+  const HideNav = 
+  location.pathname !== "/LoginForStaffAndAdmin" &&
+  !location.pathname.startsWith("/Dashboard");
+
   const showNavbar =
     location.pathname !== "/login" &&
     location.pathname !== "/register" &&
@@ -58,7 +62,9 @@ function App() {
     location.pathname !== "/reset-password/success" &&
     location.pathname !== "/reset-password" &&
     location.pathname !== "/LoginForStaffAndAdmin" &&
-    location.pathname !== "/user/information";
+    location.pathname !== "/checkout" &&
+    !location.pathname.startsWith("/user") &&
+    !location.pathname.startsWith("/Dashboard");
 
   const applyPadding = () => {
     const path = location.pathname;
@@ -86,7 +92,7 @@ function App() {
 
   return (
     <>
-      {showNavbar ? <Navbar/> : <NavLogin/>}
+      {HideNav && (showNavbar ? <Navbar/> : <NavLogin/>)}
       <div className={applyPadding()}>
         <AppRoutes toggleSidebar={toggleSidebar} isOpen={isOpen} />
       </div>
