@@ -29,10 +29,10 @@ export function ConfirmRegister() {
                     Once it’s done you will be able to start shopping!</p>
             </div>
             <div className="button flex space-x-5">
-                <button className="btn bg-blueOcean rounded-2xl font-inter text-white w-44" onClick={handleResendEmail}>
+                <button className="btn bg-blueOcean rounded-2xl font-inter text-white w-44 h-12" onClick={handleResendEmail}>
                     <p>Resend email</p>
                 </button>
-                <button className="btnReturn btn flex bg-transparent shadow-none border-none" onClick={handleReturnToSite}>
+                <button className="btn Return btn flex bg-transparent items-center space-x-2 font-inter shadow-none border-none w-44 h-12" onClick={handleReturnToSite}>
                     <p>Return to Site</p><FaArrowRight />
                 </button>
             </div>

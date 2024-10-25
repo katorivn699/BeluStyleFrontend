@@ -19,7 +19,6 @@ import { ProtectedRoute } from "./ProtectedRoute"
 import UserProfile from "../pages/User/UserSettings"
 import RegisterSuccess from "../pages/Register/RegisterSuccess"
 import ProductDetailPage from "../pages/Home/ProductDetail"
-import CartPage from "../pages/CartAndPay/Cart"
 import { ConfirmRegister } from "../pages/Register/ConfirmRegister"
 import ForgotSuccess from "../pages/Forgot/ForgotPasswordSuccess"
 import ResetSuccessPage from "../pages/ResetPassword/ResetSuccess"
@@ -99,7 +98,6 @@ const AppRoutes = ({ toggleSidebar, isOpen}) => {
           />
           <Route path="/register/success" element={<RegisterSuccess />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />
-          <Route path="/cart" element={<CartPage />} />
           <Route
             path="/user/information"
             element={

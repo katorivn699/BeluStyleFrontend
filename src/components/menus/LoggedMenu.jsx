@@ -46,6 +46,7 @@ const LoggedMenu = () => {
         <img
           src={profileImageUrl ? profileImageUrl : userDefault}
           className="rounded-full w-6 md:w-8 h-6 md:h-8 object-cover"
+          loading="eager"
           alt="Profile"
           onError={(e) => {
             e.target.onerror = null; 

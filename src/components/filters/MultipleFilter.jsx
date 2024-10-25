@@ -1,6 +1,6 @@
 import { Rating } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import RadioCommon from "../inputs/Radio";
+import {RadioCommon} from "../inputs/Radio";
 import { getBrand, getCategory } from "../../service/ShopService";
 
 const FilterComponent = ({ onFilter }) => {

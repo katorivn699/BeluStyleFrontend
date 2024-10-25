@@ -3,6 +3,7 @@ import Carousel from "react-material-ui-carousel";
 import { useCart } from "react-use-cart";
 import { useParams } from "react-router-dom";
 import { Tabs, Tab, Box, Rating } from "@mui/material";
+import { formatPrice } from "../../components/format/formats";
 
 const ProductDetailPage = () => {
   const { addItem } = useCart();
@@ -15,35 +16,35 @@ const ProductDetailPage = () => {
       blue: {
         XS: {
           id: 8,
-          price: 29.99,
+          price: 29000.99,
           images: [
             "https://htmediagroup.vn/wp-content/uploads/2021/12/Ao-pijama-6-min.jpg",
           ],
         },
         S: {
           id: 9,
-          price: 30.99,
+          price: 30000.99,
           images: [
             "https://images.unsplash.com/photo-1583050157107-2fc2d242a9f7?fit=max&fm=jpg",
           ],
         },
         M: {
           id: 10,
-          price: 31.99,
+          price: 31000.99,
           images: [
             "https://images.unsplash.com/photo-1603020340937-8f8f9d9b66b0",
           ],
         },
         L: {
           id: 1,
-          price: 32.99,
+          price: 32000.99,
           images: [
             "https://images.unsplash.com/photo-1599333711355-96f5d5c92c61",
           ],
         },
         XL: {
           id: 2,
-          price: 33.99,
+          price: 33000.99,
           images: [
             "https://images.unsplash.com/photo-1601018008784-c1b98c6f8f8a",
           ],
@@ -52,27 +53,27 @@ const ProductDetailPage = () => {
       red: {
         XS: {
           id: 3,
-          price: 32.99,
+          price: 32000.99,
           images: ["https://images.unsplash.com/photo-1574853516184"],
         },
         S: {
           id: 4,
-          price: 33.99,
+          price: 33000.99,
           images: ["https://images.unsplash.com/photo-1605917566783"],
         },
         M: {
           id: 5,
-          price: 34.99,
+          price: 34000.99,
           images: ["https://images.unsplash.com/photo-1547686835-92d16c272084"],
         },
         L: {
           id: 6,
-          price: 35.99,
+          price: 35000.99,
           images: ["https://images.unsplash.com/photo-1571064844052"],
         },
         XL: {
           id: 7,
-          price: 36.99,
+          price: 36000.99,
           images: ["https://images.unsplash.com/photo-1599985095489"],
         },
       },
@@ -160,6 +161,7 @@ const ProductDetailPage = () => {
       size: selectedSize,
       image: selectedVariation.images[0],
       price: selectedVariation.price,
+      saledPrice: finalPrice
     };
 
     addItem(cartItem, quantity);
@@ -222,11 +224,11 @@ const ProductDetailPage = () => {
         <div className="properties pl-10 col-span-2">
           <h1 className="mb-4 font-bold text-5xl">{product.name}</h1>
           <p className="mb-4 text-xl font-semibold text-gray-700">
-            ${finalPrice.toFixed(2)}
+            {formatPrice(finalPrice)}
           </p>
           {product.saleValue > 0 && (
             <p className="mb-2 text-gray-500 line-through">
-              ${selectedVariation.price.toFixed(2)} {/* Giá gốc bị gạch */}
+              {formatPrice(selectedVariation.price)} {/* Giá gốc bị gạch */}
             </p>
           )}
           <div className="rating mb-4 flex items-center text-gray-500">

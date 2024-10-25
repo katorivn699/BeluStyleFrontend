@@ -25,12 +25,11 @@ export function Shop() {
           console.log(response);
           setProductData(response); // Nếu có dữ liệu từ API, set nó
         } else {
-          console.log("It here");
-          // setProductData(products); // Nếu không có dữ liệu, sử dụng mock data
+          setProductData(products); // Nếu không có dữ liệu, sử dụng mock data
         }
       } catch (error) {
         console.log("Error! trycatch : " + error.data);
-        // setProductData(products); // Trong trường hợp lỗi, sử dụng mock data
+        setProductData(products); // Trong trường hợp lỗi, sử dụng mock data
       }
     };
 

@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Drawerbtn } from "../buttons/Button";
+import { formatPrice } from "../format/formats";
 
 const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
   const drawerRef = useRef(null); 
@@ -32,15 +33,11 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
     };
   });
 
-  const handleClickCart = () => {
-    toggleCartDrawer(false)();
-    navigate("/cart");
-  }
-
   const handleClickCheckout = () => {
     toggleCartDrawer(false)();
     navigate("/checkout")
   }
+
 
   return (
     <Drawer
@@ -94,7 +91,7 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
                   </Typography>
                   {/* Quantity and Price */}
                   <Typography variant="body2" color="text.secondary">
-                    {item.quantity} x {item.price}$
+                    {item.quantity} x {formatPrice(item.price)}
                   </Typography>
                 </Box>
 
@@ -120,7 +117,7 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
             Subtotal
           </Typography>
           <Typography variant="body1" color="primary" fontWeight="bold">
-            {cartTotal.toFixed(2)}$
+            {formatPrice(cartTotal)}
           </Typography>
         </Box>
 
@@ -128,7 +125,6 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
         <Box display="flex" justifyContent="space-between" marginTop="16px" sx={{
           gap: "16px"
         }}>
-          <Drawerbtn context={"Cart"} handleClick={handleClickCart}/>
           <Drawerbtn context={"Checkout"} handleClick={handleClickCheckout} isEmpty={isEmpty}/>
         </Box>
       </div>

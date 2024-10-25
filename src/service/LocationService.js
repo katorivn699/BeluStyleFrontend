@@ -7,6 +7,10 @@ const LocationSelector = ({ onLocationChange }) => {
   const [selectedTinh, setSelectedTinh] = useState("");
   const [selectedQuan, setSelectedQuan] = useState("");
   const [selectedPhuong, setSelectedPhuong] = useState("");
+  const shopAddress = {
+    provice: 92,
+    
+  }
 
   useEffect(() => {
     // Lấy tỉnh thành
@@ -55,9 +59,9 @@ const LocationSelector = ({ onLocationChange }) => {
     setSelectedPhuong(idphuong);
 
     // Gọi hàm onLocationChange với tên đã chọn
-    const tinhName = tinh.find((t) => t.id === selectedTinh)?.full_name || "";
-    const quanName = quan.find((q) => q.id === selectedQuan)?.full_name || "";
-    const phuongName = phuong.find((p) => p.id === idphuong)?.full_name || "";
+    const tinhName = tinh.find((t) => t.id === selectedTinh)?.name || "";
+    const quanName = quan.find((q) => q.id === selectedQuan)?.name || "";
+    const phuongName = phuong.find((p) => p.id === idphuong)?.name || "";
 
     onLocationChange({ tinh: tinhName, quan: quanName, phuong: phuongName });
   };
@@ -65,7 +69,7 @@ const LocationSelector = ({ onLocationChange }) => {
   return (
     <div className="css_select_div space-x-7 text-xl">
       <select
-        className="css_select border-gray-300 border-[1px] rounded-sm"
+        className="css_select border-gray-300 border-[1px] rounded-md"
         id="province"
         name="province"
         title="Select Province"
@@ -74,13 +78,13 @@ const LocationSelector = ({ onLocationChange }) => {
         <option value="0">Province</option>
         {tinh.map((t) => (
           <option key={t.id} value={t.id}>
-            {t.full_name}
+            {t.name}
           </option>
         ))}
       </select>
 
       <select
-        className="css_select border-gray-300 border-[1px] rounded-sm"
+        className="css_select border-gray-300 border-[1px] rounded-md"
         id="district"
         name="district"
         title="Select District"
@@ -90,13 +94,13 @@ const LocationSelector = ({ onLocationChange }) => {
         <option value="0">District</option>
         {quan.map((q) => (
           <option key={q.id} value={q.id}>
-            {q.full_name}
+            {q.name}
           </option>
         ))}
       </select>
 
       <select
-        className="css_select border-gray-300 border-[1px] rounded-sm"
+        className="css_select border-gray-300 border-[1px] rounded-md"
         id="ward"
         name="ward"
         title="Select Ward"
@@ -106,7 +110,7 @@ const LocationSelector = ({ onLocationChange }) => {
         <option value="0">Ward</option>
         {phuong.map((p) => (
           <option key={p.id} value={p.id}>
-            {p.full_name}
+            {p.name}
           </option>
         ))}
       </select>
