@@ -100,6 +100,8 @@ const DashboardBrands = () => {
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
             <tr>
+              <th className="px-4 py-2 text-left">ID</th>
+
               <th className="px-4 py-2 text-left">Logo</th>
               <th className="px-4 py-2 text-left">Website</th>
               <th className="px-4 py-2 text-left">Brand Name</th>
@@ -112,6 +114,7 @@ const DashboardBrands = () => {
           <tbody>
             {brands.map((brand) => (
               <tr key={brand.brandId} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{brand.brandId}</td>
                 <td className="px-4 py-2">
                   <img
                     src={brand.logoUrl}

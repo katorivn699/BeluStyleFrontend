@@ -3,30 +3,42 @@ import { toast, Zoom } from "react-toastify";
 import { apiClient } from "../../core/api";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import LocationSelector from "../../service/LocationService";
 
 const DashboardCreateStaffAccount = () => {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [password, setPassword] = useState("");
-  const [userImage, setUserImage] = useState(null);
-  const [userAddress, setUserAddress] = useState("");
-
   const varToken = localStorage.getItem("_auth");
   const navigate = useNavigate();
 
-  const handleImageChange = (e) => {
-    setUserImage(e.target.files[0]);
-  };
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    username: Yup.string()
+      .required("Username is required")
+      .min(7, "Username must be at least 7 characters")
+      .matches(
+        /^[a-zA-Z0-9]*$/,
+        "Username cannot contain special characters or spaces"
+      ),
+    fullName: Yup.string().required("Full name is required"),
+    password: Yup.string()
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+        "Password must contain one uppercase, one lowercase, and one number"
+      ),
+    userAddress: Yup.string().required("Address is required"),
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (values) => {
     let imageUrl = "";
 
     const uploadImage = () => {
       const formData = new FormData();
-      formData.append("image", userImage);
+      formData.append("image", values.userImage);
 
       const uploadToastId = toast.loading("Uploading image...");
 
@@ -59,12 +71,12 @@ const DashboardCreateStaffAccount = () => {
         .post(
           "/api/admin",
           {
-            email,
-            username,
-            fullName,
-            passwordHash: password,
+            email: values.email,
+            username: values.username,
+            fullName: values.fullName,
+            passwordHash: values.password,
             userImage: imageUrl,
-            userAddress,
+            userAddress: values.userAddress,
           },
           {
             headers: {
@@ -78,12 +90,6 @@ const DashboardCreateStaffAccount = () => {
             position: "bottom-right",
             transition: Zoom,
           });
-          setEmail("");
-          setUsername("");
-          setFullName("");
-          setPassword("");
-          setUserImage(null);
-          setUserAddress("");
           navigate("/Dashboard/Accounts");
         })
         .catch((error) => {
@@ -94,7 +100,7 @@ const DashboardCreateStaffAccount = () => {
         });
     };
 
-    if (userImage) {
+    if (values.userImage) {
       uploadImage()
         .then(createStaffAccount)
         .catch((error) => {
@@ -111,114 +117,143 @@ const DashboardCreateStaffAccount = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Create Staff Account</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+      <Formik
+        initialValues={{
+          email: "",
+          username: "",
+          fullName: "",
+          password: "",
+          userImage: null,
+          userAddress: "",
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values) => handleSubmit(values)}
       >
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="email"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter email"
-            required
-          />
+        {({ setFieldValue, isSubmitting }) => (
+          <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="email"
+              >
+                Email
+              </label>
+              <Field
+                type="email"
+                id="email"
+                name="email"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Enter email"
+              />
+              <ErrorMessage
+                name="email"
+                component="p"
+                className="text-red-500 text-sm"
+              />
 
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="username"
-          >
-            Username
-          </label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter username"
-            required
-          />
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
+                htmlFor="username"
+              >
+                Username
+              </label>
+              <Field
+                type="text"
+                id="username"
+                name="username"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Enter username"
+              />
+              <ErrorMessage
+                name="username"
+                component="p"
+                className="text-red-500 text-sm"
+              />
 
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="fullName"
-          >
-            Full Name
-          </label>
-          <input
-            type="text"
-            id="fullName"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter full name"
-            required
-          />
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
+                htmlFor="fullName"
+              >
+                Full Name
+              </label>
+              <Field
+                type="text"
+                id="fullName"
+                name="fullName"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Enter full name"
+              />
+              <ErrorMessage
+                name="fullName"
+                component="p"
+                className="text-red-500 text-sm"
+              />
 
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="password"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter password"
-            required
-          />
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
+                htmlFor="password"
+              >
+                Password
+              </label>
+              <Field
+                type="password"
+                id="password"
+                name="password"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Enter password"
+              />
+              <ErrorMessage
+                name="password"
+                component="p"
+                className="text-red-500 text-sm"
+              />
 
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="userImage"
-          >
-            User Image
-          </label>
-          <input
-            type="file"
-            id="userImage"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
+                htmlFor="userImage"
+              >
+                User Image
+              </label>
+              <input
+                type="file"
+                id="userImage"
+                accept="image/*"
+                onChange={(e) => setFieldValue("userImage", e.target.files[0])}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
 
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="userAddress"
-          >
-            User Address
-          </label>
-          <input
-            type="text"
-            id="userAddress"
-            value={userAddress}
-            onChange={(e) => setUserAddress(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter address"
-            required
-          />
-        </div>
-        <div className="flex items-center justify-center">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Create Account
-          </button>
-        </div>
-      </form>
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
+                htmlFor="userAddress"
+              >
+                User Address
+              </label>
+              <LocationSelector
+                onLocationChange={(location) =>
+                  setFieldValue(
+                    "userAddress",
+                    `${location.tinh}, ${location.quan}, ${location.phuong}`
+                  )
+                }
+              />
+              <ErrorMessage
+                name="userAddress"
+                component="p"
+                className="text-red-500 text-sm"
+              />
+            </div>
+            <div className="flex items-center justify-center">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Create Account
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 };

@@ -5,10 +5,10 @@ import { FaPlus } from "react-icons/fa";
 
 const DashboardWarehouseDetail = () => {
   const { stockId } = useParams();
-  const [stock, setStock] = useState(null);
+  const [stockProducts, setStockProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedBrandId, setSelectedBrandId] = useState(""); // Change to brandId
+  const [selectedCategoryId, setSelectedCategoryId] = useState(""); // Change to categoryId
   const [showOnlyLowStock, setShowOnlyLowStock] = useState(false);
 
   const varToken = localStorage.getItem("_auth");
@@ -21,41 +21,41 @@ const DashboardWarehouseDetail = () => {
         },
       })
       .then((response) => {
-        setStock(response.data);
+        setStockProducts(response.data);
       })
       .catch((error) => {
         console.error("Error fetching stock details:", error);
       });
   }, [stockId]);
 
-  if (!stock) {
+  if (!stockProducts.length) {
     return <div>Loading stock details...</div>;
   }
 
-  const groupedProducts = stock.stockProducts.reduce(
-    (grouped, stockProduct) => {
-      const { product } = stockProduct.productVariation;
-      if (!grouped[product.productId]) {
-        grouped[product.productId] = {
-          product,
-          variations: [],
-        };
-      }
-      grouped[product.productId].variations.push(stockProduct);
-      return grouped;
-    },
-    {}
-  );
+  const groupedProducts = stockProducts.reduce((grouped, product) => {
+    if (!grouped[product.productId]) {
+      grouped[product.productId] = {
+        productName: product.productName,
+        brandId: product.brandId, // Store brandId
+        brandName: product.brandName,
+        categoryId: product.categoryId, // Store categoryId
+        categoryName: product.categoryName,
+        variations: [],
+      };
+    }
+    grouped[product.productId].variations.push(product);
+    return grouped;
+  }, {});
 
   const filteredProducts = Object.values(groupedProducts).filter((group) => {
-    const matchesSearch = group.product.productName
+    const matchesSearch = group.productName
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    const matchesBrand = selectedBrand
-      ? group.product.brand.brandName === selectedBrand
+    const matchesBrand = selectedBrandId
+      ? group.brandId === selectedBrandId // Use brandId for filtering
       : true;
-    const matchesCategory = selectedCategory
-      ? group.product.category.categoryName === selectedCategory
+    const matchesCategory = selectedCategoryId
+      ? group.categoryId === selectedCategoryId // Use categoryId for filtering
       : true;
     const matchesLowStock = showOnlyLowStock
       ? group.variations.some((variation) => variation.quantity < 10)
@@ -68,8 +68,10 @@ const DashboardWarehouseDetail = () => {
       {/* Header Section: Warehouse Name and Import Button */}
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className="text-4xl font-bold">{stock.stockName}</h1>
-          <p className="text-lg text-gray-600">{stock.stockAddress}</p>
+          <h1 className="text-4xl font-bold">{stockProducts[0].stockName}</h1>
+          <p className="text-lg text-gray-600">
+            {stockProducts[0].stockAddress}
+          </p>
         </div>
         <Link to="/Dashboard/Warehouse/Import">
           <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
@@ -88,35 +90,27 @@ const DashboardWarehouseDetail = () => {
           className="p-2 border border-gray-300 rounded"
         />
         <select
-          value={selectedBrand}
-          onChange={(e) => setSelectedBrand(e.target.value)}
+          value={selectedBrandId} // Use brandId for selection
+          onChange={(e) => setSelectedBrandId(e.target.value)}
           className="p-2 border border-gray-300 rounded"
         >
           <option value="">All Brands</option>
-          {[
-            ...new Set(
-              Object.values(groupedProducts).map(
-                (group) => group.product.brand.brandName
-              )
-            ),
-          ].map((brand) => (
-            <option key={brand} value={brand}>
-              {brand}
-            </option>
-          ))}
+          {[...new Set(stockProducts.map((product) => product.brandName))].map(
+            (brand) => (
+              <option key={brand} value={brand}>
+                {brand}
+              </option>
+            )
+          )}
         </select>
         <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
+          value={selectedCategoryId} // Use categoryId for selection
+          onChange={(e) => setSelectedCategoryId(e.target.value)}
           className="p-2 border border-gray-300 rounded"
         >
           <option value="">All Categories</option>
           {[
-            ...new Set(
-              Object.values(groupedProducts).map(
-                (group) => group.product.category.categoryName
-              )
-            ),
+            ...new Set(stockProducts.map((product) => product.categoryName)),
           ].map((category) => (
             <option key={category} value={category}>
               {category}
@@ -138,25 +132,20 @@ const DashboardWarehouseDetail = () => {
       <div>
         {filteredProducts.length > 0 ? (
           filteredProducts.map((group) => (
-            <div key={group.product.productId} className="mb-8">
+            <div key={group.productName} className="mb-8">
               <div className="mb-4">
                 <h3 className="text-2xl font-semibold mb-2">
-                  {group.product.productName}
+                  {group.productName}
                 </h3>
                 <div className="flex items-center mb-2">
                   <span className="mr-4 flex items-center font-bold">
                     <span className="text-sm text-gray-500">
-                      {group.product.brand.brandName}
+                      {group.brandName}
                     </span>
                   </span>
                   <span className="flex items-center">
-                    <img
-                      src={group.product.category.imageUrl}
-                      alt={group.product.category.categoryName}
-                      className="w-6 h-6 object-cover mr-2"
-                    />
                     <span className="text-sm text-gray-500">
-                      {group.product.category.categoryName}
+                      {group.categoryName}
                     </span>
                   </span>
                 </div>
@@ -165,6 +154,7 @@ const DashboardWarehouseDetail = () => {
               <table className="table-auto w-full border-collapse">
                 <thead>
                   <tr>
+                    <th className="px-4 py-2 text-left">ID</th>
                     <th className="px-4 py-2 text-left">Image</th>
                     <th className="px-4 py-2 text-left">Size</th>
                     <th className="px-4 py-2 text-left">Color</th>
@@ -177,45 +167,38 @@ const DashboardWarehouseDetail = () => {
                     .filter((variation) =>
                       showOnlyLowStock ? variation.quantity < 10 : true
                     )
-                    .map((stockProduct) => {
-                      const { productVariation, quantity } = stockProduct;
-                      return (
-                        <tr
-                          key={productVariation.variationId}
-                          className="border-t"
+                    .map((variation) => (
+                      <tr key={variation.variationId} className="border-t">
+                        <td className="px-4 py-2">{variation.variationId}</td>
+                        <td className="px-4 py-2">
+                          <img
+                            src={variation.productVariationImage}
+                            alt={`${variation.colorName} ${group.productName}`}
+                            className="w-12 h-12 object-cover"
+                          />
+                        </td>
+                        <td className="px-4 py-2">{variation.sizeName}</td>
+                        <td className="px-4 py-6 flex items-center">
+                          {variation.colorName}
+                          <span
+                            className="ml-2 inline-block w-4 h-4 border rounded"
+                            style={{
+                              backgroundColor: variation.hexCode,
+                            }}
+                          ></span>
+                        </td>
+                        <td className="px-4 py-2">
+                          ${variation.productPrice.toFixed(2)}
+                        </td>
+                        <td
+                          className={`px-4 py-2 ${
+                            variation.quantity < 10 ? "text-red-500" : ""
+                          }`}
                         >
-                          <td className="px-4 py-2">
-                            <img
-                              src={productVariation.productVariationImage}
-                              alt={`${productVariation.color.colorName} ${group.product.productName}`}
-                              className="w-12 h-12 object-cover"
-                            />
-                          </td>
-                          <td className="px-4 py-2">
-                            {productVariation.size.sizeName}
-                          </td>
-                          <td className="px-4 py-6 flex items-center">
-                            {productVariation.color.colorName}
-                            <span
-                              className="ml-2 inline-block w-4 h-4 border rounded"
-                              style={{
-                                backgroundColor: productVariation.color.hexCode,
-                              }}
-                            ></span>
-                          </td>
-                          <td className="px-4 py-2">
-                            ${productVariation.productPrice.toFixed(2)}
-                          </td>
-                          <td
-                            className={`px-4 py-2 ${
-                              quantity < 10 ? "text-red-500" : ""
-                            }`}
-                          >
-                            {quantity}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                          {variation.quantity}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

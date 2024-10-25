@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { apiClient } from "../../core/api"; // Assuming you have an api client setup
+import { toast, Zoom } from "react-toastify"; // Assuming you want to use toast for notifications
+import { FaTrash } from "react-icons/fa";
 
 const DashboardViewSaleProduct = () => {
   const [products, setProducts] = useState([]); // State to store products
@@ -10,6 +12,7 @@ const DashboardViewSaleProduct = () => {
   const varToken = localStorage.getItem("_auth");
 
   useEffect(() => {
+    // Fetch sale details
     apiClient
       .get(`/api/sales/${saleId}`, {
         headers: {
@@ -23,6 +26,7 @@ const DashboardViewSaleProduct = () => {
         console.error("Error fetching sale details:", error);
       });
 
+    // Fetch products in sale
     apiClient
       .get(`/api/sales/${saleId}/products`, {
         headers: {
@@ -36,6 +40,33 @@ const DashboardViewSaleProduct = () => {
         console.error("Error fetching products for sale:", error);
       });
   }, [saleId]);
+
+  // Function to delete a product from the sale
+  const handleDeleteProduct = (productId) => {
+    apiClient
+      .delete(`/api/sales/${saleId}/products?productId=${productId}`, {
+        headers: {
+          Authorization: "Bearer " + varToken,
+        },
+      })
+      .then(() => {
+        // Remove the deleted product from the state
+        setProducts(
+          products.filter((product) => product.productId !== productId)
+        );
+        toast.success("Product removed from sale", {
+          position: "bottom-center",
+          transition: Zoom,
+        });
+      })
+      .catch((error) => {
+        console.error("Error deleting product from sale:", error);
+        toast.error("Failed to remove product from sale", {
+          position: "bottom-center",
+          transition: Zoom,
+        });
+      });
+  };
 
   return (
     <>
@@ -66,20 +97,32 @@ const DashboardViewSaleProduct = () => {
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
             <tr>
+              <th className="px-4 py-2 text-left">ID</th>
               <th className="px-4 py-2 text-left">Product Name</th>
               <th className="px-4 py-2 text-left">Category</th>
               <th className="px-4 py-2 text-left">Brand</th>
               <th className="px-4 py-2 text-left">Description</th>
+              <th className="px-4 py-2 text-left">Remove</th>{" "}
+              {/* New Action column */}
             </tr>
           </thead>
 
           <tbody>
             {products.map((product) => (
               <tr key={product.productId} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{product.productId}</td>
                 <td className="px-4 py-2">{product.productName}</td>
                 <td className="px-4 py-2">{product.category.categoryName}</td>
                 <td className="px-4 py-2">{product.brand.brandName}</td>
                 <td className="px-4 py-2">{product.productDescription}</td>
+                <td className="px-4 py-2">
+                  <button
+                    onClick={() => handleDeleteProduct(product.productId)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <FaTrash />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

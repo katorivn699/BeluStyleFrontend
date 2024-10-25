@@ -110,6 +110,7 @@ const DashboardCategories = () => {
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
             <tr>
+              <th className="px-4 py-2 text-left">ID</th>
               <th className="px-4 py-2 text-left">Image</th>
               <th className="px-4 py-2 text-left">Category Name</th>
               <th className="px-4 py-2 text-left">Description</th>
@@ -121,6 +122,7 @@ const DashboardCategories = () => {
           <tbody>
             {categories.map((category) => (
               <tr key={category.categoryId} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{category.categoryId}</td>
                 <td className="px-4 py-2">
                   <img
                     src={category.imageUrl}

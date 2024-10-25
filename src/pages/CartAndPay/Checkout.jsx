@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SelectLocation from "../../service/ProviceService";
+import SelectLocation from "../../service/LocationService";
 import RadioCommon from "../../components/inputs/Radio";
 import { Button } from "@mui/material";
 import { useCart } from "react-use-cart";
@@ -170,7 +170,9 @@ const CheckoutPage = () => {
           </div>
           <div className="FixedTotal px-5 pb-5 flex justify-between">
             <p className="text-blueOcean font-bold text-xl">Total</p>
-            <p className="text-blueOcean font-bold text-3xl">{lastTotal.toFixed(2)}$</p>
+            <p className="text-blueOcean font-bold text-3xl">
+              {lastTotal.toFixed(2)}$
+            </p>
           </div>
         </div>
       </div>
