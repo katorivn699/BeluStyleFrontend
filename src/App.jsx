@@ -51,7 +51,8 @@ function App() {
     location.pathname !== "/forgotPassword/success" &&
     location.pathname !== "/reset-password/success" &&
     location.pathname !== "/reset-password" &&
-    location.pathname !== "/LoginForStaffAndAdmin";
+    location.pathname !== "/LoginForStaffAndAdmin" &&
+    location.pathname !== "/confirm-registration/success";
 
   const showFooter =
     location.pathname !== "/login" &&
@@ -65,7 +66,9 @@ function App() {
     location.pathname !== "/LoginForStaffAndAdmin" &&
     location.pathname !== "/checkout" &&
     !location.pathname.startsWith("/user") &&
-    !location.pathname.startsWith("/Dashboard");
+    !location.pathname.startsWith("/Dashboard") &&
+    !location.pathname.startsWith("/confirm-registration")&&
+    location.pathname !== "/discounts";
 
   const applyPadding = () => {
     const path = location.pathname;
@@ -84,7 +87,8 @@ function App() {
       path === "/cart" ||
       path === "/checkout" ||
       path === "/reset-password" ||
-      path === "/reset-password/success"
+      path === "/reset-password/success" ||
+      path === "/discounts"
     ) {
       return "pt-[90px]";
     }

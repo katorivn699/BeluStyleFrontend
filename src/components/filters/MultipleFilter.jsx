@@ -1,6 +1,6 @@
 import { Rating } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import {RadioCommon} from "../inputs/Radio";
+import { RadioCommon } from "../inputs/Radio";
 import { getBrand, getCategory } from "../../service/ShopService";
 
 const FilterComponent = ({ onFilter }) => {
@@ -28,22 +28,27 @@ const FilterComponent = ({ onFilter }) => {
     fetchBrands();
   }, []);
 
-  const handleReset = () => {
+  const handleReset = (e) => {
+    e.preventDefault();
     setBrand("");
     setCategory("");
     setPriceOrder("");
     setRating(0);
-  }
-
+    if (typeof onFilter === "function") {
+      onFilter({ category: "", brand: "", priceOrder: "", rating: 0 });
+    }
+  };
 
   const handleFilter = (e) => {
     e.preventDefault();
-    onFilter({
-      category,
-      brand,
-      priceOrder,
-      rating,
-    });
+    if (typeof onFilter === "function") {
+      onFilter({
+        category,
+        brand,
+        priceOrder,
+        rating,
+      });
+    }
   };
 
   return (
@@ -51,7 +56,9 @@ const FilterComponent = ({ onFilter }) => {
       <form onSubmit={handleFilter}>
         {/* Category Filter */}
         <div className="mb-4">
-          <label className="block text-2xl pb-4 font-medium mb-1">Category</label>
+          <label className="block text-2xl pb-4 font-medium mb-1">
+            Category
+          </label>
           <div className="space-y-2">
             <RadioCommon
               context="All Categories"

@@ -23,67 +23,74 @@ export const GetUserInfo = (authHeader) => {
 };
 
 export const UpdateUserInfo = (data, authHeader) => {
-    apiClient
-      .put(
-        "/api/account",
-        {
-          userId : data.userId,
-          username: data.username,
-          userImage: data.userImage,
-          fullName: data.fullName,
-          userAddress: data.userAddress,
+  try {
+    console.log(data, authHeader);
+    const response = apiClient
+    .put(
+      "/api/account",
+      {
+        userId: data.userId,
+        username: data.username,
+        userImage: data.userImage,
+        fullName: data.fullName,
+        userAddress: data.userAddress,
+      },
+      {
+        headers: {
+          Authorization: authHeader,
         },
-        {
-          headers: {
-            Authorization: authHeader,
-          },
-        }
-      )
-      .then((response) => {
-        return response;
-      })
-      .catch((error) => {
-        toast.error("Error Update User Info: " + error?.message, {
-          position: "top-center",
-          transition: Zoom,
-        });
-      });
+      }
+    );
+    return response;
+  } catch (error) {
+    console.log(error?.data);
+  }
 };
 
 export const RequestDeleteAccount = (authHeader) => {
-  apiClient.post("/api/request-delete",
-    {},
-    {
-      headers: {
-        Authorization: authHeader,
-      },
-    }
-  )
-  .then((response) => {
-    return response;
-  })
-  .catch((error) => {
-    toast.error(error?.data?.message || "Error request delete account", {
-      position: "top-center",
-      transition: Zoom,
+  apiClient
+    .post(
+      "/api/request-delete",
+      {},
+      {
+        headers: {
+          Authorization: authHeader,
+        },
+      }
+    )
+    .then((response) => {
+      return response;
     })
-  })
-}
+    .catch((error) => {
+      toast.error(error?.data?.message || "Error request delete account", {
+        position: "top-center",
+        transition: Zoom,
+      });
+    });
+};
 
 export const ChangePassword = async (data, authHeader, email) => {
   try {
     const response = await apiClient.post("/api/auth/reset-password", {
       email: email,
       newPassword: data.newPassword,
-      oldPassword: data.currentPassword
+      oldPassword: data.currentPassword,
     });
     return response;
   } catch (error) {
     console.log(error);
-    toast.error("Error change password: " + error?.data?.message, {
-      position: "top-center",
-      transition: Zoom
-    })
   }
-  
-}
+};
+
+export const GetNotifications = async (authHeader) => {
+  try {
+    const response = apiClient.get("/api/notifications", {
+      headers: {
+        Authorization: authHeader,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error?.data);
+  }
+};

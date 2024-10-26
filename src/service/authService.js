@@ -3,10 +3,34 @@ import { toast, Zoom } from "react-toastify";
 import { apiClient } from "../core/api";
 
 export const LoginUser = async (data, navigate, signIn) => {
-  const loginPromise = apiClient.post("/api/auth/login", {
-    username: data.username,
-    passwordHash: data.password,
-  });
+  const loginPromise = apiClient
+    .post("/api/auth/login", {
+      username: data.username,
+      passwordHash: data.password,
+    })
+    .then((response) => {
+      const user = jwtDecode(response.data.token);
+
+      // Check the user's role and throw an error if it's not CUSTOMER
+      if (user.role?.[0]?.authority !== "CUSTOMER") {
+        throw new Error("Access Denied: Only customers are allowed");
+      }
+
+      // Proceed with login if the role is CUSTOMER
+      signIn({
+        auth: {
+          token: response.data.token,
+          type: "Bearer",
+        },
+        userState: {
+          username: data.username,
+          userImage: user.image,
+          role: user.role?.[0]?.authority,
+        },
+      });
+      navigate("/");
+      return response;
+    });
 
   toast.promise(
     loginPromise,
@@ -15,13 +39,13 @@ export const LoginUser = async (data, navigate, signIn) => {
       success: "Login successful!",
       error: {
         render({ data }) {
-          if (data.response) {
-            const errorMessage =
-              data.response.data?.message ||
-              "An error occurred. Please try again.";
-            return errorMessage;
+          if (data?.message === "Access Denied: Only customers are allowed") {
+            return "Access Denied: Only customers are allowed";
           }
-          return "An error occurred. Please try again.";
+          const errorMessage =
+            data?.response?.data?.message ||
+            "An error occurred. Please try again.";
+          return errorMessage;
         },
       },
     },
@@ -32,40 +56,19 @@ export const LoginUser = async (data, navigate, signIn) => {
   );
 
   try {
-    const response = await loginPromise;
-
-    const user = jwtDecode(response.data.token);
-    signIn({
-      auth: {
-        token: response.data.token,
-        type: "Bearer",
-      },
-      userState: {
-        username: data.username,
-        userImage: user.image,
-        role: user.role?.[0]?.authority,
-      },
-    });
-
-    navigate("/");
+    await loginPromise;
   } catch (error) {
-    throw new Error(
-      error.response?.data.message || "An error occurred. Please try again."
-    );
+    // Errors are handled within toast.promise, so no need for additional handling here
   }
 };
 
 export const RegisterUser = async (data, navigate) => {
   try {
-    const response = await apiClient.post("/api/auth/register", {
+    await apiClient.post("/api/auth/register", {
       username: data.username,
       fullName: data.fullname,
       email: data.email,
       passwordHash: data.password,
-    });
-    toast.success(response.data.message || "Register successful!", {
-      position: "top-center",
-      transition: Zoom,
     });
     localStorage.setItem("mail", data.email);
     navigate("/register/confirm-registration");

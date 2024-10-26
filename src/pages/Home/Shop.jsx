@@ -16,13 +16,18 @@ export function Shop() {
   const [page, setPage] = useState(1); // Quản lý trang hiện tại
   const [productData, setProductData] = useState([]); // Dữ liệu sản phẩm
   const productListRef = useRef(null); // Tạo ref cho product list container
+  const [filter, setFilter] = useState({
+    brand: "",
+    category: "",
+    priceOrder: "",
+    rating: 0,
+  })
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await getProductList();
         if (response && response.length > 0) {
-          console.log(response);
           setProductData(response); // Nếu có dữ liệu từ API, set nó
         } else {
           setProductData(products); // Nếu không có dữ liệu, sử dụng mock data
@@ -35,6 +40,11 @@ export function Shop() {
 
     fetchProducts();
   }, []);
+
+  const handleFilterChange = (data) => {
+    setFilter(data);
+    console.log(filter);
+  }
 
   // Tính toán currentItems và pageCount dựa trên trang hiện tại
   const startIndex = (page - 1) * itemsPerPage;
@@ -94,7 +104,9 @@ export function Shop() {
         <div className="grid grid-cols-12 gap-4 pt-10">
           {/* Filter Sidebar */}
           <div className="col-span-3 px-12">
-            <FilterComponent />
+            <FilterComponent
+              onFilter={(filterData) => handleFilterChange(filterData)}
+            />
           </div>
 
           {/* Product List */}
@@ -119,7 +131,9 @@ export function Shop() {
               </div>
             ) : (
               <div className="errorLoading text-center">
-                <p className="font-poppins font-bold text-3xl">Error occur loading Product!</p>
+                <p className="font-poppins font-bold text-3xl">
+                  Error occur loading Product!
+                </p>
               </div>
             )}
           </div>

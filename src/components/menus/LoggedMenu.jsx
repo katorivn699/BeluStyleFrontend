@@ -91,17 +91,6 @@ const LoggedMenu = () => {
           <ListItemText primary="Purchase History" />
         </MenuItem>
 
-        <MenuItem
-          component={Link}
-          to="/notifications"
-          onClick={handleMenuClose}
-        >
-          <ListItemIcon sx={{ fontSize: "1.75rem", minWidth: "40px" }}>
-            <GoBell className="text-3xl" />
-          </ListItemIcon>
-          <ListItemText primary="Notifications" />
-        </MenuItem>
-
         <MenuItem component={Link} to="/discounts" onClick={handleMenuClose}>
           <ListItemIcon sx={{ fontSize: "1.75rem", minWidth: "40px" }}>
             <TbRosetteDiscount className="text-3xl" />

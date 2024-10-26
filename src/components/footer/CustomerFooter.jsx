@@ -5,6 +5,7 @@ import { IoShieldCheckmarkOutline } from "react-icons/io5";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.webp";
+import { Divider } from "@mui/material";
 
 const Footer = () => {
   return (
@@ -78,7 +79,7 @@ const Footer = () => {
 
       {/* Copyright Section */}
       <div className="copyRight bg-base-200 py-4 mx-32">
-      <div className="divider"></div>
+      <Divider></Divider>
         <p className="font-poppins text-sm md:text-base">2024 &copy; Group 4. All rights reverved</p>
       </div>
     </>

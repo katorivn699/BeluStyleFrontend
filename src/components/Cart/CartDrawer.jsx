@@ -12,15 +12,16 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Drawerbtn } from "../buttons/Button";
 import { formatPrice } from "../format/formats";
+import { MdCancel } from "react-icons/md";
 
 const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
-  const drawerRef = useRef(null); 
+  const drawerRef = useRef(null);
   const { isEmpty, items, removeItem, emptyCart, cartTotal } = useCart();
   const navigate = useNavigate();
 
   const handleClickOutside = (event) => {
     if (drawerRef.current && !drawerRef.current.contains(event.target)) {
-      toggleCartDrawer(false)(); 
+      toggleCartDrawer(false)();
     }
   };
 
@@ -35,9 +36,8 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
 
   const handleClickCheckout = () => {
     toggleCartDrawer(false)();
-    navigate("/checkout")
-  }
-
+    navigate("/checkout");
+  };
 
   return (
     <Drawer
@@ -46,9 +46,7 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
       role="presentation"
       onClose={() => toggleCartDrawer(false)}
       PaperProps={{
-        sx: { width: "25%",
-        padding: "15px"
-        }
+        sx: { width: "25%", padding: "15px" },
       }}
     >
       <div ref={drawerRef} className="p-10">
@@ -102,7 +100,9 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
                   color="secondary"
                   sx={{ marginLeft: "auto" }}
                 >
-                  <Typography variant="body2">Xóa</Typography>
+                  <Typography variant="body2">
+                    <MdCancel />
+                  </Typography>
                 </Button>
               </ListItem>
             ))}
@@ -122,10 +122,26 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
         </Box>
 
         {/* Checkout Buttons */}
-        <Box display="flex" justifyContent="space-between" marginTop="16px" sx={{
-          gap: "16px"
-        }}>
-          <Drawerbtn context={"Checkout"} handleClick={handleClickCheckout} isEmpty={isEmpty}/>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          marginTop="16px"
+          sx={{
+            gap: "16px",
+          }}
+        >
+          <Drawerbtn
+            context={"Clear All"}
+            handleClick={() => {
+              emptyCart();
+            }}
+            isEmpty={isEmpty}
+          />
+          <Drawerbtn
+            context={"Checkout"}
+            handleClick={handleClickCheckout}
+            isEmpty={isEmpty}
+          />
         </Box>
       </div>
     </Drawer>

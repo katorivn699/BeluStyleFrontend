@@ -14,32 +14,29 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      const { status } = error.response;
+      const { status, data } = error.response;
+      const message = data?.message || "An error occurred"; // Lấy message từ response nếu có
+
       if (status === 404) {
-        toast.error("Error 404: Resource not found", {
-          position: "top-right",
+        toast.error(`${message}`, {
+          position: "bottom-center",
           transition: Zoom,
         });
       } else if (status === 401) {
-        toast.error("Error 401: Unauthorized access", {
-          position: "top-right",
+        toast.error(`${message}`, {
+          position: "bottom-center",
           transition: Zoom,
         });
       } else if (status === 400) {
-        toast.error("Error 400: Bad request", {
-          position: "top-right",
+        toast.error(`${message}`, {
+          position: "bottom-center",
           transition: Zoom,
         });
       } else {
-        toast.error(
-          `Error ${status}: ${
-            error.response.data.message || "An error occurred"
-          }`,
-          {
-            position: "top-right",
-            transition: Zoom,
-          }
-        );
+        toast.error(`${message}`, {
+          position: "top-right",
+          transition: Zoom,
+        });
       }
     } else {
       toast.error("Network error", {

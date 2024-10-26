@@ -15,13 +15,14 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
 import { useNavigate } from "react-router-dom";
 import UserChangePassword from "./UserChangePassword";
+import userDefault from "../../assets/images/userdefault.webp";
 
 export const UserProfile = () => {
   const authHeader = useAuthHeader();
   const navigate = useNavigate();
   const signOut = useSignOut();
   const [profileImage, setProfileImage] = useState(
-    "/path/to/profile/picture.jpg"
+    userDefault
   );
   const [userData, setUserData] = useState({
     userId: "",
@@ -125,7 +126,8 @@ export const UserProfile = () => {
               ...userData,
               userImage: imageUrl,
             };
-            UpdateUserInfo(updatedUserData, authHeader);
+            await console.log(updatedUserData, authHeader);
+            await UpdateUserInfo(updatedUserData, authHeader);
             resolve(updatedUserData);
           } else {
             reject(new Error("Failed to upload image"));
