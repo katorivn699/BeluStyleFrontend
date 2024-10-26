@@ -14,7 +14,7 @@ import DashboardCreateCategory from "../pages/Dashboard/DashboardCreateCategory"
 import DashboardCategories from "../pages/Dashboard/DashboardCategories";
 import LoginForStaffAndAdmin from "../pages/Login/LoginForStaffAndAdmin";
 import { ErrorNotFound } from "../pages/NotFound/404NotFound";
-import CheckoutPage from "../pages/CartAndPay/Checkout";
+import CheckoutPage from "../pages/CartAndPay/Checkout.jsx";
 import { ProtectedRoute } from "./ProtectedRoute";
 import UserProfile from "../pages/User/UserSettings";
 import RegisterSuccess from "../pages/Register/RegisterSuccess";
