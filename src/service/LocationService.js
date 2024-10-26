@@ -78,7 +78,7 @@ const LocationSelector = ({ onLocationChange }) => {
         <option value="0">Province</option>
         {tinh.map((t) => (
           <option key={t.id} value={t.id}>
-            {t.name}
+            {t.full_name}
           </option>
         ))}
       </select>
@@ -94,7 +94,7 @@ const LocationSelector = ({ onLocationChange }) => {
         <option value="0">District</option>
         {quan.map((q) => (
           <option key={q.id} value={q.id}>
-            {q.name}
+            {q.full_name}
           </option>
         ))}
       </select>
@@ -110,7 +110,7 @@ const LocationSelector = ({ onLocationChange }) => {
         <option value="0">Ward</option>
         {phuong.map((p) => (
           <option key={p.id} value={p.id}>
-            {p.name}
+            {p.full_name}
           </option>
         ))}
       </select>

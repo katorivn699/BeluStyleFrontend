@@ -13,28 +13,28 @@ import { getProductList } from "../../service/ShopService";
 const itemsPerPage = 9;
 
 export function Shop() {
-  const [page, setPage] = useState(1); // Quản lý trang hiện tại
-  const [productData, setProductData] = useState([]); // Dữ liệu sản phẩm
-  const productListRef = useRef(null); // Tạo ref cho product list container
+  const [page, setPage] = useState(1);
+  const [productData, setProductData] = useState([]);
+  const productListRef = useRef(null);
   const [filter, setFilter] = useState({
     brand: "",
     category: "",
     priceOrder: "",
     rating: 0,
-  })
+  });
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await getProductList();
         if (response && response.length > 0) {
-          setProductData(response); // Nếu có dữ liệu từ API, set nó
+          setProductData(response);
         } else {
-          setProductData(products); // Nếu không có dữ liệu, sử dụng mock data
+          setProductData(products);
         }
       } catch (error) {
         console.log("Error! trycatch : " + error.data);
-        setProductData(products); // Trong trường hợp lỗi, sử dụng mock data
+        setProductData(products);
       }
     };
 
@@ -43,19 +43,40 @@ export function Shop() {
 
   const handleFilterChange = (data) => {
     setFilter(data);
+    setPage(1); // Reset to first page when filters change
+  };
+
+  const applyFilters = () => {
     console.log(filter);
-  }
+    return productData
+      .filter((item) => {
+        // Apply brand filter
+        if (filter.brand && item.brand !== filter.brand) return false;
+        // Apply category filter
+        if (filter.category && item.category !== filter.category) return false;
+        // Apply rating filter
+        if (filter.rating && item.rating < filter.rating) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        // Apply price sorting
+        if (filter.priceOrder === "asc") return a.price - b.price;
+        if (filter.priceOrder === "desc") return b.price - a.price;
+        return 0;
+      });
+  };
 
-  // Tính toán currentItems và pageCount dựa trên trang hiện tại
+  const filteredProducts = applyFilters();
+
   const startIndex = (page - 1) * itemsPerPage;
-  const currentItems = productData.slice(startIndex, startIndex + itemsPerPage); // Sử dụng productData từ API hoặc mock data
-  const pageCount = Math.ceil(productData.length / itemsPerPage);
+  const currentItems = filteredProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+  const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
 
-  // Xử lý thay đổi trang và scroll lại đến section product list
   const handlePageChange = (event, value) => {
-    setPage(value); // Cập nhật page state
-
-    // Scroll đến phần product list
+    setPage(value);
     if (productListRef.current) {
       productListRef.current.scrollIntoView({
         behavior: "smooth",
@@ -64,7 +85,7 @@ export function Shop() {
     }
   };
 
-  const countProduct = currentItems.length;
+  const countProduct = filteredProducts.length;
 
   return (
     <MainLayout>
@@ -79,7 +100,6 @@ export function Shop() {
             <h1 className="font-poppins font-semibold text-2xl text-black">
               Shop
             </h1>
-            {/* Breadcrumbs */}
             <div className="breadcrumbs mt-4">
               <Breadcrumbs aria-label="breadcrumb" className="text-black">
                 <Link
@@ -102,16 +122,11 @@ export function Shop() {
           </p>
         </div>
         <div className="grid grid-cols-12 gap-4 pt-10">
-          {/* Filter Sidebar */}
-          <div className="col-span-3 px-12">
-            <FilterComponent
-              onFilter={(filterData) => handleFilterChange(filterData)}
-            />
+          <div className="col-span-4 px-12">
+            <FilterComponent onFilter={handleFilterChange} />
           </div>
-
-          {/* Product List */}
-          <div className="col-span-9">
-            {productData.length > 0 ? (
+          <div className="col-span-8">
+            {filteredProducts.length > 0 ? (
               <div
                 className="col-span-1 flex flex-col items-center"
                 ref={productListRef}
@@ -120,8 +135,8 @@ export function Shop() {
                 <div className="paginate mt-6">
                   <Pagination
                     count={pageCount}
-                    page={page} // Controlled component with the current page
-                    onChange={handlePageChange} // Handle page change
+                    page={page}
+                    onChange={handlePageChange}
                     color="primary"
                     shape="rounded"
                     showFirstButton
@@ -132,7 +147,7 @@ export function Shop() {
             ) : (
               <div className="errorLoading text-center">
                 <p className="font-poppins font-bold text-3xl">
-                  Error occur loading Product!
+                  No products available
                 </p>
               </div>
             )}

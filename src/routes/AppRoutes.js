@@ -48,9 +48,31 @@ import DashboardEditDiscount from "../pages/Dashboard/DashboardEditDiscount.js";
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
     <Routes>
-      <Route exact path="/" element={<Home />} />
-      <Route path="/shop" element={<Shop />} />
-      <Route path="/about" element={<About />} />
+      <Route
+        exact
+        path="/"
+        element={
+          <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/shop"
+        element={
+          <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
+            <Shop />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/about"
+        element={
+          <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
+            <About />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/login"
         element={
@@ -108,7 +130,10 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
           </ProtectedRoute>
         }
       />
-      <Route path="/confirm-registration/success" element={<RegisterSuccess />} />
+      <Route
+        path="/confirm-registration/success"
+        element={<RegisterSuccess />}
+      />
       <Route path="/shop/product/:id" element={<ProductDetailPage />} />
       <Route
         path="/user/information"
@@ -264,7 +289,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         }
       />
 
-<Route
+      <Route
         path="/Dashboard/Accounts/Create"
         element={
           <PrivateRoute requiredRoles={["ADMIN"]}>

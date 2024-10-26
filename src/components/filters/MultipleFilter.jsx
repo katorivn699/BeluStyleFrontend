@@ -153,15 +153,15 @@ const FilterComponent = ({ onFilter }) => {
         </div>
 
         {/* Filter Button */}
-        <div>
+        <div className="flex space-x-3">
           <button
             type="submit"
-            className="w-1/2 py-2 bg-blue-600 text-white rounded-md"
-          >
+            className="flex-1 py-2 bg-blue-600 text-white rounded-md"
+          > 
             Apply Filters
           </button>
           <button
-            className="w-1/2 py-2 bg-red-600 text-white rounded-md"
+            className="flex-1 py-2 bg-red-600 text-white rounded-md"
             onClick={handleReset}
           >
             Reset Filter
