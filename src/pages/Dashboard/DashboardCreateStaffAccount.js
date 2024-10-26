@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; // Import useState for image preview
 import { toast, Zoom } from "react-toastify";
 import { apiClient } from "../../core/api";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,10 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import LocationSelector from "../../service/LocationService";
+import { TextField, Button, Typography, Box } from "@mui/material";
 
 const DashboardCreateStaffAccount = () => {
   const varToken = localStorage.getItem("_auth");
   const navigate = useNavigate();
+  const [previewImage, setPreviewImage] = useState(null); // State for image preview
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -31,7 +33,16 @@ const DashboardCreateStaffAccount = () => {
         "Password must contain one uppercase, one lowercase, and one number"
       ),
     userAddress: Yup.string().required("Address is required"),
+    userImage: Yup.mixed().required("Image is required"), // Validate userImage
   });
+
+  const handleImageChange = (event, setFieldValue) => {
+    const file = event.currentTarget.files[0];
+    if (file) {
+      setFieldValue("userImage", file);
+      setPreviewImage(URL.createObjectURL(file)); // Create a preview URL for the selected image
+    }
+  };
 
   const handleSubmit = async (values) => {
     let imageUrl = "";
@@ -116,7 +127,9 @@ const DashboardCreateStaffAccount = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Create Staff Account</h1>
+      <Typography variant="h4" gutterBottom>
+        Create Staff Account
+      </Typography>
       <Formik
         initialValues={{
           email: "",
@@ -127,107 +140,83 @@ const DashboardCreateStaffAccount = () => {
           userAddress: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => handleSubmit(values)}
+        onSubmit={handleSubmit}
       >
         {({ setFieldValue, isSubmitting }) => (
-          <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="email"
-              >
-                Email
-              </label>
+          <Form>
+            <Box sx={{ mb: 2 }}>
               <Field
-                type="email"
-                id="email"
                 name="email"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter email"
+                as={TextField}
+                label="Email"
+                variant="outlined"
+                fullWidth
+                required
+                helperText={<ErrorMessage name="email" />}
               />
-              <ErrorMessage
-                name="email"
-                component="p"
-                className="text-red-500 text-sm"
-              />
-
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-                htmlFor="username"
-              >
-                Username
-              </label>
+            </Box>
+            <Box sx={{ mb: 2 }}>
               <Field
-                type="text"
-                id="username"
                 name="username"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter username"
+                as={TextField}
+                label="Username"
+                variant="outlined"
+                fullWidth
+                required
+                helperText={<ErrorMessage name="username" />}
               />
-              <ErrorMessage
-                name="username"
-                component="p"
-                className="text-red-500 text-sm"
-              />
-
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-                htmlFor="fullName"
-              >
-                Full Name
-              </label>
+            </Box>
+            <Box sx={{ mb: 2 }}>
               <Field
-                type="text"
-                id="fullName"
                 name="fullName"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter full name"
+                as={TextField}
+                label="Full Name"
+                variant="outlined"
+                fullWidth
+                required
+                helperText={<ErrorMessage name="fullName" />}
               />
-              <ErrorMessage
-                name="fullName"
-                component="p"
-                className="text-red-500 text-sm"
-              />
-
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-                htmlFor="password"
-              >
-                Password
-              </label>
+            </Box>
+            <Box sx={{ mb: 2 }}>
               <Field
+                name="password"
+                as={TextField}
+                label="Password"
                 type="password"
-                id="password"
-                name="password"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter password"
+                variant="outlined"
+                fullWidth
+                required
+                helperText={<ErrorMessage name="password" />}
               />
-              <ErrorMessage
-                name="password"
-                component="p"
-                className="text-red-500 text-sm"
-              />
+            </Box>
 
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-                htmlFor="userImage"
-              >
-                User Image
-              </label>
-              <input
-                type="file"
-                id="userImage"
-                accept="image/*"
-                onChange={(e) => setFieldValue("userImage", e.target.files[0])}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
+            <Box mt={2}>
+              <Button variant="outlined" component="label" fullWidth>
+                Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => handleImageChange(event, setFieldValue)}
+                  hidden
+                />
+              </Button>
+              <ErrorMessage name="userImage">
+                {(msg) => <Typography color="error">{msg}</Typography>}
+              </ErrorMessage>
+            </Box>
 
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-                htmlFor="userAddress"
-              >
-                User Address
-              </label>
+            {/* Image Preview */}
+            {previewImage && (
+              <Box mt={2} display="flex" justifyContent="center">
+                <img
+                  src={previewImage}
+                  alt="Preview"
+                  style={{ width: "100%", maxHeight: 200, objectFit: "cover" }}
+                />
+              </Box>
+            )}
+
+            <Box mt={2}>
               <LocationSelector
                 onLocationChange={(location) =>
                   setFieldValue(
@@ -236,21 +225,21 @@ const DashboardCreateStaffAccount = () => {
                   )
                 }
               />
-              <ErrorMessage
-                name="userAddress"
-                component="p"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div className="flex items-center justify-center">
-              <button
+              <ErrorMessage name="userAddress">
+                {(msg) => <Typography color="error">{msg}</Typography>}
+              </ErrorMessage>
+            </Box>
+
+            <Box mt={2} display="flex" justifyContent="center">
+              <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                variant="contained"
+                color="primary"
               >
                 Create Account
-              </button>
-            </div>
+              </Button>
+            </Box>
           </Form>
         )}
       </Formik>

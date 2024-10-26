@@ -14,7 +14,6 @@ const DashboardNotifications = () => {
   const [selectedNotification, setNotification] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const authUser = useAuthUser();
-  const userRole = authUser.role;
   const varToken = localStorage.getItem("_auth");
 
   const openDeleteModal = (notification) => {
@@ -68,20 +67,11 @@ const DashboardNotifications = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        let response;
-        if (userRole === "ADMIN") {
-          response = await apiClient.get("/api/notifications/admin", {
-            headers: {
-              Authorization: "Bearer " + varToken,
-            },
-          });
-        } else if (userRole === "STAFF") {
-          response = await apiClient.get("/api/notifications/staff", {
-            headers: {
-              Authorization: "Bearer " + varToken,
-            },
-          });
-        }
+        const response = await apiClient.get("/api/notifications/as", {
+          headers: {
+            Authorization: "Bearer " + varToken,
+          },
+        });
 
         if (response) {
           setNotifications(response.data);
@@ -92,7 +82,7 @@ const DashboardNotifications = () => {
     };
 
     fetchNotifications();
-  }, [userRole, varToken]);
+  }, [varToken]);
 
   return (
     <>
@@ -153,7 +143,7 @@ const DashboardNotifications = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center px-4 py-2">
+                <td colSpan="6" className="text-center px-4 py-2">
                   No notifications found.
                 </td>
               </tr>

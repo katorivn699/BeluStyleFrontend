@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { apiClient } from "../../core/api"; // Assuming you have an api client setup
 import { toast, Zoom } from "react-toastify"; // Assuming you want to use toast for notifications
-import { FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash } from "react-icons/fa";
 
 const DashboardViewSaleProduct = () => {
   const [products, setProducts] = useState([]); // State to store products
@@ -89,9 +89,15 @@ const DashboardViewSaleProduct = () => {
       )}
 
       <div className="flex items-center justify-between">
-        <h1 className="text-4xl font-bold mb-6">Products in Sale {saleId}</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-4xl font-bold mb-6">Products in Sale {saleId}</h1>
+        </div>
+        <Link to={`/Dashboard/Sales/${saleId}/AddProduct`}>
+          <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
+            <FaPlus className="mr-2" /> Add Products
+          </button>
+        </Link>
       </div>
-
       {/* Products Table */}
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse">

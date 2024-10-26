@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { apiClient } from "../../core/api"; // Assuming you have an api client setup
+import {
+  Button,
+  TextField,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import { apiClient } from "../../core/api";
 
 const DashboardEditSale = () => {
   const [saleType, setSaleType] = useState("PERCENTAGE");
@@ -13,7 +22,6 @@ const DashboardEditSale = () => {
 
   const varToken = localStorage.getItem("_auth");
 
-  // Fetch sale details on component mount
   useEffect(() => {
     apiClient
       .get(`/api/sales/${saleId}`, {
@@ -61,7 +69,7 @@ const DashboardEditSale = () => {
       })
       .then((response) => {
         console.log("Sale updated successfully:", response.data);
-        navigate("/Dashboard/Sales"); // Redirect to sales list after updating the sale
+        navigate("/Dashboard/Sales");
       })
       .catch((error) => {
         console.error("Error updating sale:", error);
@@ -70,85 +78,73 @@ const DashboardEditSale = () => {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h1 className="text-4xl font-bold mb-6">Edit Sale {saleId}</h1>
-
+      <Typography variant="h4" gutterBottom>
+        Edit Sale {saleId}
+      </Typography>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Sale Type
-          </label>
-          <select
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Sale Type</InputLabel>
+          <Select
             value={saleType}
             onChange={(e) => setSaleType(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+            label="Sale Type"
           >
-            <option value="PERCENTAGE">Percentage</option>
-            <option value="FIXED_AMOUNT">Fixed Amount</option>
-          </select>
-        </div>
+            <MenuItem value="PERCENTAGE">Percentage</MenuItem>
+            <MenuItem value="FIXED_AMOUNT">Fixed Amount</MenuItem>
+          </Select>
+        </FormControl>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Sale Value
-          </label>
-          <input
-            type="number"
-            value={saleValue}
-            onChange={(e) => setSaleValue(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-            placeholder="Enter sale value"
-            required
-          />
-        </div>
+        <TextField
+          label="Sale Value"
+          type="number"
+          value={saleValue}
+          onChange={(e) => setSaleValue(e.target.value)}
+          fullWidth
+          margin="normal"
+          required
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Start Date
-          </label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-            required
-          />
-        </div>
+        <TextField
+          label="Start Date"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          required
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            End Date
-          </label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-            required
-          />
-        </div>
+        <TextField
+          label="End Date"
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          required
+        />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Sale Status
-          </label>
-          <select
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Sale Status</InputLabel>
+          <Select
             value={saleStatus}
             onChange={(e) => setSaleStatus(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+            label="Sale Status"
           >
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="INACTIVE">INACTIVE</option>
-          </select>
-        </div>
+            <MenuItem value="ACTIVE">Active</MenuItem>
+            <MenuItem value="INACTIVE">Inactive</MenuItem>
+          </Select>
+        </FormControl>
 
-        <div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-          >
-            Update Sale
-          </button>
-        </div>
+        <Button type="submit" variant="contained" color="primary" fullWidth>
+          Update Sale
+        </Button>
       </form>
     </div>
   );

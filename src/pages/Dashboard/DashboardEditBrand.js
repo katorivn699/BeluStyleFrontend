@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import { toast, Zoom } from "react-toastify";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  InputLabel,
+} from "@mui/material";
 
 const DashboardEditBrand = () => {
   const { brandId } = useParams();
@@ -111,96 +119,78 @@ const DashboardEditBrand = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Edit Brand</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-      >
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="brandName"
-          >
-            Name
-          </label>
-          <input
-            type="text"
-            id="brandName"
-            value={brandName}
-            onChange={(e) => setBrandName(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter brand name"
-            required
-          />
+    <Container
+      maxWidth="sm"
+      sx={{ p: 4, backgroundColor: "white", borderRadius: 2, boxShadow: 3 }}
+    >
+      <Typography variant="h4" gutterBottom>
+        Edit Brand
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Brand Name"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={brandName}
+          onChange={(e) => setBrandName(e.target.value)}
+          required
+        />
+        <TextField
+          label="Description"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={brandDescription}
+          onChange={(e) => setBrandDescription(e.target.value)}
+          required
+        />
+        <TextField
+          label="Website URL"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={websiteUrl}
+          onChange={(e) => setWebsiteUrl(e.target.value)}
+          required
+        />
 
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="brandDescription"
-          >
-            Description
-          </label>
-          <input
-            type="text"
-            id="brandDescription"
-            value={brandDescription}
-            onChange={(e) => setBrandDescription(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter brand description"
-            required
-          />
-
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="websiteUrl"
-          >
-            Website URL
-          </label>
-          <input
-            type="text"
-            id="websiteUrl"
-            value={websiteUrl}
-            onChange={(e) => setWebsiteUrl(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter website URL"
-            required
-          />
-
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="brandImage"
-          >
-            Logo (Leave blank to keep current logo)
-          </label>
+        <InputLabel htmlFor="brandImage" sx={{ mt: 2 }}>
+          Logo (Leave blank to keep current logo)
+        </InputLabel>
+        <Button variant="outlined" component="label" fullWidth sx={{ mt: 1 }}>
+          Upload Image
           <input
             type="file"
-            id="brandImage"
             accept="image/*"
             onChange={handleImageChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            hidden
           />
+        </Button>
 
-          {currentLogoUrl && (
-            <div className="mt-4">
-              <img
-                src={currentLogoUrl}
-                alt="Current Logo"
-                className="w-32 h-32 object-cover rounded"
-              />
-              <p className="text-gray-600 mt-2">Current Logo</p>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center justify-center">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
+        {/* Display current logo if available */}
+        {currentLogoUrl && (
+          <Box mt={2} display="flex" justifyContent="center">
+            <img
+              src={currentLogoUrl}
+              alt="Current Logo"
+              style={{
+                width: "100px",
+                height: "100px",
+                objectFit: "cover",
+                borderRadius: "8px",
+              }}
+            />
+          </Box>
+        )}
+
+        <Box mt={3}>
+          <Button type="submit" variant="contained" color="primary" fullWidth>
             Update
-          </button>
-        </div>
+          </Button>
+        </Box>
       </form>
-    </div>
+    </Container>
   );
 };
 
