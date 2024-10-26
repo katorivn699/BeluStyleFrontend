@@ -7,8 +7,8 @@ const DashboardWarehouseDetail = () => {
   const { stockId } = useParams();
   const [stockProducts, setStockProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrandId, setSelectedBrandId] = useState(""); // Change to brandId
-  const [selectedCategoryId, setSelectedCategoryId] = useState(""); // Change to categoryId
+  const [selectedBrandId, setSelectedBrandId] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [showOnlyLowStock, setShowOnlyLowStock] = useState(false);
 
   const varToken = localStorage.getItem("_auth");
@@ -36,9 +36,9 @@ const DashboardWarehouseDetail = () => {
     if (!grouped[product.productId]) {
       grouped[product.productId] = {
         productName: product.productName,
-        brandId: product.brandId, // Store brandId
+        brandId: product.brandId,
         brandName: product.brandName,
-        categoryId: product.categoryId, // Store categoryId
+        categoryId: product.categoryId,
         categoryName: product.categoryName,
         variations: [],
       };
@@ -52,10 +52,10 @@ const DashboardWarehouseDetail = () => {
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesBrand = selectedBrandId
-      ? group.brandId === selectedBrandId // Use brandId for filtering
+      ? group.brandId === parseInt(selectedBrandId, 10)
       : true;
     const matchesCategory = selectedCategoryId
-      ? group.categoryId === selectedCategoryId // Use categoryId for filtering
+      ? group.categoryId === parseInt(selectedCategoryId, 10)
       : true;
     const matchesLowStock = showOnlyLowStock
       ? group.variations.some((variation) => variation.quantity < 10)
@@ -80,7 +80,7 @@ const DashboardWarehouseDetail = () => {
         </Link>
       </div>
 
-      {/* Filters Section: Search, Brand, Category, Low Stock */}
+      {/* Filters Section */}
       <div className="flex justify-end space-x-4 mb-6 w-full items-center">
         <input
           type="text"
@@ -90,32 +90,42 @@ const DashboardWarehouseDetail = () => {
           className="p-2 border border-gray-300 rounded"
         />
         <select
-          value={selectedBrandId} // Use brandId for selection
+          value={selectedBrandId}
           onChange={(e) => setSelectedBrandId(e.target.value)}
           className="p-2 border border-gray-300 rounded"
         >
           <option value="">All Brands</option>
-          {[...new Set(stockProducts.map((product) => product.brandName))].map(
-            (brand) => (
-              <option key={brand} value={brand}>
-                {brand}
-              </option>
-            )
+          {[...new Set(stockProducts.map((product) => product.brandId))].map(
+            (brandId) => {
+              const brandName = stockProducts.find(
+                (product) => product.brandId === brandId
+              ).brandName;
+              return (
+                <option key={brandId} value={brandId}>
+                  {brandName}
+                </option>
+              );
+            }
           )}
         </select>
         <select
-          value={selectedCategoryId} // Use categoryId for selection
+          value={selectedCategoryId}
           onChange={(e) => setSelectedCategoryId(e.target.value)}
           className="p-2 border border-gray-300 rounded"
         >
           <option value="">All Categories</option>
-          {[
-            ...new Set(stockProducts.map((product) => product.categoryName)),
-          ].map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
+          {[...new Set(stockProducts.map((product) => product.categoryId))].map(
+            (categoryId) => {
+              const categoryName = stockProducts.find(
+                (product) => product.categoryId === categoryId
+              ).categoryName;
+              return (
+                <option key={categoryId} value={categoryId}>
+                  {categoryName}
+                </option>
+              );
+            }
+          )}
         </select>
         <label className="inline-flex items-center">
           <input

@@ -44,6 +44,8 @@ import DashboardCreateNotification from "../pages/Dashboard/DashboardCreateNotif
 import DashboardDiscounts from "../pages/Dashboard/DashboardDiscounts.js";
 import DashboardCreateDiscount from "../pages/Dashboard/DashboardCreateDiscount.js";
 import DashboardEditDiscount from "../pages/Dashboard/DashboardEditDiscount.js";
+import DashboardProducts from "../pages/Dashboard/DashboardProducts.js";
+import DashboardOrders from "../pages/Dashboard/DashboardOrders.js";
 
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
@@ -391,6 +393,28 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
           <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
             <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
               <DashboardEditDiscount />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/Dashboard/Products"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardProducts />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/Dashboard/Orders"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardOrders />
             </DashboardLayout>
           </PrivateRoute>
         }
