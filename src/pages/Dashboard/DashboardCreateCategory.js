@@ -1,130 +1,151 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
+import { toast, Zoom } from "react-toastify";
+import {
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+} from "@mui/material";
 
 const DashboardCreateCategory = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
-  const [categoryImage, setCategoryImage] = useState(null); // State for the image
+  const [categoryImage, setCategoryImage] = useState(null); // State for the image file
+  const [previewImage, setPreviewImage] = useState(null); // State for image preview
   const navigate = useNavigate();
+  const varToken = localStorage.getItem("_auth");
 
   const handleImageChange = (e) => {
-    setCategoryImage(e.target.files[0]); // Set the selected image
-  };
+    const file = e.target.files[0];
+    setCategoryImage(file);
 
-  const varToken = localStorage.getItem("_auth");
+    // Generate image preview URL
+    const previewURL = URL.createObjectURL(file);
+    setPreviewImage(previewURL);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      // Upload the image to ImgBB
-      const formData = new FormData();
-      formData.append("image", categoryImage);
+    const formData = new FormData();
+    formData.append("image", categoryImage);
 
-      const uploadResponse = await fetch(
-        "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const uploadData = await uploadResponse.json();
-
-      if (uploadData.success) {
-        const imageUrl = uploadData.data.display_url; // Get the image URL
-
-        // Send the category data to the backend
-        await apiClient.post(
-          "/api/categories",
-          {
-            categoryName,
-            categoryDescription,
-            imageUrl, // Send the image URL
-          },
-          {
-            headers: {
-              Authorization: "Bearer " + varToken,
-            },
-          }
-        );
-
-        navigate("/Dashboard/Categories");
-      } else {
-        console.error("Error uploading image:", uploadData.error);
+    const uploadPromise = fetch(
+      "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
+      {
+        method: "POST",
+        body: formData,
       }
-    } catch (error) {
-      console.error("Error creating category:", error);
-    }
+    );
+
+    toast.promise(
+      uploadPromise
+        .then((uploadResponse) => uploadResponse.json())
+        .then(async (uploadData) => {
+          if (uploadData.success) {
+            const imageUrl = uploadData.data.display_url;
+
+            // Send the category data to the backend
+            await apiClient.post(
+              "/api/categories",
+              {
+                categoryName,
+                categoryDescription,
+                imageUrl,
+              },
+              {
+                headers: {
+                  Authorization: "Bearer " + varToken,
+                },
+              }
+            );
+
+            navigate("/Dashboard/Categories");
+          } else {
+            throw new Error("Image upload failed");
+          }
+        })
+        .catch((error) => {
+          console.error("Error creating category:", error);
+          throw error;
+        }),
+      {
+        pending: "Uploading image and creating category...",
+        success: "Category created successfully!",
+        error: "Failed to create category. Please try again.",
+      },
+      {
+        position: "bottom-right",
+        transition: Zoom,
+      }
+    );
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Create New Category</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-      >
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="categoryName"
-          >
-            Name
-          </label>
-          <input
-            type="text"
-            id="categoryName"
-            value={categoryName}
-            onChange={(e) => setCategoryName(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter category name"
-            required
-          />
-
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="categoryDescription"
-          >
-            Description
-          </label>
-          <input
-            type="text"
-            id="categoryDescription"
-            value={categoryDescription}
-            onChange={(e) => setCategoryDescription(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter category description"
-            required
-          />
-
-          {/* Image upload input */}
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2 mt-2"
-            htmlFor="categoryImage"
-          >
-            Image
-          </label>
-          <input
-            type="file"
-            id="categoryImage"
-            accept="image/*" // Accepts image files only
-            onChange={handleImageChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
-        <div className="flex items-center justify-center">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Save
-          </button>
-        </div>
-      </form>
-    </div>
+    <Box maxWidth="sm" mx="auto">
+      <Card>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>
+            Create New Category
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Category Name"
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              variant="outlined"
+              fullWidth
+              required
+              margin="normal"
+            />
+            <TextField
+              label="Category Description"
+              value={categoryDescription}
+              onChange={(e) => setCategoryDescription(e.target.value)}
+              variant="outlined"
+              fullWidth
+              required
+              margin="normal"
+            />
+            <Box mt={2}>
+              <Button variant="outlined" component="label" fullWidth>
+                Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  hidden
+                  required
+                />
+              </Button>
+            </Box>
+            {previewImage && (
+              <Box mt={2} display="flex" justifyContent="center">
+                <img
+                  src={previewImage}
+                  alt="Preview"
+                  style={{ width: "100%", maxHeight: 200, objectFit: "cover" }}
+                />
+              </Box>
+            )}
+            <Box mt={2}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
+                Save
+              </Button>
+            </Box>
+          </form>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 

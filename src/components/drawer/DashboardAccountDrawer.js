@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Typography, Box } from "@mui/material";
+import { Drawer, Typography, Box, CircularProgress } from "@mui/material";
 import { FaTimes } from "react-icons/fa";
 import { apiClient } from "../../core/api";
 
 const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
   const [account, setAccount] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const varToken = localStorage.getItem("_auth");
 
   useEffect(() => {
     if (userId) {
+      setIsLoading(true);
       apiClient
         .get(`/api/account/admin/${userId}`, {
           headers: {
@@ -17,15 +20,54 @@ const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
         })
         .then((response) => {
           setAccount(response.data);
+          setIsLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching user details:", error);
+          setHasError(true);
+          setIsLoading(false);
         });
     }
   }, [userId]);
 
-  if (!account) {
-    return "Error when loading";
+  if (isLoading) {
+    return (
+      <Drawer anchor="right" open={isOpen} onClose={onClose}>
+        <Box
+          sx={{
+            width: 400,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            padding: 2,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </Drawer>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <Drawer anchor="right" open={isOpen} onClose={onClose}>
+        <Box
+          sx={{
+            width: 400,
+            padding: 2,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Typography variant="h6" color="error">
+            Error loading user details. Please try again later.
+          </Typography>
+        </Box>
+      </Drawer>
+    );
   }
 
   return (

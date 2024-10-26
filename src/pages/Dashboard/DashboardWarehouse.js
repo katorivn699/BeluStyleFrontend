@@ -38,6 +38,8 @@ const DashboardWarehouse = () => {
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
             <tr>
+              <th className="px-4 py-2 text-left">ID</th>
+
               <th className="px-4 py-2 text-left">Stock Name</th>
               <th className="px-4 py-2 text-left">Stock Address</th>
               <th className="px-4 py-2 text-left">Action</th>
@@ -47,6 +49,8 @@ const DashboardWarehouse = () => {
           <tbody>
             {stocks.map((stock) => (
               <tr key={stock.stockId} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{stock.stockId}</td>
+
                 <td className="px-4 py-2">{stock.stockName}</td>
                 <td className="px-4 py-2">{stock.stockAddress}</td>
                 <td className="px-4 py-2">

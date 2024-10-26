@@ -1,3 +1,4 @@
+import RadioCommon from "../../components/inputs/Radio";
 import React, { useEffect, useState } from "react";
 import SelectLocation from "../../service/LocationService";
 import {
@@ -242,12 +243,11 @@ const CheckoutPage = () => {
               </div>
             )}
           </div>
+
           <Divider sx={{ py: "15px" }} />
           <div className="lastOrderPrice flex justify-between py-5 font-poppins text-xl">
             <p className="font-semibold">Total</p>
-            <p className="font-bold">
-              {formatPrice(finalCheckoutPrice)}
-            </p>
+            <p className="font-bold">{formatPrice(finalCheckoutPrice)}</p>
           </div>
         </div>
       </div>
@@ -306,14 +306,14 @@ const CheckoutPage = () => {
           />
         </div>
         <div className="btnCheckout flex justify-end">
-          <Button sx={
-            {
+          <Button
+            sx={{
               backgroundColor: "black",
               color: "white",
               borderRadius: "10px",
-              textTransform: "none"
-            }
-          }>
+              textTransform: "none",
+            }}
+          >
             Pay {formatPrice(finalCheckoutPrice)}
           </Button>
         </div>

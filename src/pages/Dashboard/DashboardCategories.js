@@ -5,6 +5,7 @@ import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmation
 import CategoryDrawer from "../../components/drawer/DashboardCategoryDrawer"; // Import CategoryDrawer
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
+import { toast, Zoom } from "react-toastify";
 
 const DashboardCategories = () => {
   const [categories, setCategories] = useState([]); // State to store categories
@@ -44,7 +45,7 @@ const DashboardCategories = () => {
     setIsOpen(false); // Close the modal
   };
 
-  const handleDelete = () => {
+  const handleDelete = (categoryToDelete) => {
     if (categoryToDelete) {
       apiClient
         .delete(`/api/categories/${categoryToDelete.categoryId}`, {
@@ -52,15 +53,25 @@ const DashboardCategories = () => {
             Authorization: "Bearer " + varToken,
           },
         })
-        .then(() => {
+        .then((response) => {
           setCategories(
             categories.filter(
               (c) => c.categoryId !== categoryToDelete.categoryId
             )
           );
           setIsOpen(false); // Close the modal after deletion
+          console.log(categoryToDelete.categoryId);
+          toast.success(response.data.message, {
+            position: "bottom-right",
+            transition: Zoom,
+          });
         })
-        .catch((error) => console.error("Error deleting category:", error));
+        .catch((response) =>
+          toast.error(response.data.message, {
+            position: "bottom-right",
+            transition: Zoom,
+          })
+        );
     }
   };
 
@@ -99,6 +110,7 @@ const DashboardCategories = () => {
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
             <tr>
+              <th className="px-4 py-2 text-left">ID</th>
               <th className="px-4 py-2 text-left">Image</th>
               <th className="px-4 py-2 text-left">Category Name</th>
               <th className="px-4 py-2 text-left">Description</th>
@@ -110,6 +122,7 @@ const DashboardCategories = () => {
           <tbody>
             {categories.map((category) => (
               <tr key={category.categoryId} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{category.categoryId}</td>
                 <td className="px-4 py-2">
                   <img
                     src={category.imageUrl}
@@ -127,7 +140,9 @@ const DashboardCategories = () => {
                   >
                     <FaEye />
                   </button>
-                  <Link to={`/Dashboard/Categories/${category.categoryId}`}>
+                  <Link
+                    to={`/Dashboard/Categories/Edit/${category.categoryId}`}
+                  >
                     <FaEdit className="text-blue-500 cursor-pointer" />
                   </Link>
                   {userRole === "ADMIN" && ( // Show delete button only for Admin
@@ -149,7 +164,7 @@ const DashboardCategories = () => {
       <DeleteConfirmationModal
         isOpen={isOpen}
         onClose={handleClose}
-        onConfirm={handleDelete}
+        onConfirm={() => handleDelete(categoryToDelete)} // Pass categoryToDelete here
         name={categoryToDelete?.categoryName || ""}
       />
 
@@ -159,6 +174,7 @@ const DashboardCategories = () => {
         onClose={closeDrawer}
         category={selectedCategory || {}} // Pass selected category to drawer
         onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     </>
   );

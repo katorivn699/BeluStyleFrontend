@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; // Import useState for image preview
 import { toast, Zoom } from "react-toastify";
 import { apiClient } from "../../core/api";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import LocationSelector from "../../service/LocationService";
-import { Box, Button, TextField, Typography, InputLabel } from "@mui/material";
+import { TextField, Button, Typography, Box } from "@mui/material";
 
 const DashboardCreateStaffAccount = () => {
   const varToken = localStorage.getItem("_auth");
   const navigate = useNavigate();
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null); // State for image preview
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -33,7 +33,16 @@ const DashboardCreateStaffAccount = () => {
         "Password must contain one uppercase, one lowercase, and one number"
       ),
     userAddress: Yup.string().required("Address is required"),
+    userImage: Yup.mixed().required("Image is required"), // Validate userImage
   });
+
+  const handleImageChange = (event, setFieldValue) => {
+    const file = event.currentTarget.files[0];
+    if (file) {
+      setFieldValue("userImage", file);
+      setPreviewImage(URL.createObjectURL(file)); // Create a preview URL for the selected image
+    }
+  };
 
   const handleSubmit = async (values) => {
     let imageUrl = "";
@@ -116,14 +125,6 @@ const DashboardCreateStaffAccount = () => {
     }
   };
 
-  const handleImageChange = (e, setFieldValue) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFieldValue("userImage", file);
-      setPreviewImage(URL.createObjectURL(file));
-    }
-  };
-
   return (
     <div className="container mx-auto p-4">
       <Typography variant="h4" gutterBottom>
@@ -139,85 +140,69 @@ const DashboardCreateStaffAccount = () => {
           userAddress: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => handleSubmit(values)}
+        onSubmit={handleSubmit}
       >
         {({ setFieldValue, isSubmitting }) => (
-          <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <Box mb={2}>
-              <InputLabel>Email</InputLabel>
+          <Form>
+            <Box sx={{ mb: 2 }}>
               <Field
-                as={TextField}
-                type="email"
                 name="email"
-                fullWidth
+                as={TextField}
+                label="Email"
                 variant="outlined"
+                fullWidth
                 required
-              />
-              <ErrorMessage
-                name="email"
-                component="p"
-                style={{ color: "red" }}
+                helperText={<ErrorMessage name="email" />}
               />
             </Box>
-            <Box mb={2}>
-              <InputLabel>Username</InputLabel>
+            <Box sx={{ mb: 2 }}>
               <Field
-                as={TextField}
-                type="text"
                 name="username"
-                fullWidth
+                as={TextField}
+                label="Username"
                 variant="outlined"
+                fullWidth
                 required
-              />
-              <ErrorMessage
-                name="username"
-                component="p"
-                style={{ color: "red" }}
+                helperText={<ErrorMessage name="username" />}
               />
             </Box>
-            <Box mb={2}>
-              <InputLabel>Full Name</InputLabel>
+            <Box sx={{ mb: 2 }}>
               <Field
+                name="fullName"
                 as={TextField}
-                type="text"
-                name="fullName"
-                fullWidth
+                label="Full Name"
                 variant="outlined"
+                fullWidth
                 required
-              />
-              <ErrorMessage
-                name="fullName"
-                component="p"
-                style={{ color: "red" }}
+                helperText={<ErrorMessage name="fullName" />}
               />
             </Box>
-            <Box mb={2}>
-              <InputLabel>Password</InputLabel>
+            <Box sx={{ mb: 2 }}>
               <Field
+                name="password"
                 as={TextField}
+                label="Password"
                 type="password"
-                name="password"
-                fullWidth
                 variant="outlined"
+                fullWidth
                 required
-              />
-              <ErrorMessage
-                name="password"
-                component="p"
-                style={{ color: "red" }}
+                helperText={<ErrorMessage name="password" />}
               />
             </Box>
+
             <Box mt={2}>
               <Button variant="outlined" component="label" fullWidth>
                 Upload Image
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => handleImageChange(e, setFieldValue)}
+                  onChange={(event) => handleImageChange(event, setFieldValue)}
                   hidden
-                  required
                 />
               </Button>
+              <ErrorMessage name="userImage">
+                {(msg) => <Typography color="error">{msg}</Typography>}
+              </ErrorMessage>
             </Box>
 
             {/* Image Preview */}
@@ -231,8 +216,7 @@ const DashboardCreateStaffAccount = () => {
               </Box>
             )}
 
-            <Box mb={2}>
-              <InputLabel>User Address</InputLabel>
+            <Box mt={2}>
               <LocationSelector
                 onLocationChange={(location) =>
                   setFieldValue(
@@ -241,11 +225,9 @@ const DashboardCreateStaffAccount = () => {
                   )
                 }
               />
-              <ErrorMessage
-                name="userAddress"
-                component="p"
-                style={{ color: "red" }}
-              />
+              <ErrorMessage name="userAddress">
+                {(msg) => <Typography color="error">{msg}</Typography>}
+              </ErrorMessage>
             </Box>
 
             <Box mt={2} display="flex" justifyContent="center">
