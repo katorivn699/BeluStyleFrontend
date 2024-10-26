@@ -1,4 +1,6 @@
-const RadioCommon = ({ value, current, handleChecked, context, id }) => {
+import { Card, CardContent, FormControlLabel, Radio, Typography } from "@mui/material";
+
+export const RadioCommon = ({ value, current, handleChecked, context, id }) => {
   return (
     <div className="selection">
       <label className="inline-flex items-center cursor-pointer">
@@ -18,4 +20,44 @@ const RadioCommon = ({ value, current, handleChecked, context, id }) => {
   );
 };
 
-export default RadioCommon;
+
+export const CommonRadioCard = ({ value, label, checked, onChange, description }) => {
+  return (
+    <Card
+      variant="outlined"
+      sx={{
+        border: checked ? '2px solid #1976d2' : '1px solid #ccc',
+        borderRadius: '8px',
+        transition: 'border 0.3s',
+        '&:hover': {
+          border: '2px solid #1976d2',
+        },
+      }}
+    >
+      <FormControlLabel
+        control={
+          <Radio
+            checked={checked}
+            onChange={onChange}
+            value={value}
+            sx={{ display: 'none' }} // Hide default radio button
+          />
+        }
+        label={
+          <CardContent>
+            <Typography variant="h6" component="div">
+              {label}
+            </Typography>
+            {description && (
+              <Typography variant="body2" color="text.secondary">
+                {description}
+              </Typography>
+            )}
+          </CardContent>
+        }
+      />
+    </Card>
+  );
+};
+
+

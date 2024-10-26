@@ -7,6 +7,10 @@ const LocationSelector = ({ onLocationChange }) => {
   const [selectedTinh, setSelectedTinh] = useState("");
   const [selectedQuan, setSelectedQuan] = useState("");
   const [selectedPhuong, setSelectedPhuong] = useState("");
+  const shopAddress = {
+    provice: 92,
+    
+  }
 
   useEffect(() => {
     // Lấy tỉnh thành
@@ -65,7 +69,7 @@ const LocationSelector = ({ onLocationChange }) => {
   return (
     <div className="css_select_div space-x-7 text-xl">
       <select
-        className="css_select border-gray-300 border-[1px] rounded-sm"
+        className="css_select border-gray-300 border-[1px] rounded-md"
         id="province"
         name="province"
         title="Select Province"
@@ -80,7 +84,7 @@ const LocationSelector = ({ onLocationChange }) => {
       </select>
 
       <select
-        className="css_select border-gray-300 border-[1px] rounded-sm"
+        className="css_select border-gray-300 border-[1px] rounded-md"
         id="district"
         name="district"
         title="Select District"
@@ -96,7 +100,7 @@ const LocationSelector = ({ onLocationChange }) => {
       </select>
 
       <select
-        className="css_select border-gray-300 border-[1px] rounded-sm"
+        className="css_select border-gray-300 border-[1px] rounded-md"
         id="ward"
         name="ward"
         title="Select Ward"

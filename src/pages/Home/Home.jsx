@@ -1,5 +1,4 @@
 import MainLayout from "../../layouts/MainLayout";
-import bg from "../../assets/images/homeBg.png";
 import { BuyNow, ShowMore } from "../../components/buttons/Button";
 import ProductList from "../../components/lists/ProductList";
 import products from "../../MockData/DataDemo";
@@ -19,7 +18,7 @@ export function Home() {
         <div className="headerPage relative text-center">
           <img
             className="w-screen h-full object-cover"
-            src={bg}
+            src="https://i.ibb.co/HBMbs6G/homeBg.png"
             alt="Background"
           />
           <div className="containInside w-full md:w-2/3 lg:w-1/3 h-auto md:h-1/2 bg-white rounded-lg shadow-lg absolute bottom-0 md:bottom-16 right-0 md:right-24 flex flex-col justify-center p-4 md:p-10">

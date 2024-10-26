@@ -34,3 +34,12 @@ export const getBrand = async () => {
     return [];
   }
 };
+
+export const getProductList = async () => {
+  try {
+    const response = await apiClient.get("/api/products");
+    return response.data; 
+  } catch (error) {
+    return []; 
+  }
+};

@@ -53,10 +53,6 @@ export const UserProfile = () => {
         setProfileImage(userInfo.userImage);
         setInitialData(userInfoData);
       } catch (error) {
-        toast.error("An error occurred. Please try again." + error.message, {
-          position: "bottom-center",
-          transition: Zoom,
-        });
       }
     };
 

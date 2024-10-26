@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Router, useLocation } from "react-router-dom";
 import { Navbar } from "./components/navbars/Navbar";
 import { NavLogin } from "./components/navbars/UserAccessBar";
 import { toast, ToastContainer, Zoom } from "react-toastify";
@@ -9,6 +9,7 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
 import { jwtDecode } from "jwt-decode";
 import AppRoutes from "./routes/AppRoutes.js";
+import ScrollToTop from "./Scroll.js";
 
 function App() {
   const location = useLocation();
@@ -25,21 +26,21 @@ function App() {
     const token = authHeader?.split(" ")[1];
     if (token) {
       const decodedToken = jwtDecode(token);
-      const currentTime = Date.now() / 1000; 
+      const currentTime = Date.now() / 1000;
 
       if (decodedToken.exp < currentTime) {
-        toast.info('Your session has expired. Please log in again.', {
+        toast.info("Your session has expired. Please log in again.", {
           position: "top-center",
           transition: Zoom,
-        })
+        });
         signOut();
       }
     }
   }, [authHeader, signOut]);
 
-  const HideNav = 
-  location.pathname !== "/LoginForStaffAndAdmin" &&
-  !location.pathname.startsWith("/Dashboard");
+  const HideNav =
+    location.pathname !== "/LoginForStaffAndAdmin" &&
+    !location.pathname.startsWith("/Dashboard");
 
   const showNavbar =
     location.pathname !== "/login" &&
@@ -81,8 +82,8 @@ function App() {
       path === "/register/confirm-registration" ||
       path === "/user/information" ||
       path === "/cart" ||
-      path === "/checkout"||
-      path === "/reset-password"||
+      path === "/checkout" ||
+      path === "/reset-password" ||
       path === "/reset-password/success"
     ) {
       return "pt-[90px]";
@@ -92,8 +93,9 @@ function App() {
 
   return (
     <>
-      {HideNav && (showNavbar ? <Navbar/> : <NavLogin/>)}
+      {HideNav && (showNavbar ? <Navbar /> : <NavLogin />)}
       <div className={applyPadding()}>
+        <ScrollToTop />
         <AppRoutes toggleSidebar={toggleSidebar} isOpen={isOpen} />
       </div>
       <ToastContainer
@@ -107,7 +109,7 @@ function App() {
         theme="colored"
         transition={Zoom}
       />
-      {showFooter && <Footer/> }
+      {showFooter && <Footer />}
     </>
   );
 }
