@@ -47,25 +47,33 @@ export function Shop() {
   };
 
   const applyFilters = () => {
+    // Log the current filter object for debugging
     console.log(filter);
-    return productData
-      .filter((item) => {
-        // Apply brand filter
-        if (filter.brand && item.brand !== filter.brand) return false;
-        // Apply category filter
-        if (filter.category && item.category !== filter.category) return false;
-        // Apply rating filter
-        if (filter.rating && item.rating < filter.rating) return false;
-        return true;
-      })
-      .sort((a, b) => {
-        // Apply price sorting
-        if (filter.priceOrder === "asc") return a.price - b.price;
-        if (filter.priceOrder === "desc") return b.price - a.price;
-        return 0;
-      });
+
+    // Filter the product data based on specified criteria
+    const filteredList = productData.filter((item) => {
+      // Apply brand filter
+      if (filter.brand && item.brandName !== filter.brand) return false;
+
+      // Apply category filter
+      if (filter.category && item.categoryName !== filter.category) return false;
+
+      // Apply rating filter
+      if (filter.rating && item.averageRating < filter.rating) return false;
+
+      // If all conditions are met, keep this item in the filtered list
+      return true;
+    });
+
+    // Sort the filtered products by price, if needed
+    return filteredList.sort((a, b) => {
+      if (filter.priceOrder === "asc") return a.productPrice - b.productPrice;
+      if (filter.priceOrder === "desc") return b.productPrice - a.productPrice;
+      return 0;
+    });
   };
 
+  // Apply the filters and store the result in filteredProducts
   const filteredProducts = applyFilters();
 
   const startIndex = (page - 1) * itemsPerPage;

@@ -7,7 +7,6 @@ import {
   ListItemText,
 } from "@mui/material";
 import { FaRegUserCircle } from "react-icons/fa";
-import { GoBell } from "react-icons/go";
 import { IoLogOutOutline } from "react-icons/io5";
 import { LuMousePointerClick } from "react-icons/lu";
 import { TbRosetteDiscount } from "react-icons/tb";
@@ -62,14 +61,14 @@ const LoggedMenu = () => {
         onClose={handleMenuClose}
         PaperProps={{
           style: {
-            borderRadius: 8, // Bo góc của menu
-            minWidth: 220, // Điều chỉnh chiều rộng của menu
+            borderRadius: 8,
+            minWidth: 220, 
           },
         }}
         MenuListProps={{
           sx: {
-            maxHeight: "400px", // Set max-height to make it scrollable
-            overflowY: "auto", // Enables vertical scrolling when content exceeds max-height
+            maxHeight: "400px",
+            overflowY: "auto",
           },
         }}
       >
