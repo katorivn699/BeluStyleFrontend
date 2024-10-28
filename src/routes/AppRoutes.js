@@ -46,6 +46,7 @@ import DashboardCreateDiscount from "../pages/Dashboard/DashboardCreateDiscount.
 import DashboardEditDiscount from "../pages/Dashboard/DashboardEditDiscount.js";
 import DashboardProducts from "../pages/Dashboard/DashboardProducts.js";
 import DashboardOrders from "../pages/Dashboard/DashboardOrders.js";
+import OrderPage from "../pages/Order/Order.jsx";
 
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
@@ -120,6 +121,14 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         element={
           <ProtectedRoute types={["CUSTOMER"]}>
             <Logout />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/user/orders"
+        element={
+          <ProtectedRoute types={["CUSTOMER"]}>
+            <OrderPage />
           </ProtectedRoute>
         }
       />

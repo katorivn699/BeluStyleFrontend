@@ -83,14 +83,14 @@ const LoggedMenu = () => {
           <ListItemText primary="Account Settings" />
         </MenuItem>
 
-        <MenuItem component={Link} to="/history" onClick={handleMenuClose}>
+        <MenuItem component={Link} to="/user/orders" onClick={handleMenuClose}>
           <ListItemIcon sx={{ fontSize: "1.75rem", minWidth: "40px" }}>
             <LuMousePointerClick className="text-3xl" />
           </ListItemIcon>
-          <ListItemText primary="Purchase History" />
+          <ListItemText primary="Orders" />
         </MenuItem>
 
-        <MenuItem component={Link} to="/discounts" onClick={handleMenuClose}>
+        <MenuItem component={Link} to="/user/discounts" onClick={handleMenuClose}>
           <ListItemIcon sx={{ fontSize: "1.75rem", minWidth: "40px" }}>
             <TbRosetteDiscount className="text-3xl" />
           </ListItemIcon>

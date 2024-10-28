@@ -60,6 +60,7 @@ export function Navbar() {
             </li>
             <li>
               <NavLink
+              referrerPolicy="no-referrer"
                 to="https://www.facebook.com/profile.php?id=100014062039112"
                 className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
               >

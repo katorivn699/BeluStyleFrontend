@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Router, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Navbar } from "./components/navbars/Navbar";
 import { NavLogin } from "./components/navbars/UserAccessBar";
 import { toast, ToastContainer, Zoom } from "react-toastify";
@@ -67,7 +67,7 @@ function App() {
     location.pathname !== "/checkout" &&
     !location.pathname.startsWith("/user") &&
     !location.pathname.startsWith("/Dashboard") &&
-    !location.pathname.startsWith("/confirm-registration")&&
+    !location.pathname.startsWith("/confirm-registration") &&
     location.pathname !== "/discounts";
 
   const applyPadding = () => {
@@ -83,12 +83,10 @@ function App() {
       path === "/forgotPassword" ||
       path === "/forgotPassword/success" ||
       path === "/register/confirm-registration" ||
-      path === "/user/information" ||
+      path.startsWith("/user") ||
       path === "/cart" ||
       path === "/checkout" ||
-      path === "/reset-password" ||
-      path === "/reset-password/success" ||
-      path === "/discounts"
+      path.startsWith("/reset-password")
     ) {
       return "pt-[90px]";
     }
