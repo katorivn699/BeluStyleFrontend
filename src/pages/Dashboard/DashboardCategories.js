@@ -85,7 +85,7 @@ const DashboardCategories = () => {
   };
 
   const handleEdit = (category) => {
-    navigate(`/Dashboard/Categories/${category.categoryId}`); // Use navigate to go to the edit page
+    navigate(`/Dashboard/Categories/Edit/${category.categoryId}`); // Use navigate to go to the edit page
   };
 
   return (

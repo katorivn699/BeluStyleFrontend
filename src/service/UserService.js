@@ -33,6 +33,11 @@ export const UpdateUserInfo = (data, authHeader) => {
         fullName: data.fullName,
         userAddress: data.userAddress,
       },
+      {
+        headers: {
+          Authorization: authHeader
+        }
+      }
     );
   } catch (error) {
     console.log(error?.data);

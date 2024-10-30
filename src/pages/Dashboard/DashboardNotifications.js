@@ -84,6 +84,19 @@ const DashboardNotifications = () => {
     fetchNotifications();
   }, [varToken]);
 
+  const getRoleStyle = (role) => {
+    switch (role) {
+      case "ADMIN":
+        return "text-red-600 bg-red-100 px-4 py-2 rounded-md inline-block font-bold text-center w-32";
+      case "STAFF":
+        return "text-yellow-600 bg-yellow-100 px-4 py-2 rounded-md inline-block font-bold text-center w-32";
+      case "CUSTOMER":
+        return "text-teal-600 bg-teal-100 px-4 py-2 rounded-md inline-block font-bold text-center w-32";
+      default:
+        return "";
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -121,7 +134,13 @@ const DashboardNotifications = () => {
                   <td className="px-4 py-2">{notification.notificationId}</td>
                   <td className="px-4 py-2">{notification.title}</td>
                   <td className="px-4 py-2">{notification.message}</td>
-                  <td className="px-4 py-2">{notification.role?.roleName}</td>
+                  <td
+                    className={`px-4 py-2 ${getRoleStyle(
+                      notification.role?.roleName
+                    )} `}
+                  >
+                    {notification.role?.roleName}
+                  </td>
                   <td className="px-4 py-2">
                     {new Date(notification.createdAt).toLocaleDateString()}
                   </td>
