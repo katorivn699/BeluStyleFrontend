@@ -46,6 +46,9 @@ import DashboardCreateDiscount from "../pages/Dashboard/DashboardCreateDiscount.
 import DashboardEditDiscount from "../pages/Dashboard/DashboardEditDiscount.js";
 import DashboardProducts from "../pages/Dashboard/DashboardProducts.js";
 import DashboardOrders from "../pages/Dashboard/DashboardOrders.js";
+import DashboardProductVariations from "../pages/Dashboard/DashboardProductVariations.js";
+import DashboardAddProducts from "../pages/Dashboard/DashboardAddProducts.js";
+import DashboardImportProducts from "../pages/Dashboard/DashboardImportProducts.js";
 
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
@@ -410,6 +413,39 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
       />
 
       <Route
+        path="/Dashboard/Products/:productId"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardProductVariations />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/Dashboard/Products/Add"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardAddProducts />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/Dashboard/Warehouse/:stockId/Import"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardImportProducts />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
         path="/Dashboard/Orders"
         element={
           <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
@@ -419,6 +455,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
           </PrivateRoute>
         }
       />
+
       <Route path="/Dashboard/Logout" element={<Logout />} />
     </Routes>
   );

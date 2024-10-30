@@ -78,7 +78,7 @@ const DashboardBrands = () => {
   };
 
   const handleEdit = (brand) => {
-    navigate(`/Dashboard/Brands/${brand.brandId}`); // Use navigate to go to the edit page
+    navigate(`/Dashboard/Brands/Edit/${brand.brandId}`); // Use navigate to go to the edit page
   };
 
   return (

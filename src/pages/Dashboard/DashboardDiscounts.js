@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaEye, FaUserPlus } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
@@ -14,6 +14,8 @@ const DashboardDiscounts = () => {
   const [discountToDelete, setDiscountToDelete] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const authUser = useAuthUser();
+  const userRole = authUser.role;
   const varToken = localStorage.getItem("_auth");
 
   useEffect(() => {
@@ -72,15 +74,33 @@ const DashboardDiscounts = () => {
       .then((response) => {
         fetchDiscounts(currentPage, pageSize);
         handleClose();
-        toast.success(response.data, {
+        toast.success("Delete discount successfully", {
           position: "bottom-right",
           transition: Zoom,
         });
       })
       .catch((error) => {
-        console.log("Delete discount failed");
+        toast.error("Delete discount failed", {
+          position: "bottom-right",
+          transition: Zoom,
+        });
       });
   };
+
+  function getStatusColor(discountStatus) {
+    switch (discountStatus) {
+      case "INACTIVE":
+        return "text-gray-500";
+      case "ACTIVE":
+        return "text-green-500";
+      case "EXPIRED":
+        return "text-red-500";
+      case "USED":
+        return "text-purple-500";
+      default:
+        return "";
+    }
+  }
 
   const renderPageNumbers = () => {
     const pages = [];
@@ -131,21 +151,39 @@ const DashboardDiscounts = () => {
                 <td className="px-4 py-2">{discount.discountCode}</td>
                 <td className="px-4 py-2">{discount.discountType}</td>
                 <td className="px-4 py-2">{discount.discountValue}</td>
-                <td className="px-4 py-2">{discount.discountStatus}</td>
+                <td
+                  className={`px-4 py-2 font-bold ${getStatusColor(
+                    discount.discountStatus
+                  )}`}
+                >
+                  {discount.discountStatus}
+                </td>
                 <td className="px-4 py-2">{discount.usageLimit}</td>
-                <td className="px-4 py-2 flex space-x-2">
-                  <Link
-                    to={`/Dashboard/Discounts/Edit/${discount.discountId}`}
-                    className="w-6 h-6 flex justify-center items-center"
-                  >
+
+                <td className="px-4 py-2 flex space-x-2 pt-6">
+                  <Link to={`/Dashboard/Discounts/${discount.discountId}`}>
+                    <FaEye className="text-green-500 cursor-pointer" />
+                  </Link>
+                  <Link to={`/Dashboard/Discounts/Edit/${discount.discountId}`}>
                     <FaEdit className="text-blue-500 cursor-pointer" />
                   </Link>
-                  <button
-                    className="w-6 h-6 flex justify-center items-center"
-                    onClick={() => openDeleteModal(discount)}
+                  {/* Add User to Discount Button */}
+                  <Link
+                    to={`/Dashboard/Discounts/${discount.discountId}/AddUser`}
                   >
-                    <FaTrash className="text-red-500 cursor-pointer" />
-                  </button>
+                    <FaUserPlus
+                      className="text-blue-500 cursor-pointer"
+                      title="Add User to Discount"
+                    />
+                  </Link>
+                  {userRole === "ADMIN" && (
+                    <button
+                      className="text-red-500 cursor-pointer"
+                      onClick={() => openDeleteModal(discount)}
+                    >
+                      <FaTrash />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

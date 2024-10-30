@@ -73,7 +73,7 @@ const DashboardWarehouseDetail = () => {
             {stockProducts[0].stockAddress}
           </p>
         </div>
-        <Link to="/Dashboard/Warehouse/Import">
+        <Link to={`/Dashboard/Warehouse/${stockId}/Import`}>
           <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
             <FaPlus className="mr-2" /> Import Product
           </button>

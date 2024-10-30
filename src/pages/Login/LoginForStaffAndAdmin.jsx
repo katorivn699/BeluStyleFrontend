@@ -52,6 +52,7 @@ const LoginForStaffAndAdmin = () => {
               onChange={(e) => setUsername(e.target.value)}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
               placeholder="Enter username"
+              tabIndex={1}
               required
             />
           </div>
@@ -88,12 +89,14 @@ const LoginForStaffAndAdmin = () => {
               onChange={(e) => setPasswordHash(e.target.value)}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
               placeholder="Enter password"
+              tabIndex={2}
               required
             />
           </div>
 
           <div className="flex items-center justify-between">
             <button
+              tabIndex={3}
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
