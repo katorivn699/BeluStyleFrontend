@@ -26,6 +26,7 @@ export const LoginUser = async (data, navigate, signIn) => {
           username: data.username,
           userImage: user.image,
           role: user.role?.[0]?.authority,
+          email: user.email,
         },
       });
       navigate("/");

@@ -50,6 +50,7 @@ import OrderPage from "../pages/Order/Order.jsx";
 import DashboardProductVariations from "../pages/Dashboard/DashboardProductVariations.js";
 import DashboardAddProducts from "../pages/Dashboard/DashboardAddProducts.js";
 import DashboardImportProducts from "../pages/Dashboard/DashboardImportProducts.js";
+import OrderDetail from "../pages/Order/OrderDetail.jsx";
 
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
@@ -64,7 +65,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         }
       />
       <Route
-        path="/shop"
+      path="/shop"
         element={
           <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
             <Shop />
@@ -132,6 +133,22 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         element={
           <ProtectedRoute types={["CUSTOMER"]}>
             <OrderPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/user/discounts"
+        element={
+          <ProtectedRoute types={["CUSTOMER"]}>
+            <DiscountPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/user/orders/:orderId"
+        element={
+          <ProtectedRoute types={["CUSTOMER"]}>
+            <OrderDetail />
           </ProtectedRoute>
         }
       />

@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api"; // Your API client
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardAddProductToSale = () => {
   const { saleId } = useParams(); // Get saleId from the URL
   const [products, setProducts] = useState([]);
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const navigate = useNavigate();
+  const authHeader = useAuthHeader();
 
   useEffect(() => {
     // Fetch available products
@@ -51,7 +53,11 @@ const DashboardAddProductToSale = () => {
 
   const handleAddProducts = () => {
     apiClient
-      .post(`/api/sales/${saleId}/products`, selectedProductIds)
+      .post(`/api/sales/${saleId}/products`, selectedProductIds, {
+        headers: {
+          Authorization: authHeader,
+        },
+      })
       .then((response) => {
         toast.success(response.data.message, {
           position: "bottom-right",

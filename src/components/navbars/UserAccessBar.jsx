@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import logo from "../../assets/images/logo.png";
 import { IoArrowBack } from "react-icons/io5";
 
 export function NavLogin() {
@@ -17,7 +16,7 @@ export function NavLogin() {
           <button onClick={handleGoBack} ><IoArrowBack className="text-3xl" /></button>
         </div>
         <div className="navinfo items-center justify-center flex space-x-4">
-          <img src={logo} alt="" className="logo flex w-auto h-16" />
+          <img src="https://i.ibb.co/CsqzWQw/belustyle-icon.png" alt="" className="logo flex w-auto h-16" />
         </div>
       </div>
     </nav>

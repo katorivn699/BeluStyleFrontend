@@ -30,6 +30,7 @@ module.exports = {
       },
       textColor: {
         'blueOcean' : "#177CD8",
+        'beluBlue': "#7ECCFA",
       },
       colors: {
         'blueOcean' : ""

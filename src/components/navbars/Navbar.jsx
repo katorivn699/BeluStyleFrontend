@@ -23,15 +23,18 @@ export function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 p-2 md:p-4 z-50 bg-white">
-      <div className="navitem grid grid-cols-1 md:grid-cols-3 items-center">
+    <nav className="fixed top-0 left-0 right-0 p-2 md:p-4 z-50 bg-transparent">
+      <div className="absolute top-0 left-0 right-0 bottom-0 bg-white bg-opacity-25 backdrop-blur-md"></div>
+
+      <div className="navitem grid grid-cols-1 md:grid-cols-3 items-center relative z-10">
+        {" "}
+        {/* Added `relative z-10` here */}
         <div className="nav-left flex items-center justify-start pl-4 md:pl-10">
           <img src={logo} alt="" className="logo w-12 md:w-16" />
           <h2 className="name font-montserrat font-bold text-2xl md:text-3xl pl-2">
             BeluStyle
           </h2>
         </div>
-
         <div className="nav-center justify-center hidden md:flex">
           <ul className="flex space-x-6 md:space-x-20 items-center">
             <li>
@@ -60,7 +63,7 @@ export function Navbar() {
             </li>
             <li>
               <NavLink
-              referrerPolicy="no-referrer"
+                referrerPolicy="no-referrer"
                 to="https://www.facebook.com/profile.php?id=100014062039112"
                 className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
               >
@@ -69,11 +72,8 @@ export function Navbar() {
             </li>
           </ul>
         </div>
-
         <div className="nav-right items-center justify-end flex space-x-4 md:space-x-10 pr-4 md:pr-10">
-          {isAuth && (
-            <NotificationIcon/>
-          )}
+          {isAuth && <NotificationIcon />}
           {isAuth ? (
             <div className="dropdown dropdown-bottom" ref={dropdownRef}>
               <LoggedMenu />

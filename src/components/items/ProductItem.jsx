@@ -18,12 +18,12 @@ const ProductItem = ({ product }) => {
   const displayPrice =
     discountedPrice && discountedPrice >= 0
       ? formatPrice(discountedPrice)
-      : "0.00"; // Hiển thị 0.00 nếu giá trị không hợp lệ
+      : 0; // Hiển thị 0.00 nếu giá trị không hợp lệ
 
   const originalPrice =
     product.productPrice && product.productPrice >= 0
       ? formatPrice(product.productPrice)
-      : "0.00"; // Xử lý giá gốc
+      : 0; // Xử lý giá gốc
 
   return (
     <div className="w-full max-w-[350px] bg-base-200 rounded-lg overflow-hidden shadow-md p-4 mx-auto">
@@ -44,7 +44,6 @@ const ProductItem = ({ product }) => {
           }`}
           src={product.productVariationImage || "default_image.jpg"}
           alt={product.productName || "Product Image"}
-          loading="lazy"
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageLoaded(false)}
         />
@@ -64,7 +63,7 @@ const ProductItem = ({ product }) => {
           {/* Original Price if Sale is Active */}
           {product.saleValue > 0 && (
             <p className="text-red-500 font-semibold text-sm line-through mb-1">
-              {formatPrice(originalPrice)}
+              {formatPrice(product.productPrice)}
             </p>
           )}
 

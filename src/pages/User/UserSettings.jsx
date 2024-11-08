@@ -8,7 +8,8 @@ import {
   Box,
   IconButton,
   Grid2,
-  Grid,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import {
@@ -49,12 +50,12 @@ export const UserProfile = () => {
         const response = await GetUserInfo(authHeader);
         const userInfo = response.data;
         const userInfoData = {
-          userId: userInfo.userId || "No Id",
-          email: userInfo.email || "No Email",
-          username: userInfo.username || "No Name",
-          fullName: userInfo.fullName || "No Full Name",
-          userAddress: userInfo.address || "No Address",
-          currentPaymentMethod: userInfo.currentPaymentMethod || "Order first!",
+          userId: userInfo.userId || "ID not available",
+          email: userInfo.email || "Email not provided",
+          username: userInfo.username || "Name not set",
+          fullName: userInfo.fullName || "Full name not specified",
+          userAddress: userInfo.address || "Address not provided",
+          currentPaymentMethod: userInfo.currentPaymentMethod || "Place an order to add a payment method",
           userImage: userInfo.userImage || userDefault,
         };
         setUserData(userInfoData);
@@ -81,7 +82,7 @@ export const UserProfile = () => {
         position: "top-center",
         transition: Zoom,
       });
-  
+
       setTimeout(() => {
         signOut();
         navigate("/");
@@ -92,7 +93,7 @@ export const UserProfile = () => {
         transition: Zoom,
       });
     }
-  };  
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -146,7 +147,17 @@ export const UserProfile = () => {
     }
   };
 
-  if (loading) return <Typography>Loading...</Typography>;
+  if (loading)
+    return (
+      <div>
+        <Backdrop
+          sx={{ color: "#858585", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={loading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </div>
+    );
 
   return (
     <Grid2 container>

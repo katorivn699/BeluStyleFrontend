@@ -14,12 +14,13 @@ import {
   TextField,
 } from "@mui/material";
 import { useCart } from "react-use-cart";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import LocationSelector from "../../service/LocationService";
 import { formatPrice } from "../../components/format/formats";
 import ShipmentSelector from "../../service/ShipmentService";
 import { CommonRadioCard } from "../../components/inputs/Radio";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const style = {
   py: 0,
@@ -38,11 +39,12 @@ const CheckoutPage = () => {
   });
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [houseNumber, setHouseNumber] = useState("");
-  const { items, cartTotal } = useCart();
+  const { items, cartTotal, isEmpty } = useCart();
   const [discountApply, setDiscountApply] = useState({
     discountType: "",
     discountValue: 0,
   });
+  const navigate = useNavigate();
   const [discountCode, setDiscountCode] = useState("");
   const [discountMinus, setDiscountMinus] = useState(0);
   const [subTT, setSubTT] = useState(0);
@@ -50,6 +52,13 @@ const CheckoutPage = () => {
   const calculateFinalCheckoutPrice = () => {
     return subTT + shippingFee - discountMinus;
   };
+  const userState = useAuthUser();
+
+  useEffect(() => {
+    if (isEmpty) {
+      navigate(-1);
+    }
+  },[isEmpty, navigate]);
 
   const finalCheckoutPrice = calculateFinalCheckoutPrice();
 
@@ -261,6 +270,8 @@ const CheckoutPage = () => {
             variant="outlined"
             fullWidth
             placeholder="Your email address"
+            value={userState?.email?.length > 0 ? userState?.email : "" }
+            disabled={userState?.email?.length > 0 ? true : false }
             // onChange={}
           />
         </div>

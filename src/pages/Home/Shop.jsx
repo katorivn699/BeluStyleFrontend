@@ -16,6 +16,7 @@ export function Shop() {
   const [page, setPage] = useState(1);
   const [productData, setProductData] = useState([]);
   const productListRef = useRef(null);
+  const countProductRef = useRef(null); // Add reference for "New({countProduct})"
   const [filter, setFilter] = useState({
     brand: "",
     category: "",
@@ -28,7 +29,8 @@ export function Shop() {
       try {
         const response = await getProductList();
         if (response && response.length > 0) {
-          setProductData(response);
+          const filteredProducts = response.filter(product => product.quantity > 0);
+          setProductData(filteredProducts.reverse());
         } else {
           setProductData(products);
         }
@@ -47,10 +49,6 @@ export function Shop() {
   };
 
   const applyFilters = () => {
-    // Log the current filter object for debugging
-    console.log(filter);
-
-    // Filter the product data based on specified criteria
     const filteredList = productData.filter((item) => {
       // Apply brand filter
       if (filter.brand && item.brandName !== filter.brand) return false;
@@ -73,7 +71,6 @@ export function Shop() {
     });
   };
 
-  // Apply the filters and store the result in filteredProducts
   const filteredProducts = applyFilters();
 
   const startIndex = (page - 1) * itemsPerPage;
@@ -91,9 +88,16 @@ export function Shop() {
         block: "start",
       });
     }
+    // Scroll to the "New({countProduct})" section
+    if (countProductRef.current) {
+      countProductRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
-  const countProduct = filteredProducts.length;
+  const countProduct = productData.length;
 
   return (
     <MainLayout>
@@ -124,7 +128,7 @@ export function Shop() {
           </div>
         </div>
         <div className="bg-beluBlue h-28"></div>
-        <div className="numberProducts pl-16 pt-10">
+        <div className="numberProducts pl-16 pt-10" ref={countProductRef}>
           <p className="font-montserrat font-semibold text-3xl">
             New({countProduct})
           </p>

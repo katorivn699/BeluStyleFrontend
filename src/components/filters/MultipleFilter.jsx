@@ -39,11 +39,11 @@ const FilterComponent = ({ onFilter }) => {
     }
   };
 
-  const handleFilter = (e) => {
-    e.preventDefault();
+  const handleCategoryChange = (categoryValue) => {
+    setCategory(categoryValue);
     if (typeof onFilter === "function") {
       onFilter({
-        category,
+        category: categoryValue,
         brand,
         priceOrder,
         rating,
@@ -51,9 +51,45 @@ const FilterComponent = ({ onFilter }) => {
     }
   };
 
+  const handleBrandChange = (brandValue) => {
+    setBrand(brandValue);
+    if (typeof onFilter === "function") {
+      onFilter({
+        category,
+        brand: brandValue,
+        priceOrder,
+        rating,
+      });
+    }
+  };
+
+  const handlePriceOrderChange = (priceOrderValue) => {
+    setPriceOrder(priceOrderValue);
+    if (typeof onFilter === "function") {
+      onFilter({
+        category,
+        brand,
+        priceOrder: priceOrderValue,
+        rating,
+      });
+    }
+  };
+
+  const handleRatingChange = (event, newRating) => {
+    setRating(newRating);
+    if (typeof onFilter === "function") {
+      onFilter({
+        category,
+        brand,
+        priceOrder,
+        rating: newRating,
+      });
+    }
+  };
+
   return (
     <div className="FilterContainer p-4 border rounded-md font-poppins">
-      <form onSubmit={handleFilter}>
+      <form>
         {/* Category Filter */}
         <div className="mb-4">
           <label className="block text-2xl pb-4 font-medium mb-1">
@@ -65,20 +101,21 @@ const FilterComponent = ({ onFilter }) => {
               current={category}
               value=""
               id="category"
-              handleChecked={() => setCategory("")}
+              handleChecked={() => handleCategoryChange("")}
             />
             {categories.length > 0 ? (
               categories.map((categoryItem) => (
                 <RadioCommon
+                  key={categoryItem.categoryName}
                   context={categoryItem.categoryName}
                   current={category}
                   id="category"
                   value={categoryItem.categoryName}
-                  handleChecked={() => setCategory(categoryItem.categoryName)}
+                  handleChecked={() => handleCategoryChange(categoryItem.categoryName)}
                 />
               ))
             ) : (
-              <div className="errorLoad">Error to loading category</div>
+              <div className="errorLoad">Error loading categories</div>
             )}
           </div>
         </div>
@@ -92,22 +129,21 @@ const FilterComponent = ({ onFilter }) => {
               current={brand}
               value=""
               id="brand"
-              handleChecked={() => setBrand("")}
+              handleChecked={() => handleBrandChange("")}
             />
             {brands.length > 0 ? (
               brands.map((brandItem) => (
                 <RadioCommon
+                  key={brandItem.brandName}
                   context={brandItem.brandName}
                   current={brand}
                   value={brandItem.brandName}
                   id="brand"
-                  handleChecked={() => setBrand(brandItem.brandName)}
+                  handleChecked={() => handleBrandChange(brandItem.brandName)}
                 />
               ))
             ) : (
-              <div className="error">
-                <p>Error to fetching brand list!</p>
-              </div>
+              <div className="error">Error fetching brand list!</div>
             )}
           </div>
         </div>
@@ -121,21 +157,21 @@ const FilterComponent = ({ onFilter }) => {
               current={priceOrder}
               value=""
               id="price"
-              handleChecked={() => setPriceOrder("")}
+              handleChecked={() => handlePriceOrderChange("")}
             />
             <RadioCommon
               context="Low to High"
               current={priceOrder}
               value="asc"
               id="price"
-              handleChecked={() => setPriceOrder("asc")}
+              handleChecked={() => handlePriceOrderChange("asc")}
             />
             <RadioCommon
               context="High to Low"
               current={priceOrder}
               value="desc"
               id="price"
-              handleChecked={() => setPriceOrder("desc")}
+              handleChecked={() => handlePriceOrderChange("desc")}
             />
           </div>
         </div>
@@ -147,20 +183,15 @@ const FilterComponent = ({ onFilter }) => {
             <Rating
               defaultValue={0}
               value={rating}
-              onChange={(e, newRating) => setRating(newRating)}
+              onChange={handleRatingChange}
             />
           </div>
         </div>
 
-        {/* Filter Button */}
+        {/* Reset Button */}
         <div className="flex space-x-3">
           <button
-            type="submit"
-            className="flex-1 py-2 bg-blue-600 text-white rounded-md"
-          > 
-            Apply Filters
-          </button>
-          <button
+            type="button"
             className="flex-1 py-2 bg-red-600 text-white rounded-md"
             onClick={handleReset}
           >

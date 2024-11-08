@@ -13,7 +13,8 @@ export function Home() {
       try {
         const response = await getProductList();
         if (response && response.length > 0) {
-          setProducts(response);
+          const filteredProducts = response.filter(product => product.quantity > 0);
+          setProducts(filteredProducts.reverse());
         }
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -39,22 +40,22 @@ export function Home() {
             src="https://i.ibb.co/HBMbs6G/homeBg.png"
             alt="Background"
           />
-          <div className="containInside w-full md:w-2/3 lg:w-1/3 h-auto md:h-1/2 bg-white rounded-lg shadow-lg absolute bottom-0 md:bottom-16 right-0 md:right-24 flex flex-col justify-center p-4 md:p-10">
+          <div className="containInside w-full md:w-2/3 lg:w-1/3 h-auto md:h-fit bg-white rounded-lg shadow-lg absolute bottom-0 md:bottom-16 right-0 md:right-24 flex flex-col justify-center p-4 md:p-10">
             <div className="compo text-left">
               <div className="headerText">
                 <h2 className="font-poppins text-lg md:text-xl">New Arrival</h2>
               </div>
-              <div className="middleText py-2 md:py-5">
-                <p className="font-poppins font-bold text-blueOcean text-3xl md:text-5xl">
+              <div className="middleText py-2 md:py-5 sm:py-2">
+                <p className="font-poppins font-bold text-blueOcean lg:text-5xl md:text-3xl sm:text-xl">
                   Discover Our <br /> New Collection
                 </p>
               </div>
-              <div className="bottomText py-2 md:py-5">
+              <div className="bottomText py-2 md:py-5 sm:py-2">
                 <p className="text-base md:text-xl">
                   BeluStyle Shop - Your Trusted Choice for Premium Style
                 </p>
               </div>
-              <div className="btnBottom py-2 md:py-5">
+              <div className="btnBottom py-2 md:py-5 sm:py-2">
                 <BuyNow />
               </div>
             </div>
@@ -66,7 +67,7 @@ export function Home() {
               Our Products
             </h1>
             {/* Pass only the latest 6 products */}
-            <ProductList products={latestProducts} />
+            <ProductList products={latestProducts}/>
             <div className="showMore flex justify-center py-4">
               <ShowMore onClick={handleShowMore} />
             </div>

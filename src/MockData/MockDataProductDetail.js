@@ -1,4 +1,4 @@
-const ProductDetail = [
+const ProductDetail = 
     {
       productId: "1",
       productName: "Stylish Summer Top",
@@ -52,7 +52,6 @@ const ProductDetail = [
           createAt: "2024-09-07",
         },
       ],
-    }
-  ];
+    };
 
   export default ProductDetail;
