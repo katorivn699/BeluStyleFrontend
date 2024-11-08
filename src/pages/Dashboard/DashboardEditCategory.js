@@ -9,7 +9,9 @@ import {
   CardContent,
   Typography,
   Box,
+  InputLabel,
 } from "@mui/material";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardEditCategory = () => {
   const { categoryId } = useParams();
@@ -17,15 +19,16 @@ const DashboardEditCategory = () => {
   const [categoryDescription, setCategoryDescription] = useState("");
   const [categoryImage, setCategoryImage] = useState(null);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
+  const [newImagePreview, setNewImagePreview] = useState(null);
   const navigate = useNavigate();
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     const fetchCategory = async () => {
       try {
         const response = await apiClient.get(`/api/categories/${categoryId}`, {
           headers: {
-            Authorization: "Bearer " + varToken,
+            Authorization: varToken,
           },
         });
         const { categoryName, categoryDescription, imageUrl } = response.data;
@@ -41,7 +44,9 @@ const DashboardEditCategory = () => {
   }, [categoryId, varToken]);
 
   const handleImageChange = (e) => {
-    setCategoryImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setCategoryImage(file);
+    setNewImagePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -59,17 +64,17 @@ const DashboardEditCategory = () => {
         if (uploadData.success) {
           imageUrl = uploadData.data.display_url;
         } else {
-          console.error("Error uploading image:", uploadData.error);
+          throw new Error("Image upload failed");
         }
       }
 
       await apiClient.put(
         "/api/categories",
         { categoryId, categoryName, categoryDescription, imageUrl },
-        { headers: { Authorization: "Bearer " + varToken } }
+        { headers: { Authorization: varToken } }
       );
 
-      toast.success("Update category successfully", {
+      toast.success("Category updated successfully", {
         position: "bottom-right",
         transition: Zoom,
       });
@@ -109,8 +114,11 @@ const DashboardEditCategory = () => {
               required
               margin="normal"
             />
+            <InputLabel htmlFor="brandImage" sx={{ mt: 2 }}>
+              Logo (Leave blank to keep current logo)
+            </InputLabel>
             <Box mt={2}>
-              <Button variant="outlined" component="label" fullWidth>
+              <Button variant="outlined" component="label">
                 Upload Image
                 <input
                   type="file"
@@ -120,11 +128,11 @@ const DashboardEditCategory = () => {
                 />
               </Button>
             </Box>
-            {currentImageUrl && (
+            {newImagePreview ? (
               <Box mt={2} display="flex" justifyContent="center">
                 <img
-                  src={currentImageUrl}
-                  alt="Current Category"
+                  src={newImagePreview}
+                  alt="New Category Preview"
                   style={{
                     width: 150,
                     height: 150,
@@ -132,10 +140,28 @@ const DashboardEditCategory = () => {
                     borderRadius: 8,
                   }}
                 />
-                <Typography variant="body2" color="textSecondary" mt={1}>
-                  Current Image
+                <Typography variant="body2" color="textSecondary" mt={6}>
+                  New Image Preview
                 </Typography>
               </Box>
+            ) : (
+              currentImageUrl && (
+                <Box mt={2} display="flex" justifyContent="center">
+                  <img
+                    src={currentImageUrl}
+                    alt="Current Category"
+                    style={{
+                      width: 150,
+                      height: 150,
+                      objectFit: "cover",
+                      borderRadius: 8,
+                    }}
+                  />
+                  <Typography variant="body2" color="textSecondary" mt={6}>
+                    Current Image
+                  </Typography>
+                </Box>
+              )
             )}
             <Box mt={3}>
               <Button

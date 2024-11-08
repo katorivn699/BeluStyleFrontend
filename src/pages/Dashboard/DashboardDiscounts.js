@@ -5,6 +5,7 @@ import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardDiscounts = () => {
   const [discounts, setDiscounts] = useState([]);
@@ -16,7 +17,7 @@ const DashboardDiscounts = () => {
 
   const authUser = useAuthUser();
   const userRole = authUser.role;
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     fetchDiscounts(currentPage, pageSize);
@@ -26,7 +27,7 @@ const DashboardDiscounts = () => {
     apiClient
       .get(`/api/discounts?page=${page}&size=${size}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -68,7 +69,7 @@ const DashboardDiscounts = () => {
     apiClient
       .delete(`/api/discounts/${discountToDelete.discountId}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -169,7 +170,7 @@ const DashboardDiscounts = () => {
                   </Link>
                   {/* Add User to Discount Button */}
                   <Link
-                    to={`/Dashboard/Discounts/${discount.discountId}/AddUser`}
+                    to={`/Dashboard/Discounts/${discount.discountId}/AddAccount`}
                   >
                     <FaUserPlus
                       className="text-blue-500 cursor-pointer"

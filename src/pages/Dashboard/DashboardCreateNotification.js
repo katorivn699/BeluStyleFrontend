@@ -12,6 +12,7 @@ import {
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { apiClient } from "../../core/api";
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardCreateNotification = () => {
   const [title, setTitle] = useState("");
@@ -20,6 +21,7 @@ const DashboardCreateNotification = () => {
   const authUser = useAuthUser();
   const userRole = authUser.role;
   const navigate = useNavigate();
+  const varToken = useAuthHeader();
 
   // Define available roles based on user role
   const availableRoles =
@@ -42,7 +44,7 @@ const DashboardCreateNotification = () => {
         },
         {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("_auth"),
+            Authorization: varToken,
           },
         }
       )

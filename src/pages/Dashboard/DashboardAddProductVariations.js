@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import {
   Button,
@@ -8,45 +9,41 @@ import {
   InputLabel,
   FormControl,
   Box,
+  Zoom,
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import { useNavigate } from "react-router-dom";
-import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { toast } from "react-toastify";
 
-const DashboardAddProducts = () => {
-  const [productName, setProductName] = useState("");
-  const [productDescription, setProductDescription] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [brandId, setBrandId] = useState("");
-  const [sizes, setSizes] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [colors, setColors] = useState([]);
-  const [previewImage, setPreviewImage] = useState(null);
+const DashboardAddProductVariations = () => {
+  const { productId } = useParams(); // Get productId from URL
+  const [product, setProduct] = useState(null);
   const [variations, setVariations] = useState([
     { sizeId: "", colorId: "", productPrice: 0, productVariationImage: null },
   ]);
+  const [sizes, setSizes] = useState([]);
+  const [colors, setColors] = useState([]);
+  const varToken = useAuthHeader();
   const navigate = useNavigate();
 
-  const varToken = useAuthHeader();
-
   useEffect(() => {
+    if (productId) {
+      apiClient
+        .get(`/api/products/${productId}/product-variations`, {
+          headers: { Authorization: varToken },
+        })
+        .then((response) => setProduct(response.data))
+        .catch((error) => toast.error("Failed to fetch product details"));
+    }
+
     apiClient
       .get("/api/sizes", { headers: { Authorization: varToken } })
       .then((response) => setSizes(response.data));
     apiClient
-      .get("/api/categories", { headers: { Authorization: varToken } })
-      .then((response) => setCategories(response.data));
-    apiClient
-      .get("/api/brands", { headers: { Authorization: varToken } })
-      .then((response) => setBrands(response.data));
-    apiClient
       .get("/api/colors", { headers: { Authorization: varToken } })
       .then((response) => setColors(response.data));
-  }, []);
+  }, [productId, varToken]);
 
   const handleVariationChange = (index, field, value) => {
     const newVariations = [...variations];
@@ -98,6 +95,7 @@ const DashboardAddProducts = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const uploadedVariations = await Promise.all(
       variations.map(async (variation) => {
         if (variation.productVariationImage) {
@@ -108,27 +106,27 @@ const DashboardAddProducts = () => {
       })
     );
 
-    const productData = {
-      productName,
-      productDescription,
-      categoryId,
-      brandId,
+    const updatedProductData = {
       variations: uploadedVariations,
     };
 
     apiClient
-      .post("/api/products", productData, {
-        headers: { Authorization: varToken },
-      })
-      .then((response) => {
-        toast.success("Product added successfully!", {
+      .post(
+        `/api/products/${productId}/product-variations`,
+        updatedProductData,
+        {
+          headers: { Authorization: varToken },
+        }
+      )
+      .then(() => {
+        toast.success("Product variations added successfully!", {
           position: "bottom-right",
           transition: Zoom,
         });
-        navigate("/Dashboard/Products");
+        navigate(`/Dashboard/Products`);
       })
       .catch((error) => {
-        toast.error(error.message || "Failed to add product", {
+        toast.error(error.message || "Failed to add product variations", {
           position: "bottom-right",
           transition: Zoom,
         });
@@ -146,51 +144,25 @@ const DashboardAddProducts = () => {
 
   return (
     <form onSubmit={handleSubmit} className="p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Add Product</h1>
-      <TextField
-        label="Product Name"
-        fullWidth
-        value={productName}
-        onChange={(e) => setProductName(e.target.value)}
-        required
-      />
-      <TextField
-        label="Product Description"
-        fullWidth
-        multiline
-        rows={4}
-        value={productDescription}
-        onChange={(e) => setProductDescription(e.target.value)}
-        required
-      />
-      <FormControl fullWidth>
-        <InputLabel>Category</InputLabel>
-        <Select
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-          required
-        >
-          {categories.map((category) => (
-            <MenuItem key={category.categoryId} value={category.categoryId}>
-              {category.categoryName}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth>
-        <InputLabel>Brand</InputLabel>
-        <Select
-          value={brandId}
-          onChange={(e) => setBrandId(e.target.value)}
-          required
-        >
-          {brands.map((brand) => (
-            <MenuItem key={brand.brandId} value={brand.brandId}>
-              {brand.brandName}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <h1 className="text-2xl font-bold">Add Product Variations</h1>
+      {product && (
+        <>
+          <TextField
+            label="Product Name"
+            fullWidth
+            value={product.productName}
+            disabled
+          />
+          <TextField
+            label="Product Description"
+            fullWidth
+            multiline
+            rows={4}
+            value={product.productDescription}
+            disabled
+          />
+        </>
+      )}
 
       <h2 className="text-xl font-semibold">Product Variations</h2>
       {variations.map((variation, index) => (
@@ -275,4 +247,4 @@ const DashboardAddProducts = () => {
   );
 };
 
-export default DashboardAddProducts;
+export default DashboardAddProductVariations;

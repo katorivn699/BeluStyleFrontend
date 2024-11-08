@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api"; // Assuming you have an api client setup
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardWarehouse = () => {
   const [stocks, setStocks] = useState([]); // State to store stock items
   const navigate = useNavigate();
 
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     apiClient
       .get("/api/stocks", {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {

@@ -6,6 +6,7 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import DashboardAccountDrawer from "../../components/drawer/DashboardAccountDrawer";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardAccounts = () => {
   const [users, setUsers] = useState([]);
@@ -20,7 +21,7 @@ const DashboardAccounts = () => {
   const navigate = useNavigate();
   const authUser = useAuthUser();
   const currentUser = authUser.username;
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     fetchUsers(currentPage, pageSize);
@@ -30,7 +31,7 @@ const DashboardAccounts = () => {
     apiClient
       .get(`/api/admin?page=${page}&size=${size}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -90,7 +91,7 @@ const DashboardAccounts = () => {
     apiClient
       .delete(`/api/admin/${userToDelete.userId}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {

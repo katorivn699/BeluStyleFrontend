@@ -8,15 +8,22 @@ const DashboardAddProductToSale = () => {
   const { saleId } = useParams(); // Get saleId from the URL
   const [products, setProducts] = useState([]);
   const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const authHeader = useAuthHeader();
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     // Fetch available products
     apiClient
-      .get("/api/products") // Adjust this endpoint based on your API
+      .get("/api/products", {
+        headers: {
+          Authorization: varToken,
+        },
+      }) // Adjust this endpoint based on your API
       .then((response) => {
         setProducts(response.data);
+        setFilteredProducts(response.data);
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -24,7 +31,11 @@ const DashboardAddProductToSale = () => {
 
     // Fetch products already in the sale
     apiClient
-      .get(`/api/sales/${saleId}/products`)
+      .get(`/api/sales/${saleId}/products`, {
+        headers: {
+          Authorization: varToken,
+        },
+      })
       .then((response) => {
         const existingProductIds = response.data.map(
           (product) => product.productId
@@ -41,6 +52,13 @@ const DashboardAddProductToSale = () => {
       });
   }, [saleId]);
 
+  useEffect(() => {
+    const filtered = products.filter((product) =>
+      product.productName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  }, [products, searchQuery]);
+
   const handleProductChange = (productId) => {
     if (selectedProductIds.includes(productId)) {
       setSelectedProductIds(
@@ -55,7 +73,7 @@ const DashboardAddProductToSale = () => {
     apiClient
       .post(`/api/sales/${saleId}/products`, selectedProductIds, {
         headers: {
-          Authorization: authHeader,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -76,8 +94,15 @@ const DashboardAddProductToSale = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold">Add Products to Sale</h1>
+      <input
+        type="text"
+        placeholder="Search by product's name"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="mt-4 p-2 border border-gray-300 rounded-md w-full"
+      />
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div
             key={product.productId}
             className={`border rounded-md p-2 flex flex-col relative transition-all duration-300 ${

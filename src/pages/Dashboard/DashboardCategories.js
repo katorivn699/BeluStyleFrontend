@@ -6,6 +6,7 @@ import CategoryDrawer from "../../components/drawer/DashboardCategoryDrawer"; //
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardCategories = () => {
   const [categories, setCategories] = useState([]); // State to store categories
@@ -18,14 +19,14 @@ const DashboardCategories = () => {
   const authUser = useAuthUser(); // Get the current user
   const userRole = authUser.role; // Get the user's role
 
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     // Fetch categories from API
     apiClient
       .get("/api/categories", {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -34,11 +35,11 @@ const DashboardCategories = () => {
       .catch((error) => {
         console.error("Error fetching categories:", error);
       });
-  }, []); // Empty dependency array means this useEffect runs once when the component mounts
+  }, [varToken]);
 
   const openDeleteModal = (category) => {
     setCategoryToDelete(category);
-    setIsOpen(true); // Open the modal
+    setIsOpen(true);
   };
 
   const handleClose = () => {
@@ -50,7 +51,7 @@ const DashboardCategories = () => {
       apiClient
         .delete(`/api/categories/${categoryToDelete.categoryId}`, {
           headers: {
-            Authorization: "Bearer " + varToken,
+            Authorization: varToken,
           },
         })
         .then((response) => {

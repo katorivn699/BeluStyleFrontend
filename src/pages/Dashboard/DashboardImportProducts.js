@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { apiClient } from "../../core/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardImportProducts = () => {
   const [products, setProducts] = useState([]);
   const [selectedVariations, setSelectedVariations] = useState({});
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
   const { stockId } = useParams();
   const navigate = useNavigate();
 
@@ -14,12 +15,12 @@ const DashboardImportProducts = () => {
     apiClient
       .get("/api/products", {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => setProducts(response.data))
       .catch((error) => console.error("Error fetching products:", error));
-  }, []);
+  }, [varToken]);
 
   const handleVariationChange = (variationId, quantity) => {
     setSelectedVariations((prev) => {
@@ -49,7 +50,7 @@ const DashboardImportProducts = () => {
     apiClient
       .post("/api/stock-transactions", payload, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -94,35 +95,42 @@ const DashboardImportProducts = () => {
 
 const ProductCard = ({ product, onVariationChange, selectedVariations }) => {
   const [variations, setVariations] = useState([]);
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     apiClient
       .get(`/api/products/${product.productId}/product-variations`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => setVariations(response.data.productVariations))
       .catch((error) => console.error("Error fetching variations:", error));
-  }, [product.productId]);
+  }, [product.productId, varToken]);
 
   return (
-    <div className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-lg transition duration-200">
-      <div className="flex items-center mb-3">
+    <div
+      className="p-6 border rounded-lg shadow-sm bg-white hover:shadow-lg transition duration-200"
+      style={{ minWidth: "350px" }}
+    >
+      <div className="flex items-center mb-4">
         <img
           src={product.productVariationImage}
           alt={product.productName}
-          className="w-16 h-16 rounded-lg shadow mr-4 object-cover"
+          className="w-20 h-20 rounded-lg shadow mr-4 object-cover"
         />
         <div>
           <h2 className="text-lg font-semibold text-gray-800">
             {product.productName}
           </h2>
           <p className="text-sm text-gray-600">{product.productDescription}</p>
+          <p className="text-sm text-gray-600">Brand: {product.brandName}</p>
+          <p className="text-sm text-gray-600">
+            Category: {product.categoryName}
+          </p>
         </div>
       </div>
-      <div className="flex flex-wrap gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {variations.map((variation) => (
           <VariationCard
             key={variation.variationId}
@@ -160,23 +168,24 @@ const VariationCard = ({ variation, onVariationChange, isSelected }) => {
 
   return (
     <div
-      className={`p-3 rounded-lg border text-center shadow-sm cursor-pointer transition duration-200 ${
+      className={`p-2 rounded-lg border text-center shadow-sm cursor-pointer transition duration-200 ${
         isSelected ? "border-green-500 bg-green-50" : "bg-gray-50"
       }`}
       onClick={handleCardClick}
+      style={{ minWidth: "100px", maxWidth: "110px" }}
     >
       <img
         src={variation.productVariationImage}
         alt={`${variation.size.sizeName} ${variation.color.colorName}`}
-        className="w-full h-24 rounded-lg object-cover mb-2"
+        className="w-full h-16 rounded-lg object-cover mb-1"
       />
-      <p className="text-sm font-medium text-gray-700">
+      <p className="text-xs font-medium text-gray-700">
         Size: {variation.size.sizeName}
       </p>
-      <p className="text-sm text-gray-700">
+      <p className="text-xs text-gray-700">
         Color: {variation.color.colorName}
       </p>
-      <p className="text-sm font-semibold text-gray-800">
+      <p className="text-xs font-semibold text-gray-800">
         Price: ${variation.productPrice}
       </p>
       {showInput && (
@@ -187,7 +196,7 @@ const VariationCard = ({ variation, onVariationChange, isSelected }) => {
           onClick={(e) => e.stopPropagation()}
           onChange={handleQuantityChange}
           placeholder="Quantity"
-          className="mt-3 w-full p-2 border rounded focus:outline-none focus:ring focus:ring-green-200"
+          className="mt-1 w-full p-1 border rounded focus:outline-none focus:ring focus:ring-green-200"
         />
       )}
     </div>

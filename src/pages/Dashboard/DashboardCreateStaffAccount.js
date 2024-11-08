@@ -7,9 +7,10 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import LocationSelector from "../../service/LocationService";
 import { TextField, Button, Typography, Box } from "@mui/material";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardCreateStaffAccount = () => {
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
   const navigate = useNavigate();
   const [previewImage, setPreviewImage] = useState(null); // State for image preview
 
@@ -92,7 +93,7 @@ const DashboardCreateStaffAccount = () => {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + varToken,
+              Authorization: varToken,
             },
           }
         )

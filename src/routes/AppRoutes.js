@@ -51,6 +51,11 @@ import DashboardProductVariations from "../pages/Dashboard/DashboardProductVaria
 import DashboardAddProducts from "../pages/Dashboard/DashboardAddProducts.js";
 import DashboardImportProducts from "../pages/Dashboard/DashboardImportProducts.js";
 import OrderDetail from "../pages/Order/OrderDetail.jsx";
+import DashboardViewUserDiscount from "../pages/Dashboard/DashboardViewUserDiscount.js";
+import DashboardAddAccountToDiscount from "../pages/Dashboard/DashboardAddAccountToDiscount.js";
+import DashboardEditProduct from "../pages/Dashboard/DashboardEditProduct.js";
+import DashboardAddProductVariations from "../pages/Dashboard/DashboardAddProductVariations.js";
+import DashboardEditProductVariation from "../pages/Dashboard/DashboardEditProductVariation.js";
 
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
@@ -441,6 +446,28 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
       />
 
       <Route
+        path="/Dashboard/Discounts/:discountId"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardViewUserDiscount />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/Dashboard/Discounts/:discountId/AddAccount"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardAddAccountToDiscount />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
         path="/Dashboard/Discounts/Create"
         element={
           <PrivateRoute requiredRoles={["ADMIN"]}>
@@ -490,6 +517,39 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
           <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
             <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
               <DashboardAddProducts />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/Dashboard/Products/:productId/Add"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardAddProductVariations />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/Dashboard/Products/Edit/:productId"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardEditProduct />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/Dashboard/Products/:productId/Edit/:productVariationId"
+        element={
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <DashboardEditProductVariation />
             </DashboardLayout>
           </PrivateRoute>
         }

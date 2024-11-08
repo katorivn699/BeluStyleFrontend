@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardEditAccount = () => {
   const { userId } = useParams();
@@ -9,14 +10,14 @@ const DashboardEditAccount = () => {
   const [isCustomer, setIsCustomer] = useState(false);
   const [enable, setEnable] = useState(false);
   const navigate = useNavigate();
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     // Fetch user data to get the current status
     apiClient
       .get(`/api/admin/${userId}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -37,7 +38,7 @@ const DashboardEditAccount = () => {
     apiClient
       .put(`/api/admin/${userId}`, updatedUser, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then(

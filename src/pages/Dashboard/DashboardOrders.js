@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { apiClient } from "../../core/api"; // Your API client
+import { apiClient } from "../../core/api";
 import {
   Card,
   CardContent,
@@ -7,6 +7,7 @@ import {
   Grid,
   Divider,
   IconButton,
+  Button,
 } from "@mui/material";
 import {
   LocalShipping,
@@ -16,21 +17,38 @@ import {
   Home,
   TrackChanges,
 } from "@mui/icons-material";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardOrders = () => {
   const [orders, setOrders] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const varToken = useAuthHeader();
 
   useEffect(() => {
-    // Fetch orders from the API
+    fetchOrders();
+  }, [page]);
+
+  const fetchOrders = () => {
     apiClient
-      .get("/api/orders") // Adjust this endpoint as needed
-      .then((response) => setOrders(response.data))
+      .get("/api/orders", {
+        headers: { Authorization: varToken },
+        params: { page, size: 10 },
+      })
+      .then((response) => {
+        setOrders(response.data.content);
+        setTotalPages(response.data.totalPages);
+      })
       .catch((error) => console.error("Error fetching orders:", error));
-  }, []);
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
 
   return (
     <div>
-      <Typography variant="h4" className="text-2xl font-bold mb-4">
+      <Typography variant="h4" className="text-4xl font-bold mb-4">
         Orders
       </Typography>
       <Grid container spacing={4}>
@@ -112,6 +130,7 @@ const DashboardOrders = () => {
                     </Typography>
                   </Grid>
                 </Grid>
+
                 <Divider style={{ margin: "16px 0" }} />
                 <Typography
                   variant="body2"
@@ -120,11 +139,45 @@ const DashboardOrders = () => {
                 >
                   Notes: {order.notes || "N/A"}
                 </Typography>
+
+                <Typography variant="h6" className="mt-4">
+                  Order Details:
+                </Typography>
+                {order.orderDetails.map((detail) => (
+                  <Typography key={detail.orderDetailId} color="textSecondary">
+                    - Item {detail.variationId}, Quantity:{" "}
+                    {detail.orderQuantity}, Unit Price: $
+                    {detail.unitPrice.toFixed(2)}, Discount: $
+                    {detail.discountAmount.toFixed(2)}
+                  </Typography>
+                ))}
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
+
+      <div className="flex justify-center mt-4">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handlePageChange(page - 1)}
+          disabled={page === 0}
+        >
+          Previous
+        </Button>
+        <Typography className="mx-4">
+          Page {page + 1} of {totalPages}
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handlePageChange(page + 1)}
+          disabled={page >= totalPages - 1}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

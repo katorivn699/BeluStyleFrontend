@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Drawer, Typography, Box, CircularProgress } from "@mui/material";
 import { FaTimes } from "react-icons/fa";
 import { apiClient } from "../../core/api";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
   const [account, setAccount] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     if (userId) {
@@ -15,7 +16,7 @@ const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
       apiClient
         .get(`/api/account/admin/${userId}`, {
           headers: {
-            Authorization: "Bearer " + varToken,
+            Authorization: varToken,
           },
         })
         .then((response) => {

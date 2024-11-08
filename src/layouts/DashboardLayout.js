@@ -25,14 +25,14 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
             </button>
 
             {/* Search bar */}
-            <div className="flex items-center bg-gray-100 p-2 rounded-full shadow-sm w-96 mx-auto ml-4">
+            {/* <div className="flex items-center bg-gray-100 p-2 rounded-full shadow-sm w-96 mx-auto ml-4">
               <FaSearch className="text-gray-400 ml-2" />
               <input
                 type="text"
                 placeholder="Search"
                 className="bg-gray-100 focus:outline-none ml-2 w-full"
               />
-            </div>
+            </div> */}
           </div>
 
           {/* User Profile */}

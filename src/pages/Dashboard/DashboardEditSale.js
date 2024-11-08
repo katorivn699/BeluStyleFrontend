@@ -10,6 +10,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { apiClient } from "../../core/api";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardEditSale = () => {
   const [saleType, setSaleType] = useState("PERCENTAGE");
@@ -20,13 +21,13 @@ const DashboardEditSale = () => {
   const navigate = useNavigate();
   const { saleId } = useParams();
 
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     apiClient
       .get(`/api/sales/${saleId}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -64,7 +65,7 @@ const DashboardEditSale = () => {
     apiClient
       .put(`/api/sales/${saleId}`, updatedSale, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
