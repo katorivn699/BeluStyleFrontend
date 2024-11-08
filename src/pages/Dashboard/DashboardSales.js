@@ -5,6 +5,7 @@ import { apiClient } from "../../core/api"; // Assuming you have an api client s
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardSales = () => {
   const [sales, setSales] = useState([]);
@@ -14,7 +15,7 @@ const DashboardSales = () => {
 
   const authUser = useAuthUser(); // Get the current user
   const userRole = authUser.role; // Get the user's role
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   const openDeleteModal = (sale) => {
     setSaleToDelete(sale);
@@ -30,7 +31,7 @@ const DashboardSales = () => {
       apiClient
         .delete(`/api/sales/${saleToDelete.saleId}`, {
           headers: {
-            Authorization: "Bearer " + varToken,
+            Authorization: varToken,
           },
         })
         .then((response) => {
@@ -67,7 +68,7 @@ const DashboardSales = () => {
     apiClient
       .get("/api/sales", {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {

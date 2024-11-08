@@ -6,6 +6,7 @@ import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
 import BrandDrawer from "../../components/drawer/DashboardBrandDrawer";
 import { toast, Zoom } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardBrands = () => {
   const [brands, setbrands] = useState([]); // State to store brands
@@ -17,13 +18,12 @@ const DashboardBrands = () => {
 
   const authUser = useAuthUser(); // Get the current user
   const userRole = authUser.role; // Get the user's role
-  const varToken = localStorage.getItem("_auth");
-
+  const varToken = useAuthHeader();
   useEffect(() => {
     apiClient
       .get("/api/brands", {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -48,7 +48,7 @@ const DashboardBrands = () => {
       apiClient
         .delete(`/api/brands/${brandToDelete.brandId}`, {
           headers: {
-            Authorization: "Bearer " + varToken,
+            Authorization: varToken,
           },
         })
         .then((response) => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiClient } from "../../core/api"; // Assuming you have an API client setup
 import { FaPlus } from "react-icons/fa";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardWarehouseDetail = () => {
   const { stockId } = useParams();
@@ -11,13 +12,13 @@ const DashboardWarehouseDetail = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [showOnlyLowStock, setShowOnlyLowStock] = useState(false);
 
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     apiClient
       .get(`/api/stocks/${stockId}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -49,8 +50,8 @@ const DashboardWarehouseDetail = () => {
 
   const filteredProducts = Object.values(groupedProducts).filter((group) => {
     const matchesSearch = group.productName
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      ? group.productName.toLowerCase().includes(searchTerm.toLowerCase())
+      : true;
     const matchesBrand = selectedBrandId
       ? group.brandId === parseInt(selectedBrandId, 10)
       : true;

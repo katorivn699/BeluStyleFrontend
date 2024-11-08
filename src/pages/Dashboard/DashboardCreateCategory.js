@@ -9,80 +9,78 @@ import {
   CardContent,
   Typography,
   Box,
+  CircularProgress,
 } from "@mui/material";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardCreateCategory = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
-  const [categoryImage, setCategoryImage] = useState(null); // State for the image file
-  const [previewImage, setPreviewImage] = useState(null); // State for image preview
+  const [categoryImage, setCategoryImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setCategoryImage(file);
-
-    // Generate image preview URL
-    const previewURL = URL.createObjectURL(file);
-    setPreviewImage(previewURL);
+    if (file) setCategoryImage(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append("image", categoryImage);
+    try {
+      let imageUrl = "";
 
-    const uploadPromise = fetch(
-      "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+      if (categoryImage) {
+        const formData = new FormData();
+        formData.append("image", categoryImage);
 
-    toast.promise(
-      uploadPromise
-        .then((uploadResponse) => uploadResponse.json())
-        .then(async (uploadData) => {
-          if (uploadData.success) {
-            const imageUrl = uploadData.data.display_url;
-
-            // Send the category data to the backend
-            await apiClient.post(
-              "/api/categories",
-              {
-                categoryName,
-                categoryDescription,
-                imageUrl,
-              },
-              {
-                headers: {
-                  Authorization: "Bearer " + varToken,
-                },
-              }
-            );
-
-            navigate("/Dashboard/Categories");
-          } else {
-            throw new Error("Image upload failed");
+        const uploadResponse = await fetch(
+          "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
+          {
+            method: "POST",
+            body: formData,
           }
-        })
-        .catch((error) => {
-          console.error("Error creating category:", error);
-          throw error;
-        }),
-      {
-        pending: "Uploading image and creating category...",
-        success: "Category created successfully!",
-        error: "Failed to create category. Please try again.",
-      },
-      {
+        );
+        const uploadData = await uploadResponse.json();
+
+        if (uploadData.success) {
+          imageUrl = uploadData.data.display_url;
+        } else {
+          throw new Error("Image upload failed");
+        }
+      }
+
+      await apiClient.post(
+        "/api/categories",
+        {
+          categoryName,
+          categoryDescription,
+          imageUrl,
+        },
+        {
+          headers: {
+            Authorization: varToken,
+          },
+        }
+      );
+
+      toast.success("Category created successfully!", {
         position: "bottom-right",
         transition: Zoom,
-      }
-    );
+      });
+      navigate("/Dashboard/Categories");
+    } catch (error) {
+      console.error("Error creating category:", error);
+      toast.error("Failed to create category. Please try again.", {
+        position: "bottom-right",
+        transition: Zoom,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -112,23 +110,22 @@ const DashboardCreateCategory = () => {
               margin="normal"
             />
             <Box mt={2}>
-              <Button variant="outlined" component="label" fullWidth>
+              <Button variant="outlined" component="label">
                 Upload Image
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
                   hidden
-                  required
                 />
               </Button>
             </Box>
-            {previewImage && (
-              <Box mt={2} display="flex" justifyContent="center">
+            {categoryImage && (
+              <Box mt={2}>
                 <img
-                  src={previewImage}
-                  alt="Preview"
-                  style={{ width: "100%", maxHeight: 200, objectFit: "cover" }}
+                  src={URL.createObjectURL(categoryImage)}
+                  alt="Category Image Preview"
+                  className="w-32 h-32 object-cover rounded"
                 />
               </Box>
             )}
@@ -138,8 +135,13 @@ const DashboardCreateCategory = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
+                disabled={isSubmitting}
               >
-                Save
+                {isSubmitting ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Save"
+                )}
               </Button>
             </Box>
           </form>

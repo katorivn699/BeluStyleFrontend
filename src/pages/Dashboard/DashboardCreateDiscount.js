@@ -6,6 +6,7 @@ import { TextField, Button, Typography, Box, MenuItem } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import { apiClient } from "../../core/api";
 import { useNavigate } from "react-router-dom";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardCreateDiscount = () => {
   const validationSchema = Yup.object({
@@ -33,7 +34,7 @@ const DashboardCreateDiscount = () => {
     usageLimit: Yup.number().min(0, "Usage limit cannot be negative"),
   });
 
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
@@ -56,7 +57,7 @@ const DashboardCreateDiscount = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + varToken,
+            Authorization: varToken,
           },
         }
       );

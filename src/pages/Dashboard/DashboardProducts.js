@@ -2,21 +2,22 @@ import React, { useEffect, useState } from "react";
 import { apiClient } from "../../core/api";
 import { Link } from "react-router-dom";
 import { Box, Button, Typography, Modal } from "@mui/material";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast } from "react-toastify";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardProducts = () => {
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     apiClient
       .get("/api/products", {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => setProducts(response.data))
@@ -27,7 +28,7 @@ const DashboardProducts = () => {
     apiClient
       .delete(`/api/products/${productId}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then(() => {
@@ -63,7 +64,7 @@ const DashboardProducts = () => {
         <h1 className="text-4xl font-bold">Products</h1>
         <Link to="/Dashboard/Products/Add">
           <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
-            <FaPlus className="mr-2" /> Add New Product
+            <FaPlus className="mr-2 " /> Add New Product
           </button>
         </Link>
       </div>
@@ -97,14 +98,24 @@ const DashboardProducts = () => {
                     ? product.productPrice.toFixed(2)
                     : "N/A"}
                 </p>
+                <p className="text-gray-400">
+                  Avg. Rating: {product.averageRating} ({product.totalRatings}{" "}
+                  ratings)
+                </p>
               </div>
             </Link>
             <button
               onClick={() => handleOpenModal(product)}
-              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+              className="absolute top-2 right-2 text-red-500 p-2 hover:text-red-700 bg-white"
             >
               <FaTrash />
             </button>
+            <Link
+              to={`/Dashboard/Products/Edit/${product.productId}`}
+              className="absolute top-2 right-10 text-blue-500 hover:text-blue-700 p-2 bg-white"
+            >
+              <FaEdit />
+            </Link>
           </div>
         ))}
       </div>

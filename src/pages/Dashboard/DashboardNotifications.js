@@ -6,6 +6,7 @@ import { FaEye, FaPlus, FaTrash } from "react-icons/fa";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast, Zoom } from "react-toastify";
 import NotificationDrawer from "../../components/drawer/DashboardNotificationDrawer";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardNotifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -14,7 +15,7 @@ const DashboardNotifications = () => {
   const [selectedNotification, setNotification] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const authUser = useAuthUser();
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   const openDeleteModal = (notification) => {
     setNotificationToDelete(notification);
@@ -31,7 +32,7 @@ const DashboardNotifications = () => {
       apiClient
         .delete(`/api/notifications/${notificationToDelete.notificationId}`, {
           headers: {
-            Authorization: "Bearer " + varToken,
+            Authorization: varToken,
           },
         })
         .then((response) => {
@@ -69,7 +70,7 @@ const DashboardNotifications = () => {
       try {
         const response = await apiClient.get("/api/notifications/as", {
           headers: {
-            Authorization: "Bearer " + varToken,
+            Authorization: varToken,
           },
         });
 

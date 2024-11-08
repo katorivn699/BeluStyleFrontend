@@ -8,9 +8,9 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Box,
 } from "@mui/material";
 import { apiClient } from "../../core/api";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardEditDiscount = () => {
   const [discountType, setDiscountType] = useState("PERCENTAGE");
@@ -20,15 +20,18 @@ const DashboardEditDiscount = () => {
   const [discountStatus, setDiscountStatus] = useState("ACTIVE");
   const [discountCode, setDiscountCode] = useState("");
   const [discountDescription, setDiscountDescription] = useState("");
+  const [minimumOrderValue, setMinimumOrderValue] = useState("");
+  const [maximumDiscountValue, setMaximumDiscountValue] = useState("");
+  const [usageLimit, setUsageLimit] = useState("");
   const navigate = useNavigate();
   const { discountId } = useParams();
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     const fetchDiscount = async () => {
       try {
         const response = await apiClient.get(`/api/discounts/${discountId}`, {
-          headers: { Authorization: "Bearer " + varToken },
+          headers: { Authorization: varToken },
         });
         const discount = response.data;
         setDiscountType(discount.discountType);
@@ -38,6 +41,9 @@ const DashboardEditDiscount = () => {
         setDiscountStatus(discount.discountStatus);
         setDiscountCode(discount.discountCode);
         setDiscountDescription(discount.discountDescription);
+        setMinimumOrderValue(discount.minimumOrderValue);
+        setMaximumDiscountValue(discount.maximumDiscountValue);
+        setUsageLimit(discount.usageLimit);
       } catch (error) {
         console.error("Error fetching discount details:", error);
       }
@@ -64,11 +70,14 @@ const DashboardEditDiscount = () => {
       discountStatus,
       discountCode,
       discountDescription,
+      minimumOrderValue: parseFloat(minimumOrderValue),
+      maximumDiscountValue: parseFloat(maximumDiscountValue),
+      usageLimit: parseInt(usageLimit, 10),
     };
 
     try {
       await apiClient.put(`/api/discounts/${discountId}`, updatedDiscount, {
-        headers: { Authorization: "Bearer " + varToken },
+        headers: { Authorization: varToken },
       });
       navigate("/Dashboard/Discounts");
     } catch (error) {
@@ -139,7 +148,8 @@ const DashboardEditDiscount = () => {
             label="Discount Status"
           >
             <MenuItem value="ACTIVE">Active</MenuItem>
-            <MenuItem value="INACTIVE">Inactive</MenuItem>
+            <MenuItem value="EXPIRED">Expired</MenuItem>
+            <MenuItem value="USED">Used</MenuItem>
           </Select>
         </FormControl>
 
@@ -150,6 +160,30 @@ const DashboardEditDiscount = () => {
           fullWidth
           multiline
           rows={3}
+        />
+
+        <TextField
+          label="Minimum Order Value"
+          type="number"
+          value={minimumOrderValue}
+          onChange={(e) => setMinimumOrderValue(e.target.value)}
+          fullWidth
+        />
+
+        <TextField
+          label="Maximum Discount Value"
+          type="number"
+          value={maximumDiscountValue}
+          onChange={(e) => setMaximumDiscountValue(e.target.value)}
+          fullWidth
+        />
+
+        <TextField
+          label="Usage Limit"
+          type="number"
+          value={usageLimit}
+          onChange={(e) => setUsageLimit(e.target.value)}
+          fullWidth
         />
 
         <Button type="submit" variant="contained" color="primary" fullWidth>

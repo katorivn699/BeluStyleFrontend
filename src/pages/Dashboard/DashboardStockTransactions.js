@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../../core/api";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardStockTransactions = () => {
   const [transactions, setTransactions] = useState([]);
 
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     apiClient
       .get("/api/stock-transactions", {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {

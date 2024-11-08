@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { apiClient } from "../../core/api"; // Assuming you have an api client setup
-import { toast, Zoom } from "react-toastify"; // Assuming you want to use toast for notifications
+import { apiClient } from "../../core/api";
+import { toast, Zoom } from "react-toastify";
 import { FaPlus, FaTrash } from "react-icons/fa";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardViewSaleProduct = () => {
-  const [products, setProducts] = useState([]); // State to store products
-  const [sale, setSale] = useState(null); // State to store sale details
-  const { saleId } = useParams(); // Get saleId from route params
+  const [products, setProducts] = useState([]);
+  const [sale, setSale] = useState(null);
+  const { saleId } = useParams();
 
-  const varToken = localStorage.getItem("_auth");
+  const varToken = useAuthHeader();
 
   useEffect(() => {
     // Fetch sale details
     apiClient
       .get(`/api/sales/${saleId}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -30,7 +31,7 @@ const DashboardViewSaleProduct = () => {
     apiClient
       .get(`/api/sales/${saleId}/products`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then((response) => {
@@ -46,7 +47,7 @@ const DashboardViewSaleProduct = () => {
     apiClient
       .delete(`/api/sales/${saleId}/products?productId=${productId}`, {
         headers: {
-          Authorization: "Bearer " + varToken,
+          Authorization: varToken,
         },
       })
       .then(() => {
