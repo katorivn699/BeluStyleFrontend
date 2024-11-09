@@ -23,7 +23,7 @@ const SearchBar = ({ toggleSearchBar }) => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [products]);
 
   // Filter products based on the query
   const filteredProducts = products.filter((product) =>
