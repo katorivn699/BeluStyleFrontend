@@ -8,6 +8,10 @@ const SearchBar = ({ toggleSearchBar }) => {
   const { isSearchOpen } = useSearchBar();
   const [products, setProducts] = useState([]);
   const searchBarRef = useRef(null);
+  const inputRef = useRef(null);
+  const buttonRef = useRef(null);
+  const searchResultsRef = useRef(null); // Added for search results
+  const [left, setLeft] = useState("50%");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -48,15 +52,45 @@ const SearchBar = ({ toggleSearchBar }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const updatePosition = () => {
+      // Get the width of the input and button, plus the gap between them
+      const inputWidth = inputRef.current.offsetWidth;
+      const buttonWidth = buttonRef.current.offsetWidth;
+      const gap = 24; // The gap between input and button
+      const totalWidth = inputWidth + buttonWidth + gap;
+
+      // Set the left position of both search bar and search results
+      setLeft(`calc(50% - ${totalWidth / 2}px)`);
+
+      // Similarly, adjust search results position and width
+      if (searchResultsRef.current) {
+        searchResultsRef.current.style.left = `calc(50% - ${totalWidth / 2}px)`;
+        searchResultsRef.current.style.width = `${totalWidth}px`; // Match the width exactly
+      }
+    };
+
+    // Update position on window resize
+    window.addEventListener("resize", updatePosition);
+
+    // Initial position calculation
+    updatePosition();
+
+    // Cleanup listener
+    return () => window.removeEventListener("resize", updatePosition);
+  }, [query]);
+
   return (
     <>
       <div
         ref={searchBarRef}
-        className={`fixed top-28 left-[30%] transform -translate-x-1/2 z-50 bg-white p-4 rounded-full shadow-lg flex items-center gap-3 ${
+        className={`fixed top-28 transform -translate-x-1/2 z-50 bg-white p-4 max-w-[40rem] rounded-full shadow-lg flex items-center gap-3 ${
           isSearchOpen ? "animate-slide-out" : "animate-slide-in"
         }`}
+        style={{ left }}
       >
         <input
+          ref={inputRef}
           type="text"
           value={query}
           onChange={handleChange}
@@ -64,6 +98,7 @@ const SearchBar = ({ toggleSearchBar }) => {
           className="border border-gray-300 rounded-full px-4 py-2 w-[40rem]"
         />
         <button
+          ref={buttonRef}
           onClick={handleSearch}
           className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600"
         >
@@ -74,8 +109,9 @@ const SearchBar = ({ toggleSearchBar }) => {
       {/* Floating container for search results */}
       {query && filteredProducts.length > 0 && (
         <div
-          className="fixed top-[11.1rem] left-1/2 transform -translate-x-1/2 z-50 w-[40rem] bg-white shadow-lg rounded-b-lg border-t border-gray-200 mt-2"
-          onMouseDown={(e) => e.stopPropagation()} // Prevent close on click inside dropdown
+          ref={searchResultsRef}
+          className="fixed top-[11.5rem] z-50 bg-white shadow-lg rounded-lg border-t border-gray-200 mt-2 ml-2"
+          onMouseDown={(e) => e.stopPropagation()}
         >
           <ul className="max-h-64 overflow-y-auto">
             {filteredProducts.map((product) => (

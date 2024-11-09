@@ -43,7 +43,7 @@ module.exports = {
         },
         slideIn: {
           "0%": {
-            transform: "translateY(-200%)",
+            transform: "translateY(-300%)",
           },
           "100%": {
             transform: "translateY(0%)",
@@ -51,7 +51,7 @@ module.exports = {
         },
         slideOut: {
           "0%": { transform: "translateY(0%)" },
-          "100%": { transform: "translateY(-200%)" },
+          "100%": { transform: "translateY(-300%)" },
         },
       },
       animation: {
