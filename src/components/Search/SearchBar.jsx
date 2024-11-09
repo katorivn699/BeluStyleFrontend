@@ -127,7 +127,7 @@ const SearchBar = ({ toggleSearchBar }) => {
                   <img
                     src={product.productVariationImage}
                     alt={product.productName}
-                    className="w-12 h-12 mr-4 rounded-full"
+                    className="w-12 h-12 mr-4 rounded-full object-cover"
                   />
                   <span>{product.productName}</span>
                 </li>

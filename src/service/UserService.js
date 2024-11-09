@@ -73,7 +73,13 @@ export const ChangePassword = async (data, authHeader, email) => {
       email: email,
       newPassword: data.newPassword,
       oldPassword: data.currentPassword,
-    });
+    },
+    {
+      headers: {
+        Authorization: authHeader
+      }
+    }
+  );
     return response;
   } catch (error) {
     console.log(error);

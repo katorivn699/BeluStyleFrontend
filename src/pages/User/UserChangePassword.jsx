@@ -11,13 +11,12 @@ import {
 } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import {ChangePassword} from "../../service/UserService";
-import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { ChangePassword } from "../../service/UserService";
 import { toast, Zoom } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import useSignOut from "react-auth-kit/hooks/useSignOut";
 import { useNavigate } from "react-router-dom";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -26,6 +25,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const UserChangePassword = () => {
   const [open, setOpen] = useState(false);
   const authHeader = useAuthHeader();
+  const authState = useAuthUser();
   const navigate = useNavigate();
 
   const handleClickOpen = () => {
@@ -57,25 +57,35 @@ const UserChangePassword = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const token = jwtDecode(authHeader);
-      const response = await ChangePassword(values, authHeader, token.email);
-      toast.success(response?.data?.message || "Change password successfully!", {
-        position: "top-center",
-        transition: Zoom
-      })
-      handleClose();
-      setTimeout(() => {
-        toast.info("Please login again!", {
+      const response = await ChangePassword(
+        values,
+        authHeader,
+        authState.email
+      );
+      if (response.status === 200) {
+        toast.success(response?.data || "Change password successfully!", {
           position: "top-center",
           transition: Zoom,
-        })
-        navigate("/logout");
-      }, 3000);
+        });
+        handleClose();
+        setTimeout(() => {
+          toast.info("Please login again!", {
+            position: "top-center",
+            transition: Zoom,
+          });
+          navigate("/logout");
+        }, 3000);
+      }else{
+        toast.error(response?.data || "Error to change password", {
+          position: "top-center",
+          transition: Zoom,
+        });
+      }
     } catch (error) {
-      toast.error(error?.data?.message|| "Error to change password", {
+      toast.error(error?.data?.message || "Error to change password", {
         position: "top-center",
         transition: Zoom,
-      })
+      });
     }
   };
 
