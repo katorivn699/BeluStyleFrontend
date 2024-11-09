@@ -1,4 +1,3 @@
-// src/components/PrivateRoute.js
 import React from "react";
 import { Navigate } from "react-router-dom";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
@@ -8,14 +7,17 @@ const PrivateRoute = ({ children, requiredRoles, isLoginForm }) => {
   const isAuth = useIsAuthenticated();
   const authUser = useAuthUser();
 
+  if (isLoginForm) {
+    if (isAuth) {
+      return <Navigate to="/Dashboard" />;
+    } else {
+      return children;
+    }
+  }
+
   try {
     if (!isAuth) {
-      // Redirect to login if not authenticated
       return <Navigate to="/LoginForStaffAndAdmin" />;
-    }
-
-    if (isAuth && isLoginForm) {
-      return <Navigate to="/Dashboard" />;
     }
 
     const userRole = authUser.role;
@@ -30,11 +32,10 @@ const PrivateRoute = ({ children, requiredRoles, isLoginForm }) => {
       return <Navigate to="/Dashboard" />;
     }
 
-    // Render the children if authenticated and has required role
     return children;
   } catch (error) {
     console.error("Error in PrivateRoute:", error);
-    // Redirect to login on error
+
     return <Navigate to="/LoginForStaffAndAdmin" />;
   }
 };
