@@ -25,9 +25,8 @@ const DashboardAddProducts = () => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [colors, setColors] = useState([]);
-  const [previewImage, setPreviewImage] = useState(null);
   const [variations, setVariations] = useState([
-    { sizeId: "", colorId: "", productPrice: 0, productVariationImage: null },
+    { sizeId: "", colorId: "", productPrice: "", productVariationImage: null },
   ]);
   const navigate = useNavigate();
 
@@ -57,7 +56,12 @@ const DashboardAddProducts = () => {
   const handleAddVariation = () => {
     setVariations([
       ...variations,
-      { sizeId: "", colorId: "", productPrice: 0, productVariationImage: null },
+      {
+        sizeId: "",
+        colorId: "",
+        productPrice: "",
+        productVariationImage: null,
+      },
     ]);
   };
 
@@ -240,7 +244,18 @@ const DashboardAddProducts = () => {
               handleVariationChange(index, "productPrice", e.target.value)
             }
             required
+            onBlur={(e) => {
+              // Check if value is within min and max range
+              const value = parseFloat(e.target.value);
+              if (value < 0) {
+                handleVariationChange(index, "productPrice", 0);
+              } else if (value > 999999999999) {
+                handleVariationChange(index, "productPrice", 999999999999);
+              }
+            }}
+            inputProps={{ min: 0, max: 999999999999 }}
           />
+
           <Button variant="outlined" component="label">
             Upload Image
             <input
@@ -268,7 +283,12 @@ const DashboardAddProducts = () => {
       <Button variant="outlined" onClick={handleAddVariation}>
         Add Variation
       </Button>
-      <Button type="submit" variant="contained" color="primary">
+      <Button
+        className="ml-5"
+        type="submit"
+        variant="contained"
+        color="primary"
+      >
         Submit
       </Button>
     </form>

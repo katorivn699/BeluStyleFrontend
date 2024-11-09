@@ -14,7 +14,7 @@ const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
     if (userId) {
       setIsLoading(true);
       apiClient
-        .get(`/api/account/admin/${userId}`, {
+        .get(`/api/admin/${userId}`, {
           headers: {
             Authorization: varToken,
           },

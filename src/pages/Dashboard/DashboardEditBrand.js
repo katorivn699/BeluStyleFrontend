@@ -9,7 +9,12 @@ import {
   Button,
   Box,
   InputLabel,
+  CircularProgress,
+  FormHelperText,
 } from "@mui/material";
+
+import * as Yup from "yup";
+import { Formik, Field, ErrorMessage } from "formik";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardEditBrand = () => {
@@ -23,6 +28,7 @@ const DashboardEditBrand = () => {
   const [brandImage, setBrandImage] = useState(null);
   const [currentLogoUrl, setCurrentLogoUrl] = useState("");
   const [newImagePreview, setNewImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchBrand = async () => {
@@ -49,11 +55,28 @@ const DashboardEditBrand = () => {
     setNewImagePreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validationSchema = Yup.object({
+    brandName: Yup.string()
+      .max(255, "Brand Name must be at most 255 characters")
+      .required("Brand Name is required"),
+    brandDescription: Yup.string()
+      .max(500, "Description must be at most 500 characters")
+      .required("Brand Description is required"),
+    websiteUrl: Yup.string()
+      .matches(
+        /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}(\/[a-z0-9\-._~:/?#[\]@!$&'()*+,;=]*)?$/i,
+        "Enter a valid URL"
+      )
+      .required("Website URL is required"),
+  });
+
+  const handleSubmit = async (values) => {
+    setLoading(true);
+
     try {
       let logoUrl = currentLogoUrl;
 
+      // Handle image upload if there is a new image
       if (brandImage) {
         const formData = new FormData();
         formData.append("image", brandImage);
@@ -69,9 +92,16 @@ const DashboardEditBrand = () => {
         }
       }
 
+      // Update brand
       await apiClient.put(
         "/api/brands",
-        { brandId, brandName, brandDescription, websiteUrl, logoUrl },
+        {
+          brandId,
+          brandName: values.brandName,
+          brandDescription: values.brandDescription,
+          websiteUrl: values.websiteUrl,
+          logoUrl,
+        },
         { headers: { Authorization: varToken } }
       );
 
@@ -85,6 +115,8 @@ const DashboardEditBrand = () => {
         position: "bottom-right",
         transition: Zoom,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,90 +128,138 @@ const DashboardEditBrand = () => {
       <Typography variant="h4" gutterBottom>
         Edit Brand
       </Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Brand Name"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={brandName}
-          onChange={(e) => setBrandName(e.target.value)}
-          required
-        />
-        <TextField
-          label="Description"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={brandDescription}
-          onChange={(e) => setBrandDescription(e.target.value)}
-          required
-        />
-        <TextField
-          label="Website URL"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={websiteUrl}
-          onChange={(e) => setWebsiteUrl(e.target.value)}
-          required
-        />
 
-        <InputLabel htmlFor="brandImage" sx={{ mt: 2 }}>
-          Logo (Leave blank to keep current logo)
-        </InputLabel>
-        <Button variant="outlined" component="label" sx={{ mt: 1 }}>
-          Upload Image
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            hidden
-          />
-        </Button>
-
-        {newImagePreview ? (
-          <Box mt={2} display="flex" justifyContent="center">
-            <img
-              src={newImagePreview}
-              alt="New Logo Preview"
-              style={{
-                width: 150,
-                height: 150,
-                objectFit: "cover",
-                borderRadius: 8,
-              }}
+      <Formik
+        initialValues={{
+          brandName,
+          brandDescription,
+          websiteUrl,
+        }}
+        validationSchema={validationSchema}
+        enableReinitialize
+        onSubmit={handleSubmit}
+      >
+        {({ values, handleChange, handleBlur, errors, touched }) => (
+          <form onSubmit={(e) => e.preventDefault()}>
+            <TextField
+              label="Brand Name"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="brandName"
+              value={values.brandName}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              disabled={loading}
+              error={touched.brandName && !!errors.brandName}
+              helperText={touched.brandName && errors.brandName}
             />
-            <Typography variant="body2" color="textSecondary" mt={6}>
-              New Image Preview
-            </Typography>
-          </Box>
-        ) : (
-          currentLogoUrl && (
-            <Box mt={2} display="flex" justifyContent="center">
-              <img
-                src={currentLogoUrl}
-                alt="Current Logo"
-                style={{
-                  width: 150,
-                  height: 150,
-                  objectFit: "cover",
-                  borderRadius: 8,
-                }}
-              />
-              <Typography variant="body2" color="textSecondary" mt={6}>
-                Current Image
-              </Typography>
-            </Box>
-          )
-        )}
 
-        <Box mt={3}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Update
-          </Button>
-        </Box>
-      </form>
+            <TextField
+              label="Description"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="brandDescription"
+              value={values.brandDescription}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              disabled={loading}
+              error={touched.brandDescription && !!errors.brandDescription}
+              helperText={touched.brandDescription && errors.brandDescription}
+            />
+
+            <TextField
+              label="Website URL"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="websiteUrl"
+              value={values.websiteUrl}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              disabled={loading}
+              error={touched.websiteUrl && !!errors.websiteUrl}
+              helperText={touched.websiteUrl && errors.websiteUrl}
+            />
+
+            <InputLabel htmlFor="brandImage" sx={{ mt: 2 }}>
+              Logo (Leave blank to keep current logo)
+            </InputLabel>
+            <Button
+              variant="outlined"
+              component="label"
+              sx={{ mt: 1 }}
+              disabled={loading}
+            >
+              Upload Image
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                hidden
+                disabled={loading}
+              />
+            </Button>
+
+            {newImagePreview ? (
+              <Box mt={2} display="flex" justifyContent="center">
+                <img
+                  src={newImagePreview}
+                  alt="New Logo Preview"
+                  style={{
+                    width: 150,
+                    height: 150,
+                    objectFit: "cover",
+                    borderRadius: 8,
+                  }}
+                />
+                <Typography variant="body2" color="textSecondary" mt={6}>
+                  New Image Preview
+                </Typography>
+              </Box>
+            ) : (
+              currentLogoUrl && (
+                <Box mt={2} display="flex" justifyContent="center">
+                  <img
+                    src={currentLogoUrl}
+                    alt="Current Logo"
+                    style={{
+                      width: 150,
+                      height: 150,
+                      objectFit: "cover",
+                      borderRadius: 8,
+                    }}
+                  />
+                  <Typography variant="body2" color="textSecondary" mt={6}>
+                    Current Image
+                  </Typography>
+                </Box>
+              )
+            )}
+
+            <Box mt={3}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={loading}
+                onClick={() => handleSubmit(values)}
+              >
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Update"
+                )}
+              </Button>
+            </Box>
+          </form>
+        )}
+      </Formik>
     </Container>
   );
 };

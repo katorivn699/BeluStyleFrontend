@@ -3,17 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const DashboardEditAccount = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [isCustomer, setIsCustomer] = useState(false);
   const [enable, setEnable] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const varToken = useAuthHeader();
 
   useEffect(() => {
-    // Fetch user data to get the current status
     apiClient
       .get(`/api/admin/${userId}`, {
         headers: {
@@ -32,29 +33,36 @@ const DashboardEditAccount = () => {
 
   const handleSave = () => {
     const updatedUser = {
-      enable, // Only updating enable status
+      enable,
     };
 
-    apiClient
-      .put(`/api/admin/${userId}`, updatedUser, {
-        headers: {
-          Authorization: varToken,
-        },
-      })
-      .then(
-        (response) =>
-          toast.success(response.data, {
+    setLoading(true);
+
+    setTimeout(() => {
+      apiClient
+        .put(`/api/admin/${userId}`, updatedUser, {
+          headers: {
+            Authorization: varToken,
+          },
+        })
+        .then(
+          (response) =>
+            toast.success(response.data, {
+              position: "bottom-right",
+              transition: Zoom,
+            }),
+          navigate("/Dashboard/Accounts")
+        )
+        .catch((error) => {
+          toast.error("Update user failed", {
             position: "bottom-right",
             transition: Zoom,
-          }),
-        navigate("/Dashboard/Accounts") // Redirect to accounts page
-      )
-      .catch((error) => {
-        toast.error("Update user failed", {
-          position: "bottom-right",
-          transition: Zoom,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
         });
-      });
+    }, 1000);
   };
 
   if (!user) return <div>Loading...</div>;
@@ -67,7 +75,7 @@ const DashboardEditAccount = () => {
         <input
           type="text"
           value={user.username}
-          readOnly // Always read-only
+          readOnly
           className="mt-2 border border-gray-300 rounded-lg p-2 w-full"
         />
       </div>
@@ -76,7 +84,7 @@ const DashboardEditAccount = () => {
         <input
           type="email"
           value={user.email}
-          readOnly // Always read-only
+          readOnly
           className="mt-2 border border-gray-300 rounded-lg p-2 w-full"
         />
       </div>
@@ -85,7 +93,7 @@ const DashboardEditAccount = () => {
         <input
           type="text"
           value={user.role}
-          readOnly // Role should not be changed
+          readOnly
           className="mt-2 border border-gray-300 rounded-lg p-2 w-full"
         />
       </div>
@@ -107,12 +115,19 @@ const DashboardEditAccount = () => {
         >
           Go Back
         </button>
-        {/* Conditionally show the "Save Changes" button for customers */}
+
         <button
           onClick={handleSave}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+          disabled={loading}
+          className={`mt-4 px-4 py-2 rounded-lg ${
+            loading ? "bg-gray-500" : "bg-blue-500"
+          } text-white flex items-center justify-center`}
         >
-          Save Changes
+          {loading ? (
+            <CircularProgress size={24} className="text-white" />
+          ) : (
+            "Save Changes"
+          )}
         </button>
       </div>
     </div>

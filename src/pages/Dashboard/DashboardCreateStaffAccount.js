@@ -1,23 +1,28 @@
-import React, { useState } from "react"; // Import useState for image preview
+import React, { useState } from "react";
 import { toast, Zoom } from "react-toastify";
 import { apiClient } from "../../core/api";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import LocationSelector from "../../service/LocationService";
-import { TextField, Button, Typography, Box } from "@mui/material";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardCreateStaffAccount = () => {
   const varToken = useAuthHeader();
   const navigate = useNavigate();
-  const [previewImage, setPreviewImage] = useState(null); // State for image preview
+  const [userImage, setUserImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
     username: Yup.string()
       .required("Username is required")
       .min(7, "Username must be at least 7 characters")
@@ -26,6 +31,9 @@ const DashboardCreateStaffAccount = () => {
         "Username cannot contain special characters or spaces"
       ),
     fullName: Yup.string().required("Full name is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
@@ -33,54 +41,44 @@ const DashboardCreateStaffAccount = () => {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
         "Password must contain one uppercase, one lowercase, and one number"
       ),
-    userAddress: Yup.string().required("Address is required"),
-    userImage: Yup.mixed().required("Image is required"), // Validate userImage
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Please confirm your password"),
   });
 
-  const handleImageChange = (event, setFieldValue) => {
-    const file = event.currentTarget.files[0];
-    if (file) {
-      setFieldValue("userImage", file);
-      setPreviewImage(URL.createObjectURL(file)); // Create a preview URL for the selected image
-    }
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      username: "",
+      fullName: "",
+      password: "",
+      confirmPassword: "",
+      userAddress: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setIsSubmitting(true);
+      try {
+        let imageUrl = "";
 
-  const handleSubmit = async (values) => {
-    let imageUrl = "";
+        if (userImage) {
+          const formData = new FormData();
+          formData.append("image", userImage);
 
-    const uploadImage = () => {
-      const formData = new FormData();
-      formData.append("image", values.userImage);
+          const uploadResponse = await fetch(
+            "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
+            { method: "POST", body: formData }
+          );
+          const uploadData = await uploadResponse.json();
 
-      const uploadToastId = toast.loading("Uploading image...");
-
-      return fetch(
-        "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
-        {
-          method: "POST",
-          body: formData,
-        }
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            imageUrl = data.data.display_url;
-            toast.update(uploadToastId, {
-              render: "Image uploaded successfully!",
-              type: "success",
-              isLoading: false,
-              autoClose: 3000,
-              transition: Zoom,
-            });
+          if (uploadData.success) {
+            imageUrl = uploadData.data.display_url;
           } else {
             throw new Error("Image upload failed");
           }
-        });
-    };
+        }
 
-    const createStaffAccount = () => {
-      apiClient
-        .post(
+        await apiClient.post(
           "/api/admin",
           {
             email: values.email,
@@ -96,154 +94,141 @@ const DashboardCreateStaffAccount = () => {
               Authorization: varToken,
             },
           }
-        )
-        .then(() => {
-          toast.success("Staff account created successfully!", {
-            position: "bottom-right",
-            transition: Zoom,
-          });
-          navigate("/Dashboard/Accounts");
-        })
-        .catch((error) => {
-          toast.error(error.message || "Failed to create staff account", {
-            position: "bottom-right",
-            transition: Zoom,
-          });
-        });
-    };
+        );
 
-    if (values.userImage) {
-      uploadImage()
-        .then(createStaffAccount)
-        .catch((error) => {
-          toast.error(error.message, {
-            position: "bottom-right",
-            transition: Zoom,
-          });
+        toast.success("Staff account created successfully!", {
+          position: "bottom-right",
+          transition: Zoom,
         });
-    } else {
-      createStaffAccount();
+        navigate("/Dashboard/Accounts");
+      } catch (error) {
+        console.error("Error creating staff account:", error);
+        toast.error("Failed to create staff account. Please try again.", {
+          position: "bottom-right",
+          transition: Zoom,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+  });
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUserImage(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div maxWidth="sm" mx="auto">
       <Typography variant="h4" gutterBottom>
         Create Staff Account
       </Typography>
-      <Formik
-        initialValues={{
-          email: "",
-          username: "",
-          fullName: "",
-          password: "",
-          userImage: null,
-          userAddress: "",
-        }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ setFieldValue, isSubmitting }) => (
-          <Form>
-            <Box sx={{ mb: 2 }}>
-              <Field
-                name="email"
-                as={TextField}
-                label="Email"
-                variant="outlined"
-                fullWidth
-                required
-                helperText={<ErrorMessage name="email" />}
-              />
-            </Box>
-            <Box sx={{ mb: 2 }}>
-              <Field
-                name="username"
-                as={TextField}
-                label="Username"
-                variant="outlined"
-                fullWidth
-                required
-                helperText={<ErrorMessage name="username" />}
-              />
-            </Box>
-            <Box sx={{ mb: 2 }}>
-              <Field
-                name="fullName"
-                as={TextField}
-                label="Full Name"
-                variant="outlined"
-                fullWidth
-                required
-                helperText={<ErrorMessage name="fullName" />}
-              />
-            </Box>
-            <Box sx={{ mb: 2 }}>
-              <Field
-                name="password"
-                as={TextField}
-                label="Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                required
-                helperText={<ErrorMessage name="password" />}
-              />
-            </Box>
+      <form onSubmit={formik.handleSubmit}>
+        <TextField
+          label="Email"
+          {...formik.getFieldProps("email")}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Username"
+          {...formik.getFieldProps("username")}
+          error={formik.touched.username && Boolean(formik.errors.username)}
+          helperText={formik.touched.username && formik.errors.username}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Full Name"
+          {...formik.getFieldProps("fullName")}
+          error={formik.touched.fullName && Boolean(formik.errors.fullName)}
+          helperText={formik.touched.fullName && formik.errors.fullName}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Password"
+          type="password"
+          {...formik.getFieldProps("password")}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Confirm Password"
+          type="password"
+          {...formik.getFieldProps("confirmPassword")}
+          error={
+            formik.touched.confirmPassword &&
+            Boolean(formik.errors.confirmPassword)
+          }
+          helperText={
+            formik.touched.confirmPassword && formik.errors.confirmPassword
+          }
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
 
-            <Box mt={2}>
-              <Button variant="outlined" component="label" fullWidth>
-                Upload Image
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => handleImageChange(event, setFieldValue)}
-                  hidden
-                />
-              </Button>
-              <ErrorMessage name="userImage">
-                {(msg) => <Typography color="error">{msg}</Typography>}
-              </ErrorMessage>
-            </Box>
+        <Box mt={2}>
+          <Button variant="outlined" component="label">
+            Upload Image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              hidden
+            />
+          </Button>
+        </Box>
 
-            {/* Image Preview */}
-            {previewImage && (
-              <Box mt={2} display="flex" justifyContent="center">
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  style={{ width: "100%", maxHeight: 200, objectFit: "cover" }}
-                />
-              </Box>
-            )}
-
-            <Box mt={2}>
-              <LocationSelector
-                onLocationChange={(location) =>
-                  setFieldValue(
-                    "userAddress",
-                    `${location.tinh}, ${location.quan}, ${location.phuong}`
-                  )
-                }
-              />
-              <ErrorMessage name="userAddress">
-                {(msg) => <Typography color="error">{msg}</Typography>}
-              </ErrorMessage>
-            </Box>
-
-            <Box mt={2} display="flex" justifyContent="center">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                variant="contained"
-                color="primary"
-              >
-                Create Account
-              </Button>
-            </Box>
-          </Form>
+        {previewImage && (
+          <Box mt={2}>
+            <img
+              src={previewImage}
+              alt="User Image Preview"
+              className="w-32 h-32 object-cover rounded"
+            />
+          </Box>
         )}
-      </Formik>
+
+        <Box mt={2}>
+          <LocationSelector
+            onLocationChange={(location) =>
+              formik.setFieldValue(
+                "userAddress",
+                `${location.tinh}, ${location.quan}, ${location.phuong}`
+              )
+            }
+          />
+        </Box>
+
+        <Box mt={2}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Create Account"
+            )}
+          </Button>
+        </Box>
+      </form>
     </div>
   );
 };

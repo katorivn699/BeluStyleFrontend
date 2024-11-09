@@ -160,7 +160,6 @@ const DashboardBrands = () => {
         </table>
       </div>
 
-      {/* Use DeleteConfirmationModal component */}
       <DeleteConfirmationModal
         isOpen={isOpen}
         onClose={handleClose}
@@ -168,11 +167,10 @@ const DashboardBrands = () => {
         name={brandToDelete?.brandName || ""}
       />
 
-      {/* brand Drawer */}
       <BrandDrawer
         isOpen={isDrawerOpen}
         onClose={closeDrawer}
-        brand={selectedbrand || {}} // Pass selected brand to drawer
+        brand={selectedbrand || {}}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />

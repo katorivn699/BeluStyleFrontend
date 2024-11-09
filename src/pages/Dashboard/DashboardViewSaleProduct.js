@@ -13,7 +13,6 @@ const DashboardViewSaleProduct = () => {
   const varToken = useAuthHeader();
 
   useEffect(() => {
-    // Fetch sale details
     apiClient
       .get(`/api/sales/${saleId}`, {
         headers: {
@@ -81,8 +80,8 @@ const DashboardViewSaleProduct = () => {
           <h2 className="text-2xl font-bold">Sale ID: {sale.saleId}</h2>
           <p>Type: {sale.saleType}</p>
           <p>Value: {sale.saleValue}</p>
-          <p>Start Date: {new Date(sale.startDate).toLocaleDateString()}</p>
-          <p>End Date: {new Date(sale.endDate).toLocaleDateString()}</p>
+          <p>Start Date: {new Date(sale.startDate).toLocaleString()}</p>
+          <p>End Date: {new Date(sale.endDate).toLocaleString()}</p>
           <p>Status: {sale.saleStatus}</p>
         </div>
       ) : (

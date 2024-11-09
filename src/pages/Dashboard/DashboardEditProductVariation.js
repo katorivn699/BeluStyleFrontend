@@ -12,6 +12,7 @@ import {
   MenuItem,
   Select,
   FormControl,
+  CircularProgress,
 } from "@mui/material";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
@@ -29,6 +30,7 @@ const DashboardEditProductVariation = () => {
 
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
+  const [loading, setLoading] = useState(false); // New loading state
 
   useEffect(() => {
     const fetchProductVariation = async () => {
@@ -77,6 +79,8 @@ const DashboardEditProductVariation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
+
     try {
       let imageUrl = currentImageUrl;
 
@@ -111,6 +115,8 @@ const DashboardEditProductVariation = () => {
         position: "bottom-right",
         transition: Zoom,
       });
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -162,6 +168,16 @@ const DashboardEditProductVariation = () => {
           onChange={(e) => setProductPrice(e.target.value)}
           type="number"
           required
+          onBlur={(e) => {
+            // Check if value is within min and max range
+            const value = parseFloat(e.target.value);
+            if (value < 0) {
+              setProductPrice(0);
+            } else if (value > 999999999999) {
+              setProductPrice(999999999999);
+            }
+          }}
+          inputProps={{ min: 0, max: 999999999999 }}
         />
 
         <InputLabel htmlFor="productVariationImage" sx={{ mt: 2 }}>
@@ -214,8 +230,18 @@ const DashboardEditProductVariation = () => {
         )}
 
         <Box mt={3}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Update Product Variation
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Update Product Variation"
+            )}
           </Button>
         </Box>
       </form>
