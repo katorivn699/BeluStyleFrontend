@@ -7,7 +7,7 @@ import useSignIn from "react-auth-kit/hooks/useSignIn";
 const LoginForStaffAndAdmin = () => {
   const [username, setUsername] = useState("");
   const [passwordHash, setPasswordHash] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const signIn = useSignIn();
   const navigate = useNavigate();
 
@@ -29,18 +29,15 @@ const LoginForStaffAndAdmin = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <div className="w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">
+    <div className="min-h-screen bg-gradient-to-r from-white via-blue-300 to-blue-600 flex justify-center items-center p-4">
+      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
           Staff/Admin Login
         </h2>
-        <form
-          onSubmit={handleLogin}
-          className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-        >
-          <div className="mb-4">
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-sm font-semibold text-gray-600 mb-2"
               htmlFor="username"
             >
               Username
@@ -50,55 +47,46 @@ const LoginForStaffAndAdmin = () => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-              placeholder="Enter username"
+              className="shadow-md border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:ring-2 focus:ring-blue-500 transition duration-300"
+              placeholder="Enter your username"
               tabIndex={1}
               required
             />
           </div>
 
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <label
-                className="block text-gray-700 text-sm font-bold"
-                htmlFor="password"
-              >
-                Password
-              </label>
+          <div>
+            <label
+              className="block text-sm font-semibold text-gray-600 mb-2"
+              htmlFor="password"
+            >
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={passwordHash}
+                onChange={(e) => setPasswordHash(e.target.value)}
+                className="shadow-md border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:ring-2 focus:ring-blue-500 transition duration-300"
+                placeholder="Enter your password"
+                tabIndex={2}
+                required
+              />
               <button
                 type="button"
                 onClick={toggleShowPassword}
-                className="flex items-center text-gray-500 text-sm"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl"
               >
-                {showPassword ? (
-                  <>
-                    <BiSolidHide className="mr-1 text-2xl" /> Hide
-                  </>
-                ) : (
-                  <>
-                    <BiSolidShow className="mr-1 text-2xl" /> Show
-                  </>
-                )}
+                {showPassword ? <BiSolidHide /> : <BiSolidShow />}
               </button>
             </div>
-
-            <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              value={passwordHash}
-              onChange={(e) => setPasswordHash(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-              placeholder="Enter password"
-              tabIndex={2}
-              required
-            />
           </div>
 
           <div className="flex items-center justify-between">
             <button
               tabIndex={3}
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold text-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
             >
               Login
             </button>
