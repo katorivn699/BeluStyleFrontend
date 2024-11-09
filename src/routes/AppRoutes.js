@@ -213,9 +213,14 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
 
       <Route
         path="/LoginForStaffAndAdmin"
-        element={<LoginForStaffAndAdmin />}
+        element={
+          <PrivateRoute isLoginForm={true}>
+            <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
+              <LoginForStaffAndAdmin />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
       />
-
       {/* Protect the Dashboard route */}
       <Route
         path="/Dashboard"

@@ -173,9 +173,8 @@ const DashboardAccounts = () => {
                         Disable
                       </td>
                     )}
-                    <td className="px-4 py-2 flex space-x-2">
-                      {(user.role === "STAFF" ||
-                        user.username === currentUser) && (
+                    <td className="px-4 py-2 flex justify-center space-x-2">
+                      {
                         <span
                           className="w-6 h-6 flex justify-center items-center"
                           onClick={() => handleViewUser(user.userId)}
@@ -188,7 +187,8 @@ const DashboardAccounts = () => {
                             }`}
                           />
                         </span>
-                      )}
+                      }
+
                       <Link to={`/Dashboard/Accounts/Edit/${user.userId}`}>
                         <FaEdit className="text-blue-500 cursor-pointer" />
                       </Link>

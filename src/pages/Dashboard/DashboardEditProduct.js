@@ -99,7 +99,7 @@ const DashboardEditProduct = () => {
         },
       })
       .then((response) => {
-        toast.success(response.data.message, {
+        toast.success("Product updated successfully", {
           position: "bottom-right",
           transition: Zoom,
         });

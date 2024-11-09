@@ -98,10 +98,10 @@ const DashboardProductVariations = () => {
           </p>
           <p className="text-gray-600">Brand: {product.brand.brandName}</p>
           <p className="text-gray-600">
-            Created At: {new Date(product.createdAt).toLocaleDateString()}
+            Created At: {new Date(product.createdAt).toLocaleString()}
           </p>
           <p className="text-gray-600">
-            Updated At: {new Date(product.updatedAt).toLocaleDateString()}
+            Updated At: {new Date(product.updatedAt).toLocaleString()}
           </p>
         </div>
 

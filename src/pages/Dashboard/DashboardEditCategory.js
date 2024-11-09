@@ -3,33 +3,35 @@ import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import { toast, Zoom } from "react-toastify";
 import {
+  Container,
+  Typography,
   TextField,
   Button,
-  Card,
-  CardContent,
-  Typography,
   Box,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 const DashboardEditCategory = () => {
   const { categoryId } = useParams();
+  const navigate = useNavigate();
+  const varToken = useAuthHeader();
+
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
   const [categoryImage, setCategoryImage] = useState(null);
   const [currentImageUrl, setCurrentImageUrl] = useState("");
   const [newImagePreview, setNewImagePreview] = useState(null);
-  const navigate = useNavigate();
-  const varToken = useAuthHeader();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCategory = async () => {
       try {
         const response = await apiClient.get(`/api/categories/${categoryId}`, {
-          headers: {
-            Authorization: varToken,
-          },
+          headers: { Authorization: varToken },
         });
         const { categoryName, categoryDescription, imageUrl } = response.data;
         setCategoryName(categoryName);
@@ -39,7 +41,6 @@ const DashboardEditCategory = () => {
         console.error("Error fetching category data:", error);
       }
     };
-
     fetchCategory();
   }, [categoryId, varToken]);
 
@@ -49,10 +50,11 @@ const DashboardEditCategory = () => {
     setNewImagePreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
+    setLoading(true);
     try {
       let imageUrl = currentImageUrl;
+
       if (categoryImage) {
         const formData = new FormData();
         formData.append("image", categoryImage);
@@ -70,7 +72,12 @@ const DashboardEditCategory = () => {
 
       await apiClient.put(
         "/api/categories",
-        { categoryId, categoryName, categoryDescription, imageUrl },
+        {
+          categoryId,
+          categoryName: values.categoryName,
+          categoryDescription: values.categoryDescription,
+          imageUrl,
+        },
         { headers: { Authorization: varToken } }
       );
 
@@ -78,56 +85,101 @@ const DashboardEditCategory = () => {
         position: "bottom-right",
         transition: Zoom,
       });
-
       navigate("/Dashboard/Categories");
     } catch (error) {
       toast.error("Update category failed", {
         position: "bottom-right",
         transition: Zoom,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
+  const validationSchema = Yup.object({
+    categoryName: Yup.string()
+      .max(255, "Category Name must be at most 255 characters")
+      .required("Category Name is required"),
+    categoryDescription: Yup.string()
+      .max(500, "Description must be at most 500 characters")
+      .required("Category Description is required"),
+  });
+
   return (
-    <Box maxWidth="sm" mx="auto">
-      <Card>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>
-            Edit Category
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Name"
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
-              variant="outlined"
-              fullWidth
-              required
-              margin="normal"
+    <Container
+      maxWidth="sm"
+      sx={{ p: 4, backgroundColor: "white", borderRadius: 2, boxShadow: 3 }}
+    >
+      <Typography variant="h4" gutterBottom>
+        Edit Category
+      </Typography>
+      <Formik
+        initialValues={{
+          categoryName: categoryName || "",
+          categoryDescription: categoryDescription || "",
+        }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({
+          values,
+          handleChange,
+          handleBlur,
+          errors,
+          touched,
+          isSubmitting,
+        }) => (
+          <Form>
+            <Field
+              name="categoryName"
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Category Name"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  error={touched.categoryName && Boolean(errors.categoryName)}
+                  helperText={touched.categoryName && errors.categoryName}
+                  disabled={loading}
+                />
+              )}
             />
-            <TextField
-              label="Description"
-              value={categoryDescription}
-              onChange={(e) => setCategoryDescription(e.target.value)}
-              variant="outlined"
-              fullWidth
-              required
-              margin="normal"
+            <Field
+              name="categoryDescription"
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Description"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  error={
+                    touched.categoryDescription &&
+                    Boolean(errors.categoryDescription)
+                  }
+                  helperText={
+                    touched.categoryDescription && errors.categoryDescription
+                  }
+                  disabled={loading}
+                />
+              )}
             />
-            <InputLabel htmlFor="brandImage" sx={{ mt: 2 }}>
+
+            <InputLabel htmlFor="categoryImage" sx={{ mt: 2 }}>
               Logo (Leave blank to keep current logo)
             </InputLabel>
-            <Box mt={2}>
-              <Button variant="outlined" component="label">
-                Upload Image
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  hidden
-                />
-              </Button>
-            </Box>
+            <Button variant="outlined" component="label" sx={{ mt: 1 }}>
+              Upload Image
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                hidden
+                disabled={loading}
+              />
+            </Button>
+
             {newImagePreview ? (
               <Box mt={2} display="flex" justifyContent="center">
                 <img
@@ -163,20 +215,26 @@ const DashboardEditCategory = () => {
                 </Box>
               )
             )}
+
             <Box mt={3}>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
+                disabled={loading || isSubmitting}
               >
-                Update
+                {loading || isSubmitting ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Update"
+                )}
               </Button>
             </Box>
-          </form>
-        </CardContent>
-      </Card>
-    </Box>
+          </Form>
+        )}
+      </Formik>
+    </Container>
   );
 };
 

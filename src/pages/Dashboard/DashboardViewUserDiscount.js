@@ -81,8 +81,8 @@ const DashboardViewUserDiscount = () => {
           <p>Code: {discount.discountCode}</p>
           <p>Type: {discount.discountType}</p>
           <p>Value: {discount.discountValue}</p>
-          <p>Start Date: {new Date(discount.startDate).toLocaleDateString()}</p>
-          <p>End Date: {new Date(discount.endDate).toLocaleDateString()}</p>
+          <p>Start Date: {new Date(discount.startDate).toLocaleString()}</p>
+          <p>End Date: {new Date(discount.endDate).toLocaleString()}</p>
           <p>Status: {discount.discountStatus}</p>
           <p>Description: {discount.discountDescription}</p>
           <p>Minimum Order Value: {discount.minimumOrderValue}</p>

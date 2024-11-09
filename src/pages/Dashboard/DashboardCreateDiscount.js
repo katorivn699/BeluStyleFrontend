@@ -1,6 +1,6 @@
 import React from "react";
 import { toast, Zoom } from "react-toastify";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { TextField, Button, Typography, Box, MenuItem } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,26 +12,56 @@ const DashboardCreateDiscount = () => {
   const validationSchema = Yup.object({
     discountCode: Yup.string()
       .required("Discount code is required")
-      .min(3, "Discount code must be at least 3 characters"),
-    discountType: Yup.string().required("Discount type is required"),
+      .min(3, "Discount code must be at least 3 characters")
+      .max(20, "Discount code cannot exceed 20 characters"),
+    discountType: Yup.string()
+      .required("Discount type is required")
+      .oneOf(["PERCENTAGE", "FIXED_AMOUNT"], "Invalid discount type"),
     discountValue: Yup.number()
       .required("Discount value is required")
-      .min(0, "Discount value cannot be negative"),
-    startDate: Yup.date().required("Start date is required"),
+      .min(0, "Discount value cannot be negative")
+      .when("discountType", {
+        is: "PERCENTAGE",
+        then: (schema) =>
+          schema
+            .max(100, "Discount value cannot be greater than 100")
+            .required("Discount value is required"),
+      })
+      .max(999999999999, "Discount value cannot exceed 999999999999"),
+    startDate: Yup.date()
+      .required("Start date is required")
+      .min(new Date(), "Start date cannot be in the past"),
     endDate: Yup.date()
       .required("End date is required")
       .min(Yup.ref("startDate"), "End date must be after start date"),
-    discountStatus: Yup.string().required("Discount status is required"),
+    discountStatus: Yup.string()
+      .required("Discount status is required")
+      .oneOf(
+        ["ACTIVE", "INACTIVE"],
+        "Invalid discount status (You cannot create an expired discount or make a discount expired)"
+      ),
     discountDescription: Yup.string(),
-    minimumOrderValue: Yup.number().min(
-      0,
-      "Minimum order value cannot be negative"
-    ),
-    maximumDiscountValue: Yup.number().min(
-      0,
-      "Maximum discount value cannot be negative"
-    ),
-    usageLimit: Yup.number().min(0, "Usage limit cannot be negative"),
+    minimumOrderValue: Yup.number()
+      .min(0, "Minimum order value cannot be negative")
+      .max(999999999999, "Minimum order value cannot exceed 999999999999")
+      .nullable(),
+    maximumDiscountValue: Yup.number()
+      .min(0, "Maximum discount value cannot be negative")
+      .max(999999999999, "Maximum discount value cannot exceed 999999999999")
+      .nullable()
+      .when("minimumOrderValue", {
+        is: (minValue) => minValue != null,
+        then: (schema) =>
+          schema
+            .min(
+              Yup.ref("minimumOrderValue"),
+              "Must be greater than minimum order value"
+            )
+            .nullable(),
+      }),
+    usageLimit: Yup.number()
+      .min(1, "Usage limit cannot be negative")
+      .required("Usage limit cannot be null"),
   });
 
   const varToken = useAuthHeader();
@@ -39,41 +69,23 @@ const DashboardCreateDiscount = () => {
 
   const handleSubmit = async (values) => {
     try {
-      // Make the API call to create the discount
-      await apiClient.post(
-        "/api/discounts",
-        {
-          discountCode: values.discountCode,
-          discountType: values.discountType,
-          discountValue: values.discountValue,
-          startDate: values.startDate,
-          endDate: values.endDate,
-          discountStatus: values.discountStatus,
-          discountDescription: values.discountDescription,
-          minimumOrderValue: values.minimumOrderValue,
-          maximumDiscountValue: values.maximumDiscountValue,
-          usageLimit: values.usageLimit,
+      await apiClient.post("/api/discounts", values, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: varToken,
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: varToken,
-          },
-        }
-      );
+      });
 
       toast.success("Discount created successfully!", {
         position: "bottom-right",
         transition: Zoom,
       });
+      navigate("/Dashboard/Discounts");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to create discount",
-        {
-          position: "bottom-right",
-          transition: Zoom,
-        }
-      );
+      toast.error("Create discount failed", {
+        position: "bottom-right",
+        transition: Zoom,
+      });
     }
   };
 
@@ -96,9 +108,9 @@ const DashboardCreateDiscount = () => {
           usageLimit: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => handleSubmit(values)}
+        onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, touched, errors }) => (
           <Form>
             <Box sx={{ mb: 2 }}>
               <Field
@@ -108,7 +120,8 @@ const DashboardCreateDiscount = () => {
                 variant="outlined"
                 fullWidth
                 required
-                helperText={<ErrorMessage name="discountCode" />}
+                error={touched.discountCode && Boolean(errors.discountCode)}
+                helperText={touched.discountCode && errors.discountCode}
               />
             </Box>
             <Box sx={{ mb: 2 }}>
@@ -120,15 +133,12 @@ const DashboardCreateDiscount = () => {
                 select
                 fullWidth
                 required
+                error={touched.discountType && Boolean(errors.discountType)}
+                helperText={touched.discountType && errors.discountType}
               >
                 <MenuItem value="PERCENTAGE">Percentage</MenuItem>
                 <MenuItem value="FIXED_AMOUNT">Fixed Amount</MenuItem>
               </Field>
-              <ErrorMessage
-                name="discountType"
-                component="div"
-                className="text-red-500"
-              />
             </Box>
             <Box sx={{ mb: 2 }}>
               <Field
@@ -139,7 +149,8 @@ const DashboardCreateDiscount = () => {
                 fullWidth
                 required
                 type="number"
-                helperText={<ErrorMessage name="discountValue" />}
+                error={touched.discountValue && Boolean(errors.discountValue)}
+                helperText={touched.discountValue && errors.discountValue}
               />
             </Box>
             <Box sx={{ mb: 2 }}>
@@ -147,14 +158,15 @@ const DashboardCreateDiscount = () => {
                 name="startDate"
                 as={TextField}
                 label="Start Date"
-                type="date"
+                type="datetime-local"
                 variant="outlined"
                 fullWidth
                 required
                 InputLabelProps={{
                   shrink: true,
                 }}
-                helperText={<ErrorMessage name="startDate" />}
+                error={touched.startDate && Boolean(errors.startDate)}
+                helperText={touched.startDate && errors.startDate}
               />
             </Box>
             <Box sx={{ mb: 2 }}>
@@ -162,14 +174,15 @@ const DashboardCreateDiscount = () => {
                 name="endDate"
                 as={TextField}
                 label="End Date"
-                type="date"
+                type="datetime-local"
                 variant="outlined"
                 fullWidth
                 required
                 InputLabelProps={{
                   shrink: true,
                 }}
-                helperText={<ErrorMessage name="endDate" />}
+                error={touched.endDate && Boolean(errors.endDate)}
+                helperText={touched.endDate && errors.endDate}
               />
             </Box>
             <Box sx={{ mb: 2 }}>
@@ -181,15 +194,13 @@ const DashboardCreateDiscount = () => {
                 select
                 fullWidth
                 required
+                error={touched.discountStatus && Boolean(errors.discountStatus)}
+                helperText={touched.discountStatus && errors.discountStatus}
               >
                 <MenuItem value="ACTIVE">Active</MenuItem>
                 <MenuItem value="INACTIVE">Inactive</MenuItem>
+                {/* <MenuItem value="EXPIRED">Expired</MenuItem> */}
               </Field>
-              <ErrorMessage
-                name="discountStatus"
-                component="div"
-                className="text-red-500"
-              />
             </Box>
             <Box sx={{ mb: 2 }}>
               <Field
@@ -200,6 +211,13 @@ const DashboardCreateDiscount = () => {
                 fullWidth
                 multiline
                 rows={3}
+                error={
+                  touched.discountDescription &&
+                  Boolean(errors.discountDescription)
+                }
+                helperText={
+                  touched.discountDescription && errors.discountDescription
+                }
               />
             </Box>
             <Box sx={{ mb: 2 }}>
@@ -210,7 +228,12 @@ const DashboardCreateDiscount = () => {
                 variant="outlined"
                 fullWidth
                 type="number"
-                helperText={<ErrorMessage name="minimumOrderValue" />}
+                error={
+                  touched.minimumOrderValue && Boolean(errors.minimumOrderValue)
+                }
+                helperText={
+                  touched.minimumOrderValue && errors.minimumOrderValue
+                }
               />
             </Box>
             <Box sx={{ mb: 2 }}>
@@ -221,7 +244,13 @@ const DashboardCreateDiscount = () => {
                 variant="outlined"
                 fullWidth
                 type="number"
-                helperText={<ErrorMessage name="maximumDiscountValue" />}
+                error={
+                  touched.maximumDiscountValue &&
+                  Boolean(errors.maximumDiscountValue)
+                }
+                helperText={
+                  touched.maximumDiscountValue && errors.maximumDiscountValue
+                }
               />
             </Box>
             <Box sx={{ mb: 2 }}>
@@ -232,7 +261,8 @@ const DashboardCreateDiscount = () => {
                 variant="outlined"
                 fullWidth
                 type="number"
-                helperText={<ErrorMessage name="usageLimit" />}
+                error={touched.usageLimit && Boolean(errors.usageLimit)}
+                helperText={touched.usageLimit && errors.usageLimit}
               />
             </Box>
             <div className="flex items-center justify-center">
