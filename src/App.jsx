@@ -40,7 +40,7 @@ function App() {
   }, [authHeader, signOut]);
 
   const HideNav =
-    location.pathname !== "/LoginForStaffAndAdmin" &&
+    !location.pathname.startsWith("/LoginForStaffAndAdmin") &&
     !location.pathname.startsWith("/Dashboard");
 
   const showNavbar =
@@ -52,7 +52,7 @@ function App() {
     location.pathname !== "/forgotPassword/success" &&
     location.pathname !== "/reset-password/success" &&
     location.pathname !== "/reset-password" &&
-    location.pathname !== "/LoginForStaffAndAdmin" &&
+    !location.pathname.startsWith("/LoginForStaffAndAdmin") &&
     location.pathname !== "/confirm-registration/success" &&
     location.pathname !== "/orders/success";
 

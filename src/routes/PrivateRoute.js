@@ -29,7 +29,11 @@ const PrivateRoute = ({ children, requiredRoles, isLoginForm }) => {
     const hasRequiredRole = requiredRoles.includes(userRole);
 
     if (!hasRequiredRole) {
-      return <Navigate to="/Dashboard" />;
+      if (userRole === "CUSTOMER") {
+        return <Navigate to="/" />;
+      } else if (userRole === "STAFF") {
+        return <Navigate to="/Dashboard" />;
+      }
     }
 
     return children;
