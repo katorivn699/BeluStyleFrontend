@@ -1,9 +1,9 @@
 import React from "react";
 import { formatPrice } from "../../components/format/formats";
 
-const CouponCard = ({ discount, brand, timesUsed, expiry, discountType }) => {
+const DiscountCard = ({ discount, brand, timesUsed, expiry, discountType }) => {
   return (
-    <div className="relative bg-blue-500 text-white rounded-lg p-4 shadow-lg w-52">
+    <div className="relative bg-belugradient text-white rounded-lg p-4 shadow-lg w-52 h-44">
       <div className="flex justify-between items-center">
         <span className="bg-red-500 text-xs font-semibold px-2 py-1 rounded-md">
           {timesUsed} TIME USED
@@ -22,4 +22,4 @@ const CouponCard = ({ discount, brand, timesUsed, expiry, discountType }) => {
   );
 };
 
-export default CouponCard;
+export default DiscountCard;

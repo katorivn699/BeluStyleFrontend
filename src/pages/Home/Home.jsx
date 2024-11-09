@@ -14,7 +14,7 @@ export function Home() {
         const response = await getProductList();
         if (response && response.length > 0) {
           const filteredProducts = response.filter(product => product.quantity > 0);
-          setProducts(filteredProducts.reverse());
+          setProducts(filteredProducts);
         }
       } catch (error) {
         console.error("Failed to fetch products:", error);

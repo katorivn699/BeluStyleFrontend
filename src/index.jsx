@@ -10,7 +10,9 @@ import { CartProvider } from "react-use-cart";
 
 const store = createStore({
   authName: "_auth",
-  authType: "localstorage",
+  authType: "cookie",
+  cookieDomain: window.location.hostname,
+  cookieSecure: window.location.protocol === "https:",
 });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

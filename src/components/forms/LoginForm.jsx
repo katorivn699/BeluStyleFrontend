@@ -8,15 +8,13 @@ import { Checkbox, Divider, FormControlLabel } from "@mui/material";
 import { InputField } from "../inputs/InputField";
 import { LoginBtn, LoginGooglebtn } from "../buttons/Button";
 import useSignIn from "react-auth-kit/hooks/useSignIn";
+import AnimatedCheckbox from "../inputs/CheckBox";
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string()
-    .required("Username can't be blank")
-    .min(7, "Username must be at least 7 characters")
-    .matches(/^[a-zA-Z0-9]+$/, "Only letters and numbers are allowed."),
+    .required("Username can't be blank"),
   password: Yup.string()
     .required("Password is required")
-    .min(7, "Password must be at least 7 characters")
 });
 
 export function LoginForm() {
@@ -89,7 +87,7 @@ export function LoginForm() {
               />
             </div>
 
-            <FormControlLabel control={<Checkbox checked={rememberMe} onChange={handleRememberMeChange} name="Remember"/>} label="Remember me"/>
+            <AnimatedCheckbox handleRememberMeChange={handleRememberMeChange} rememberMe={rememberMe}/>
 
             <LoginBtn/>
           </Form>

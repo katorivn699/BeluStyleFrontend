@@ -30,7 +30,7 @@ export function Shop() {
         const response = await getProductList();
         if (response && response.length > 0) {
           const filteredProducts = response.filter(product => product.quantity > 0);
-          setProductData(filteredProducts.reverse());
+          setProductData(filteredProducts);
         } else {
           setProductData(products);
         }

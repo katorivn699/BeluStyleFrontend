@@ -59,7 +59,7 @@ export default function NotificationIcon() {
             ✕
           </button>
         </div>
-        <div className="p-4">
+        <div className="p-4 max-h-[400px] overflow-y-auto">
           {isPending ? (
             <div className="flex justify-center items-center">
               <CircularProgress size={20} />

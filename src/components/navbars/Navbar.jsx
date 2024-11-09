@@ -9,18 +9,23 @@ import GuessMenu from "../menus/GuessMenu";
 import CartDrawer from "../Cart/CartDrawer";
 import { Badge, IconButton } from "@mui/material";
 import NotificationIcon from "../menus/NotificationMenu";
+import SearchBar from "../Search/SearchBar";
+import useSearchBar from "../hooks/SearchHook";
 
 export function Navbar() {
   const dropdownRef = useRef(null);
   const isAuth = useIsAuthenticated();
 
-  const [isCartOpen, setIsCartOpen] = useState(false); // State for CartDrawer
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const { isSearchOpen, toggleSearchBar } = useSearchBar(); 
 
   const { totalItems } = useCart();
 
   const toggleCartDrawer = (open) => () => {
     setIsCartOpen(open); // Open or close the CartDrawer
   };
+
 
   return (
     <nav className="fixed top-0 left-0 right-0 p-2 md:p-4 z-50 bg-transparent">
@@ -83,7 +88,7 @@ export function Navbar() {
           )}
 
           <div className="searchBtn hover:text-base-300 transition duration-300">
-            <IconButton>
+            <IconButton onClick={toggleSearchBar}>
               <IoSearchOutline className="text-2xl md:text-3xl text-black" />
             </IconButton>
           </div>
@@ -101,6 +106,7 @@ export function Navbar() {
 
       {/* Cart Drawer */}
       <CartDrawer isCartOpen={isCartOpen} toggleCartDrawer={toggleCartDrawer} />
+      {isSearchOpen && <SearchBar isSearchOpen={isSearchOpen} toggleSearchBar={toggleSearchBar} />}
     </nav>
   );
 }

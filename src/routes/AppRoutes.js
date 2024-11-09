@@ -56,6 +56,7 @@ import DashboardAddAccountToDiscount from "../pages/Dashboard/DashboardAddAccoun
 import DashboardEditProduct from "../pages/Dashboard/DashboardEditProduct.js";
 import DashboardAddProductVariations from "../pages/Dashboard/DashboardAddProductVariations.js";
 import DashboardEditProductVariation from "../pages/Dashboard/DashboardEditProductVariation.js";
+import OrderSuccess from "../pages/Order/OrderSuccess.jsx";
 
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
@@ -70,7 +71,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         }
       />
       <Route
-      path="/shop"
+        path="/shop"
         element={
           <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
             <Shop />
@@ -142,6 +143,14 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         }
       />
       <Route
+        path="/orders/success"
+        element={
+          <ProtectedRoute types={["CUSTOMER"]}>
+            <OrderSuccess />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/user/discounts"
         element={
           <ProtectedRoute types={["CUSTOMER"]}>
@@ -168,7 +177,11 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
       />
       <Route
         path="/confirm-registration/success"
-        element={<RegisterSuccess />}
+        element={
+          <ProtectedRoute types={["REGISTER"]}>
+            <RegisterSuccess />
+          </ProtectedRoute>
+        }
       />
       <Route path="/shop/product/:id" element={<ProductDetailPage />} />
       <Route

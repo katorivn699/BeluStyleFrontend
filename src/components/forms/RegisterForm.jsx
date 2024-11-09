@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 import { RegisterUser } from "../../service/AuthService";
 import { LoginGooglebtn, RegisterBtn } from "../buttons/Button";
-import { Divider } from "@mui/material";
+import { Checkbox, Divider } from "@mui/material";
 import { toast, Zoom } from "react-toastify";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -54,10 +54,10 @@ export function RegisterForm() {
     try {
       await RegisterUser(values, navigate);
     } catch (error) {
-      toast.error("Error during registration: " + error.message, {
-        position: "top-center",
-        transition: Zoom,
-      });
+      // toast.error("Error during registration: " + error?.data?.message, {
+      //   position: "top-center",
+      //   transition: Zoom,
+      // });
     }
   };
 
@@ -187,12 +187,7 @@ export function RegisterForm() {
               />
             </div>
             <div className="agreeTerm flex flex-row">
-              <Field
-                type="checkbox"
-                name="agreeTerms"
-                required
-                className="mr-2 checkbox"
-              />
+              <Checkbox required/>
               <p className="text-left text-xl">
                 By continuing, you agree to the{" "}
                 <Link className="underline font-semibold">Terms of Use</Link>{" "}

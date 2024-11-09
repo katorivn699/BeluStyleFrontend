@@ -56,7 +56,9 @@ const ProductDetailPage = () => {
       if (colorName && variations) {
         Object.keys(variations).forEach((size) => {
           const image = variations[size]?.images;
-          if (image) {
+
+          // Check if image is unique before adding it
+          if (image && !images.some((img) => img.image === image)) {
             images.push({ colorName, image });
             imageCounter++;
           }
@@ -336,11 +338,11 @@ const ProductDetailPage = () => {
               })}
             </div>
           </div>
-          <div className="quantity mb-4">
-            <div className="font-semibold text-gray-600 mb-2">Quantity:</div>
+          <div className="quantity mb-6">
+            <div className="font-semibold text-gray-700 mb-2">Quantity:</div>
             <div className="flex items-center">
               <button
-                className="px-3 py-1 bg-gray-300 text-black rounded-l-lg"
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-l-lg hover:bg-gray-300 transition-colors focus:outline-none shadow-sm"
                 onMouseDown={startDecrement}
                 onMouseUp={stopInterval}
                 onMouseLeave={stopInterval}
@@ -359,10 +361,10 @@ const ProductDetailPage = () => {
                     setQuantity(newValue);
                   }
                 }}
-                className="px-4 py-1 border-t border-b border-gray-300 text-center"
+                className="w-16 px-4 py-2 text-center border border-gray-300 outline-none focus:border-indigo-400 transition-colors shadow-inner rounded-none"
               />
               <button
-                className="px-3 py-1 bg-gray-300 text-black rounded-r-lg"
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-r-lg hover:bg-gray-300 transition-colors focus:outline-none shadow-sm"
                 onMouseDown={startIncrement}
                 onMouseUp={stopInterval}
                 onMouseLeave={stopInterval}
@@ -370,11 +372,12 @@ const ProductDetailPage = () => {
               >
                 +
               </button>
-              <p className="px-5">
+              <p className="ml-4 text-sm text-gray-500">
                 {selectedVariation?.quantity || 0} pieces available
               </p>
             </div>
           </div>
+
           <button
             className={`${
               cartCheck && quantity <= selectedVariation?.quantity
