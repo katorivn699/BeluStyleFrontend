@@ -235,7 +235,7 @@ const ProductDetailPage = () => {
                   key={index}
                   style={{
                     width: "100%",
-                    height: "auto",
+                    height: "30rem",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -361,7 +361,7 @@ const ProductDetailPage = () => {
                     setQuantity(newValue);
                   }
                 }}
-                className="w-16 px-4 py-2 text-center border border-gray-300 outline-none focus:border-indigo-400 transition-colors shadow-inner rounded-none"
+                className="w-24 px-4 py-2 text-center border border-gray-300 outline-none focus:border-indigo-400 transition-colors shadow-inner rounded-none"
               />
               <button
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-r-lg hover:bg-gray-300 transition-colors focus:outline-none shadow-sm"
