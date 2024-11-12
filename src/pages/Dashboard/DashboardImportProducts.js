@@ -3,10 +3,13 @@ import { apiClient } from "../../core/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const DashboardImportProducts = () => {
   const [products, setProducts] = useState([]);
   const [selectedVariations, setSelectedVariations] = useState({});
+  const authUser = useAuthUser();
+  const username = authUser.username;
   const varToken = useAuthHeader();
   const { stockId } = useParams();
   const navigate = useNavigate();
@@ -44,6 +47,7 @@ const DashboardImportProducts = () => {
 
     const payload = {
       stockId,
+      username,
       variations,
     };
 

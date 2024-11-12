@@ -4,7 +4,6 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardStockTransactions = () => {
   const [transactions, setTransactions] = useState([]);
-
   const varToken = useAuthHeader();
 
   useEffect(() => {
@@ -28,82 +27,82 @@ const DashboardStockTransactions = () => {
   return (
     <div>
       <h1 className="text-4xl font-bold mb-6">Stock Transactions</h1>
-      <div className="overflow-x-auto">
-        <table className="table-auto w-full min-w-max border-collapse">
-          <thead className="border border-gray-300">
-            <tr>
-              <th className="px-4 py-2">ID</th>
-              <th className="px-4 py-2">Warehouse</th>
-              <th className="px-4 py-2">Product</th>
-              <th className="px-4 py-2">Category</th>
-              <th className="px-4 py-2">Brand</th>
-              <th className="px-4 py-2">Size</th>
-              <th className="px-4 py-2">Color</th>
-              <th className="px-4 py-2">Price</th>
-              <th className="px-4 py-2">Quantity</th>
-              <th className="px-4 py-2">Type</th>
-              <th className="px-4 py-2">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((transaction) => (
-              <tr key={transaction.transactionId} className="hover:bg-gray-50">
-                <td className="px-4 py-2 whitespace-nowrap">
-                  {displayValue(transaction.transactionId)}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap">
-                  {displayValue(transaction.stock?.stockName)}
-                </td>
-                <td className="px-4 py-2 truncate">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {transactions.map((transaction) => (
+          <div
+            key={transaction.transactionId}
+            className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg"
+          >
+            <div className="flex items-center space-x-4 mb-4">
+              <img
+                src={displayValue(
+                  transaction.productVariation?.productVariationImage
+                )}
+                alt="Product Variation"
+                className="h-16 w-16 object-cover rounded-md"
+              />
+              <div>
+                <h2 className="font-semibold">
                   {displayValue(
                     transaction.productVariation?.product?.productName
                   )}
-                </td>
-                <td className="px-4 py-2">
-                  {displayValue(
-                    transaction.productVariation?.product?.category
-                      ?.categoryName
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {displayValue(
-                    transaction.productVariation?.product?.brand?.brandName
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {displayValue(transaction.productVariation?.size?.sizeName)}
-                </td>
-                <td className="px-4 py-2">
-                  <span
-                    className="inline-block w-4 h-4 mr-2 rounded-full border-gray-200 border-2"
-                    style={{
-                      backgroundColor:
-                        transaction.productVariation?.color?.hexCode ||
-                        "transparent",
-                    }}
-                  ></span>
-                  {displayValue(transaction.productVariation?.color?.colorName)}
-                </td>
-                <td className="px-4 py-2">
-                  $
-                  {transaction.productVariation?.productPrice?.toFixed(2) ||
-                    "null"}
-                </td>
-                <td className="px-4 py-2">
-                  {displayValue(transaction.quantity)}
-                </td>
-                <td className="px-4 py-2">
+                </h2>
+                <p className="text-sm text-gray-600">
+                  {displayValue(transaction.stock?.stockName)} |{" "}
                   {displayValue(transaction.transactionType)}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap">
-                  {displayValue(
-                    new Date(transaction.transactionDate).toLocaleDateString()
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </p>
+              </div>
+            </div>
+            <div className="text-sm">
+              <p>
+                <strong>Category:</strong>{" "}
+                {displayValue(
+                  transaction.productVariation?.product?.category?.categoryName
+                )}
+              </p>
+              <p>
+                <strong>Brand:</strong>{" "}
+                {displayValue(
+                  transaction.productVariation?.product?.brand?.brandName
+                )}
+              </p>
+              <p>
+                <strong>Size:</strong>{" "}
+                {displayValue(transaction.productVariation?.size?.sizeName)}
+              </p>
+              <p className="flex items-center">
+                <strong>Color:</strong>{" "}
+                <span
+                  className="inline-block w-4 h-4 mr-1 rounded-full border border-gray-200"
+                  style={{
+                    backgroundColor:
+                      transaction.productVariation?.color?.hexCode ||
+                      "transparent",
+                  }}
+                ></span>
+                {displayValue(transaction.productVariation?.color?.colorName)}
+              </p>
+              <p>
+                <strong>Price:</strong> $
+                {transaction.productVariation?.productPrice?.toFixed(2) ||
+                  "null"}
+              </p>
+              <p>
+                <strong>Quantity:</strong> {displayValue(transaction.quantity)}
+              </p>
+              <p>
+                <strong>Date:</strong>{" "}
+                {displayValue(
+                  new Date(transaction.transactionDate).toLocaleString()
+                )}
+              </p>
+              <p>
+                <strong>Staff:</strong>{" "}
+                {displayValue(transaction.user.username)}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
