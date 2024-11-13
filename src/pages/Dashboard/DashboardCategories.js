@@ -121,42 +121,46 @@ const DashboardCategories = () => {
           </thead>
 
           <tbody>
-            {categories.map((category) => (
-              <tr key={category.categoryId} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{category.categoryId}</td>
-                <td className="px-4 py-2">
-                  <img
-                    src={category.imageUrl}
-                    alt={category.categoryName}
-                    className="h-12 w-12"
-                  />
-                </td>
-                <td className="px-4 py-2">{category.categoryName}</td>
-                <td className="px-4 py-2">{category.categoryDescription}</td>
-                <td className="px-4 py-2">{category.totalQuantity}</td>
-                <td className="px-4 py-2 flex space-x-2 pt-6">
-                  <button
-                    onClick={() => openDrawer(category)} // Open drawer on click
-                    className="text-green-500 cursor-pointer"
-                  >
-                    <FaEye />
-                  </button>
-                  <Link
-                    to={`/Dashboard/Categories/Edit/${category.categoryId}`}
-                  >
-                    <FaEdit className="text-blue-500 cursor-pointer" />
-                  </Link>
-                  {userRole === "ADMIN" && ( // Show delete button only for Admin
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <tr key={category.categoryId} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{category.categoryId}</td>
+                  <td className="px-4 py-2">
+                    <img
+                      src={category.imageUrl}
+                      alt={category.categoryName}
+                      className="h-12 w-12"
+                    />
+                  </td>
+                  <td className="px-4 py-2">{category.categoryName}</td>
+                  <td className="px-4 py-2">{category.categoryDescription}</td>
+                  <td className="px-4 py-2">{category.totalQuantity}</td>
+                  <td className="px-4 py-2 flex space-x-2 pt-6">
                     <button
-                      onClick={() => openDeleteModal(category)}
-                      className="text-red-500 cursor-pointer"
+                      onClick={() => openDrawer(category)} // Open drawer on click
+                      className="text-green-500 cursor-pointer"
                     >
-                      <FaTrash />
+                      <FaEye />
                     </button>
-                  )}
-                </td>
-              </tr>
-            ))}
+                    <Link
+                      to={`/Dashboard/Categories/Edit/${category.categoryId}`}
+                    >
+                      <FaEdit className="text-blue-500 cursor-pointer" />
+                    </Link>
+                    {userRole === "ADMIN" && ( // Show delete button only for Admin
+                      <button
+                        onClick={() => openDeleteModal(category)}
+                        className="text-red-500 cursor-pointer"
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <p className="text-red-500">No categories found.</p>
+            )}
           </tbody>
         </table>
       </div>

@@ -6,7 +6,6 @@ import {
   Typography,
   Grid,
   Divider,
-  IconButton,
   Button,
 } from "@mui/material";
 import {
@@ -16,14 +15,18 @@ import {
   Info,
   Home,
   TrackChanges,
+  CheckCircle,
+  Cancel,
 } from "@mui/icons-material";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const DashboardOrders = () => {
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const varToken = useAuthHeader();
+  const authUser = useAuthUser();
 
   useEffect(() => {
     fetchOrders();
@@ -44,6 +47,45 @@ const DashboardOrders = () => {
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
+  };
+
+  const handleReview = (orderId, isApproved) => {
+    apiClient
+      .put(
+        `/api/orders/${orderId}/staff-review`,
+        {
+          isApproved: isApproved,
+          staffName: authUser.username,
+        },
+        {
+          headers: { Authorization: varToken },
+        }
+      )
+      .then((response) => {
+        console.log("Review submitted:", response.data.message);
+        fetchOrders();
+      })
+      .catch((error) => {
+        console.error("Error submitting review:", error);
+      });
+  };
+
+  // Define color styles for each order status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "PENDING":
+        return "orange";
+      case "PROCESSING":
+        return "blue";
+      case "COMPLETED":
+        return "green";
+      case "PAID":
+        return "purple";
+      case "CANCELLED":
+        return "red";
+      default:
+        return "gray";
+    }
   };
 
   return (
@@ -73,12 +115,41 @@ const DashboardOrders = () => {
                     </Typography>
                     <Typography
                       color="textSecondary"
-                      className="flex items-center"
+                      className="flex items-center mb-1"
+                      sx={{ color: getStatusColor(order.orderStatus) }}
                     >
                       <TrackChanges className="mr-1" /> Status:{" "}
                       {order.orderStatus}
                     </Typography>
                   </Grid>
+
+                  {order.orderStatus === "PAID" && (
+                    <Grid item xs={12}>
+                      <Typography variant="h6" className="mt-2">
+                        Confirm Order:
+                      </Typography>
+                      <div className="flex items-center space-x-4">
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={() => handleReview(order.orderId, true)}
+                          startIcon={<CheckCircle />}
+                          size="large"
+                        >
+                          Approve
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleReview(order.orderId, false)}
+                          startIcon={<Cancel />}
+                          size="large"
+                        >
+                          Reject
+                        </Button>
+                      </div>
+                    </Grid>
+                  )}
 
                   <Grid item xs={12} sm={6} md={4}>
                     <Typography
@@ -118,7 +189,7 @@ const DashboardOrders = () => {
                       color="textSecondary"
                       className="flex items-center mb-1"
                     >
-                      <Payment className="mr-1" /> Total Amount: $
+                      <Payment className="mr-1" /> Total Amount: ${" "}
                       {order.totalAmount.toFixed(2)}
                     </Typography>
                     <Typography
@@ -146,8 +217,8 @@ const DashboardOrders = () => {
                 {order.orderDetails.map((detail) => (
                   <Typography key={detail.orderDetailId} color="textSecondary">
                     - Item {detail.variationId}, Quantity:{" "}
-                    {detail.orderQuantity}, Unit Price: $
-                    {detail.unitPrice.toFixed(2)}, Discount: $
+                    {detail.orderQuantity}, Unit Price: ${" "}
+                    {detail.unitPrice.toFixed(2)}, Discount: ${" "}
                     {detail.discountAmount.toFixed(2)}
                   </Typography>
                 ))}
@@ -157,7 +228,7 @@ const DashboardOrders = () => {
         ))}
       </Grid>
 
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center items-center mt-4">
         <Button
           variant="contained"
           color="primary"

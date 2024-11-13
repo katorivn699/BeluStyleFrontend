@@ -162,11 +162,7 @@ const DashboardNotifications = () => {
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan="6" className="text-center px-4 py-2">
-                  No notifications found.
-                </td>
-              </tr>
+              <p className="text-red-500">No notifications found.</p>
             )}
           </tbody>
         </table>

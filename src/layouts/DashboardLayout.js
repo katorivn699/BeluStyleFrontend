@@ -1,14 +1,22 @@
-import React from "react";
-import { FaBars, FaSearch, FaTimes } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaBars, FaCog, FaSignOutAlt, FaTimes } from "react-icons/fa";
 import Sidebar from "../components/sidebars/Sidebar";
 import Breadcrumb from "../components/breadcrumb/Breadcrumbs";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import userDefault from "../assets/images/userdefault.webp";
+import { Link } from "react-router-dom";
 
 const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
   const isAuth = useIsAuthenticated();
   const authUser = useAuthUser();
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -23,27 +31,50 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
             <button onClick={toggleSidebar} className="text-gray-700">
               {isOpen ? <FaTimes /> : <FaBars />}
             </button>
-
-            {/* Search bar */}
-            {/* <div className="flex items-center bg-gray-100 p-2 rounded-full shadow-sm w-96 mx-auto ml-4">
-              <FaSearch className="text-gray-400 ml-2" />
-              <input
-                type="text"
-                placeholder="Search"
-                className="bg-gray-100 focus:outline-none ml-2 w-full"
-              />
-            </div> */}
           </div>
 
           {/* User Profile */}
-          <div className="flex items-center space-x-2">
-            <img
-              src={authUser.userImage ? authUser.userImage : userDefault}
-              alt="User"
-              className="rounded-full w-6 md:w-8 h-6 md:h-8 object-cover"
-            />
-            <span className="font-medium">{authUser.userFullName}</span>
+          <div className="relative flex items-center space-x-2">
+            <span
+              className={`font-medium px-2 py-1 rounded ${
+                authUser.role === "STAFF"
+                  ? "text-yellow-700 bg-yellow-100"
+                  : authUser.role === "ADMIN"
+                  ? "text-red-700 bg-red-100"
+                  : "text-gray-700 bg-gray-100"
+              }`}
+            >
+              {authUser.role}
+            </span>
+            <div
+              className="flex items-center space-x-2 object-cover cursor-pointer transition duration-200 ease-in-out transform hover:scale-105 hover:shadow-md"
+              onClick={toggleDropdown}
+            >
+              <img
+                src={authUser.userImage ? authUser.userImage : userDefault}
+                alt="User"
+                className="rounded-full w-8 h-8 "
+              />
+
+              <span className="font-medium">{authUser.userFullName}</span>
+            </div>
           </div>
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <div className="absolute right-0 top-12 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
+              {/* Settings Button */}
+              <button className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1">
+                <FaCog /> Settings
+              </button>
+
+              {/* Log Out Button */}
+              <Link to="/Dashboard/Logout" className="w-full">
+                <button className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1 text-gray-700 hover:text-white hover:bg-gray-500">
+                  <FaSignOutAlt /> Log Out
+                </button>
+              </Link>
+            </div>
+          )}
         </header>
 
         {/* Breadcrumb */}

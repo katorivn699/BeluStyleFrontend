@@ -25,6 +25,8 @@ const DashboardAddProducts = () => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [colors, setColors] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageRequired, setIsImageRequired] = useState(true);
   const [variations, setVariations] = useState([
     { sizeId: "", colorId: "", productPrice: "", productVariationImage: null },
   ]);
@@ -102,6 +104,7 @@ const DashboardAddProducts = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const uploadedVariations = await Promise.all(
       variations.map(async (variation) => {
         if (variation.productVariationImage) {
@@ -136,6 +139,7 @@ const DashboardAddProducts = () => {
           position: "bottom-right",
           transition: Zoom,
         });
+        setIsSubmitting(false);
       });
   };
 
@@ -145,6 +149,9 @@ const DashboardAddProducts = () => {
       const newVariations = [...variations];
       newVariations[index].productVariationImage = file;
       setVariations(newVariations);
+      setIsImageRequired(false);
+    } else {
+      setIsImageRequired(true);
     }
   };
 
@@ -262,8 +269,12 @@ const DashboardAddProducts = () => {
               type="file"
               hidden
               onChange={(e) => handleImageChange(index, e)}
+              required
             />
           </Button>
+          {isImageRequired && (
+            <div className="text-red-500">Image is required</div>
+          )}
           {variation.productVariationImage && (
             <img
               src={URL.createObjectURL(variation.productVariationImage)}
@@ -280,7 +291,11 @@ const DashboardAddProducts = () => {
           </IconButton>
         </Box>
       ))}
-      <Button variant="outlined" onClick={handleAddVariation}>
+      <Button
+        variant="outlined"
+        onClick={handleAddVariation}
+        disabled={isSubmitting}
+      >
         Add Variation
       </Button>
       <Button
@@ -288,6 +303,7 @@ const DashboardAddProducts = () => {
         type="submit"
         variant="contained"
         color="primary"
+        disabled={isSubmitting}
       >
         Submit
       </Button>

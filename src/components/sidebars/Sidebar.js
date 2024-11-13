@@ -202,10 +202,10 @@ const Sidebar = ({ isOpen }) => {
           </li>
 
           {/* Divider */}
-          <hr className="my-4 border-gray-300" />
+          {/* <hr className="my-4 border-gray-300" /> */}
 
           {/* Logout Link */}
-          <li>
+          {/* <li>
             <Link
               to="/Dashboard/Logout"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
@@ -215,7 +215,7 @@ const Sidebar = ({ isOpen }) => {
               <FaSignOutAlt className="mr-2" />
               Logout
             </Link>
-          </li>
+          </li> */}
         </ul>
       )}
     </div>

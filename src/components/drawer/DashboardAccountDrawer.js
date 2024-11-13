@@ -110,6 +110,10 @@ const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
           <strong>Full Name:</strong> {account.fullName}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
+          <strong>Phone Number:</strong>{" "}
+          {account.phoneNumber ? account.phoneNumber : "null"}
+        </Typography>
+        <Typography variant="body1" sx={{ marginBottom: 1 }}>
           <strong>Role:</strong> {account.role}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>

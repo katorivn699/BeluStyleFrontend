@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { apiClient } from "../../core/api"; // Assuming you have an API client setup
+import { apiClient } from "../../core/api";
 import { FaPlus } from "react-icons/fa";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
@@ -167,18 +167,28 @@ const DashboardWarehouseDetail = () => {
                     key={variation.variationId}
                     className="border-t pt-4 mb-4 flex justify-between items-center"
                   >
-                    {/* Color Circle with Color Name */}
+                    {/* Variation Image */}
                     <div className="flex items-center">
-                      <div
-                        className="w-5 h-5 rounded-full mr-2"
-                        style={{
-                          backgroundColor: variation.hexCode,
-                          border: "1px solid gray",
-                        }}
-                      ></div>
-                      <p className="text-sm text-gray-500">
-                        {variation.colorName}
-                      </p>
+                      <img
+                        src={
+                          variation.productVariationImage ||
+                          "/images/placeholder.png"
+                        }
+                        alt={variation.colorName}
+                        className="w-10 h-10 object-cover mr-2 rounded"
+                      />
+                      <div>
+                        <div
+                          className="w-5 h-5 rounded-full mr-2"
+                          style={{
+                            backgroundColor: variation.hexCode,
+                            border: "1px solid gray",
+                          }}
+                        ></div>
+                        <p className="text-sm text-gray-500">
+                          {variation.colorName}
+                        </p>
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-semibold">

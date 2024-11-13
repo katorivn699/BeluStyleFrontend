@@ -140,6 +140,9 @@ const DashboardCreateCategory = () => {
               />
             </Button>
           </Box>
+          {categoryImage != null || (
+            <div className="text-red-500">Image is required</div>
+          )}
           {categoryImage && (
             <Box mt={2}>
               <img

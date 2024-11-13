@@ -146,48 +146,54 @@ const DashboardDiscounts = () => {
             </tr>
           </thead>
           <tbody>
-            {discounts.map((discount) => (
-              <tr key={discount.discountId} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{discount.discountId}</td>
-                <td className="px-4 py-2">{discount.discountCode}</td>
-                <td className="px-4 py-2">{discount.discountType}</td>
-                <td className="px-4 py-2">{discount.discountValue}</td>
-                <td
-                  className={`px-4 py-2 font-bold ${getStatusColor(
-                    discount.discountStatus
-                  )}`}
-                >
-                  {discount.discountStatus}
-                </td>
-                <td className="px-4 py-2">{discount.usageLimit}</td>
-
-                <td className="px-4 py-2 flex space-x-2 pt-6">
-                  <Link to={`/Dashboard/Discounts/${discount.discountId}`}>
-                    <FaEye className="text-green-500 cursor-pointer" />
-                  </Link>
-                  <Link to={`/Dashboard/Discounts/Edit/${discount.discountId}`}>
-                    <FaEdit className="text-blue-500 cursor-pointer" />
-                  </Link>
-                  {/* Add User to Discount Button */}
-                  <Link
-                    to={`/Dashboard/Discounts/${discount.discountId}/AddAccount`}
+            {discounts.length > 0 ? (
+              discounts.map((discount) => (
+                <tr key={discount.discountId} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{discount.discountId}</td>
+                  <td className="px-4 py-2">{discount.discountCode}</td>
+                  <td className="px-4 py-2">{discount.discountType}</td>
+                  <td className="px-4 py-2">{discount.discountValue}</td>
+                  <td
+                    className={`px-4 py-2 font-bold ${getStatusColor(
+                      discount.discountStatus
+                    )}`}
                   >
-                    <FaUserPlus
-                      className="text-blue-500 cursor-pointer"
-                      title="Add User to Discount"
-                    />
-                  </Link>
-                  {userRole === "ADMIN" && (
-                    <button
-                      className="text-red-500 cursor-pointer"
-                      onClick={() => openDeleteModal(discount)}
+                    {discount.discountStatus}
+                  </td>
+                  <td className="px-4 py-2">{discount.usageLimit}</td>
+
+                  <td className="px-4 py-2 flex space-x-2 pt-6">
+                    <Link to={`/Dashboard/Discounts/${discount.discountId}`}>
+                      <FaEye className="text-green-500 cursor-pointer" />
+                    </Link>
+                    <Link
+                      to={`/Dashboard/Discounts/Edit/${discount.discountId}`}
                     >
-                      <FaTrash />
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
+                      <FaEdit className="text-blue-500 cursor-pointer" />
+                    </Link>
+                    {/* Add User to Discount Button */}
+                    <Link
+                      to={`/Dashboard/Discounts/${discount.discountId}/AddAccount`}
+                    >
+                      <FaUserPlus
+                        className="text-blue-500 cursor-pointer"
+                        title="Add User to Discount"
+                      />
+                    </Link>
+                    {userRole === "ADMIN" && (
+                      <button
+                        className="text-red-500 cursor-pointer"
+                        onClick={() => openDeleteModal(discount)}
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <p className="text-red-500">No discounts found.</p>
+            )}
           </tbody>
         </table>
       </div>
