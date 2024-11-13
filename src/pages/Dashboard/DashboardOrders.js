@@ -20,6 +20,7 @@ import {
 } from "@mui/icons-material";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -217,9 +218,12 @@ const DashboardOrders = () => {
                 {order.orderDetails.map((detail) => (
                   <Typography key={detail.orderDetailId} color="textSecondary">
                     - Item {detail.variationId}, Quantity:{" "}
-                    {detail.orderQuantity}, Unit Price: ${" "}
-                    {detail.unitPrice.toFixed(2)}, Discount: ${" "}
-                    {detail.discountAmount.toFixed(2)}
+                    {detail.orderQuantity}, Unit Price:{" "}
+                    {detail.unitPrice ? formatPrice(detail.unitPrice) : "N/A"},
+                    Discount:{" "}
+                    {detail.discountAmount
+                      ? formatPrice(detail.discountAmount)
+                      : "N/A"}
                   </Typography>
                 ))}
               </CardContent>

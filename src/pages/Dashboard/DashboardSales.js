@@ -6,6 +6,7 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardSales = () => {
   const [sales, setSales] = useState([]);
@@ -130,7 +131,11 @@ const DashboardSales = () => {
                 <tr key={sale.saleId} className="hover:bg-gray-50">
                   <td className="px-4 py-2">{sale.saleId}</td>
                   <td className="px-4 py-2">{sale.saleType}</td>
-                  <td className="px-4 py-2">{sale.saleValue}</td>
+                  <td className="px-4 py-2">
+                    {sale.saleType === "PERCENTAGE"
+                      ? sale.saleValue + "%"
+                      : formatPrice(sale.saleValue)}
+                  </td>
                   <td className="px-4 py-2">
                     {new Date(sale.startDate).toLocaleDateString()}
                   </td>

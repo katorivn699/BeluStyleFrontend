@@ -6,6 +6,7 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardDiscounts = () => {
   const [discounts, setDiscounts] = useState([]);
@@ -152,7 +153,12 @@ const DashboardDiscounts = () => {
                   <td className="px-4 py-2">{discount.discountId}</td>
                   <td className="px-4 py-2">{discount.discountCode}</td>
                   <td className="px-4 py-2">{discount.discountType}</td>
-                  <td className="px-4 py-2">{discount.discountValue}</td>
+                  <td className="px-4 py-2">
+                    {" "}
+                    {discount.discountType === "PERCENTAGE"
+                      ? discount.discountValue + "%"
+                      : formatPrice(discount.discountValue)}
+                  </td>
                   <td
                     className={`px-4 py-2 font-bold ${getStatusColor(
                       discount.discountStatus

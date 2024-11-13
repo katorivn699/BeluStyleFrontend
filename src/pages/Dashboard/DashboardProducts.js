@@ -6,6 +6,7 @@ import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardProducts = () => {
   const [products, setProducts] = useState([]);
@@ -129,11 +130,12 @@ const DashboardProducts = () => {
                     Category: {product.categoryName}
                   </p>
                   <p className="font-bold">
-                    Price: $
+                    Price:{" "}
                     {product.productPrice
-                      ? product.productPrice.toFixed(2)
+                      ? formatPrice(product.productPrice)
                       : "N/A"}
                   </p>
+
                   <p className="text-gray-400">
                     Avg. Rating: {product.averageRating} ({product.totalRatings}{" "}
                     ratings)

@@ -14,6 +14,7 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [userImage, setUserImage] = useState(authUser.userImage || userDefault);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const openSettingsModal = () => {
@@ -56,7 +57,7 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
               onClick={toggleDropdown}
             >
               <img
-                src={authUser.userImage ? authUser.userImage : userDefault}
+                src={userImage}
                 alt="User"
                 className="rounded-full w-8 h-8 "
               />
@@ -89,6 +90,7 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
         <ManagerSettings
           open={isSettingsModalOpen}
           onClose={closeSettingsModal}
+          onImageUpdate={(newImage) => setUserImage(newImage)} // Pass a callback for image updates
         />
 
         {/* Breadcrumb */}
