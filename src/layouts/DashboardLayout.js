@@ -6,16 +6,21 @@ import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import userDefault from "../assets/images/userdefault.webp";
 import { Link } from "react-router-dom";
+import ManagerSettings from "../pages/User/ManagerSettings";
 
 const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
   const isAuth = useIsAuthenticated();
   const authUser = useAuthUser();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const openSettingsModal = () => {
+    setIsSettingsModalOpen(true);
+    setIsDropdownOpen(false); // Close dropdown when opening modal
   };
+  const closeSettingsModal = () => setIsSettingsModalOpen(false);
 
   return (
     <div className="flex h-screen">
@@ -63,19 +68,28 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
           {isDropdownOpen && (
             <div className="absolute right-0 top-12 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
               {/* Settings Button */}
-              <button className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1">
+              <button
+                className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1"
+                onClick={openSettingsModal}
+              >
                 <FaCog /> Settings
               </button>
 
               {/* Log Out Button */}
               <Link to="/Dashboard/Logout" className="w-full">
-                <button className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1 text-gray-700 hover:text-white hover:bg-gray-500">
+                <button className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1 text-gray-700  ">
                   <FaSignOutAlt /> Log Out
                 </button>
               </Link>
             </div>
           )}
         </header>
+
+        {/* Settings Modal */}
+        <ManagerSettings
+          open={isSettingsModalOpen}
+          onClose={closeSettingsModal}
+        />
 
         {/* Breadcrumb */}
         <div className="p-4">

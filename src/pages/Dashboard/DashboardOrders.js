@@ -76,11 +76,11 @@ const DashboardOrders = () => {
       case "PENDING":
         return "orange";
       case "PROCESSING":
-        return "blue";
+        return "purple";
       case "COMPLETED":
         return "green";
-      case "PAID":
-        return "purple";
+      case "SHIPPED":
+        return "blue";
       case "CANCELLED":
         return "red";
       default:
@@ -123,7 +123,7 @@ const DashboardOrders = () => {
                     </Typography>
                   </Grid>
 
-                  {order.orderStatus === "PAID" && (
+                  {order.orderStatus === "PROCESSING" && (
                     <Grid item xs={12}>
                       <Typography variant="h6" className="mt-2">
                         Confirm Order:
