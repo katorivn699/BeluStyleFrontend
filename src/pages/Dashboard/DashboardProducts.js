@@ -7,6 +7,7 @@ import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmation
 import { toast } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { formatPrice } from "../../components/format/formats";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const DashboardProducts = () => {
   const [products, setProducts] = useState([]);
@@ -14,6 +15,7 @@ const DashboardProducts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const role = useAuthUser().role;
   const varToken = useAuthHeader();
 
   useEffect(() => {
@@ -87,11 +89,13 @@ const DashboardProducts = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-4xl font-bold">Products</h1>
-        <Link to="/Dashboard/Products/Add">
-          <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
-            <FaPlus className="mr-2" /> Add New Product
-          </button>
-        </Link>
+        {role === "STAFF" || (
+          <Link to="/Dashboard/Products/Add">
+            <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
+              <FaPlus className="mr-2" /> Add New Product
+            </button>
+          </Link>
+        )}
       </div>
 
       {/* Search Input */}
@@ -142,18 +146,21 @@ const DashboardProducts = () => {
                   </p>
                 </div>
               </Link>
-              <button
-                onClick={() => handleOpenModal(product)}
-                className="absolute top-2 right-2 text-red-500 p-2 hover:text-red-700 bg-white"
-              >
-                <FaTrash />
-              </button>
-              <Link
-                to={`/Dashboard/Products/Edit/${product.productId}`}
-                className="absolute top-2 right-10 text-blue-500 hover:text-blue-700 p-2 bg-white"
-              >
-                <FaEdit />
-              </Link>
+              {role === "STAFF" || (
+                <div>
+                  <Link to="/Dashboard/Products/Add">
+                    <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
+                      <FaPlus className="mr-2" /> Add New Product
+                    </button>
+                  </Link>
+                  <Link
+                    to={`/Dashboard/Products/Edit/${product.productId}`}
+                    className="absolute top-2 right-10 text-blue-500 hover:text-blue-700 p-2 bg-white"
+                  >
+                    <FaEdit />
+                  </Link>
+                </div>
+              )}
             </div>
           ))
         ) : (

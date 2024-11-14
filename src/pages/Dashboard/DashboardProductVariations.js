@@ -12,6 +12,7 @@ import {
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { toast, Zoom } from "react-toastify";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const DashboardProductVariations = () => {
   const { productId } = useParams();
@@ -19,6 +20,7 @@ const DashboardProductVariations = () => {
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [variationToDelete, setVariationToDelete] = useState(null);
+  const role = useAuthUser().role;
   const varToken = useAuthHeader();
 
   useEffect(() => {
@@ -106,14 +108,16 @@ const DashboardProductVariations = () => {
         </div>
 
         <div className="mt-4 flex justify-end space-x-4">
-          <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
-            <Link
-              to={`/Dashboard/Products/Edit/${product.productId}`}
-              className="flex items-center"
-            >
-              <FaEdit className="mr-2" /> Edit Product
-            </Link>
-          </button>
+          {role === "STAFF" || (
+            <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
+              <Link
+                to={`/Dashboard/Products/Edit/${product.productId}`}
+                className="flex items-center"
+              >
+                <FaEdit className="mr-2" /> Edit Product
+              </Link>
+            </button>
+          )}
 
           <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center z-10">
             <Link

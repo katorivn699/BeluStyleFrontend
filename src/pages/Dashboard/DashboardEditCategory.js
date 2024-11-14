@@ -34,6 +34,7 @@ const DashboardEditCategory = () => {
           headers: { Authorization: varToken },
         });
         const { categoryName, categoryDescription, imageUrl } = response.data;
+        console.log(response.data);
         setCategoryName(categoryName);
         setCategoryDescription(categoryDescription);
         setCurrentImageUrl(imageUrl);
@@ -42,7 +43,7 @@ const DashboardEditCategory = () => {
       }
     };
     fetchCategory();
-  }, [categoryId, varToken]);
+  }, [categoryId]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -120,6 +121,7 @@ const DashboardEditCategory = () => {
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
+        enableReinitialize
       >
         {({
           values,
