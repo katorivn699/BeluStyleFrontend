@@ -364,7 +364,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
       <Route
         path="/Dashboard/StockTransactions"
         element={
-          <PrivateRoute requiredRoles={["ADMIN"]}>
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
             <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
               <DashboardStockTransactions />
             </DashboardLayout>
@@ -407,7 +407,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
       <Route
         path="/Dashboard/Sales/Create"
         element={
-          <PrivateRoute requiredRoles={["ADMIN"]}>
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
             <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
               <DashboardCreateSale />
             </DashboardLayout>
@@ -495,7 +495,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
       <Route
         path="/Dashboard/Discounts/Create"
         element={
-          <PrivateRoute requiredRoles={["ADMIN"]}>
+          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
             <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
               <DashboardCreateDiscount />
             </DashboardLayout>
@@ -539,7 +539,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
       <Route
         path="/Dashboard/Products/Add"
         element={
-          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+          <PrivateRoute requiredRoles={["ADMIN"]}>
             <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
               <DashboardAddProducts />
             </DashboardLayout>
@@ -561,7 +561,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
       <Route
         path="/Dashboard/Products/Edit/:productId"
         element={
-          <PrivateRoute requiredRoles={["ADMIN", "STAFF"]}>
+          <PrivateRoute requiredRoles={["ADMIN"]}>
             <DashboardLayout toggleSidebar={toggleSidebar} isOpen={isOpen}>
               <DashboardEditProduct />
             </DashboardLayout>

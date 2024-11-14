@@ -55,14 +55,16 @@ const validationSchema = Yup.object({
     .min(0, "Maximum discount value cannot be negative")
     .max(999999999999, "Maximum discount value cannot exceed 999999999999")
     .nullable()
-    .when("minimumOrderValue", {
-      is: (minValue) => minValue != null,
+    .when("discountType", {
+      is: "FIXED_AMOUNT",
       then: (schema) =>
-        schema.min(
-          Yup.ref("minimumOrderValue"),
-          "Must be greater than minimum order value"
+        schema.test(
+          "is-null",
+          "For fixed amount, Maximum discount value should be null",
+          (value) => value === null || value === undefined
         ),
     }),
+
   usageLimit: Yup.number()
     .min(1, "Usage limit cannot be negative")
     .required("Usage limit cannot be null"),
@@ -161,6 +163,7 @@ const DashboardEditDiscount = () => {
             <FormControl
               fullWidth
               error={touched.discountType && Boolean(errors.discountType)}
+              helperText={touched.discountType && errors.discountType}
             >
               <InputLabel>Discount Type</InputLabel>
               <Select
@@ -200,6 +203,7 @@ const DashboardEditDiscount = () => {
               error={touched.startDate && Boolean(errors.startDate)}
               helperText={touched.startDate && errors.startDate}
               required
+              disabled
             />
 
             <TextField
@@ -218,6 +222,7 @@ const DashboardEditDiscount = () => {
             <FormControl
               fullWidth
               error={touched.discountStatus && Boolean(errors.discountStatus)}
+              helperText={touched.discountStatus && errors.discountStatus}
             >
               <InputLabel>Discount Status</InputLabel>
               <Select

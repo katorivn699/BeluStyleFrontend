@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { FaBars, FaCog, FaSignOutAlt, FaTimes } from "react-icons/fa";
+import {
+  FaBars,
+  FaCog,
+  FaSignOutAlt,
+  FaTimes,
+  FaInfoCircle,
+} from "react-icons/fa";
 import Sidebar from "../components/sidebars/Sidebar";
 import Breadcrumb from "../components/breadcrumb/Breadcrumbs";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
@@ -9,7 +15,6 @@ import { Link } from "react-router-dom";
 import ManagerSettings from "../pages/User/ManagerSettings";
 
 const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
-  // const isAuth = useIsAuthenticated();
   const authUser = useAuthUser();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -69,17 +74,18 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
           {/* Dropdown Menu */}
           {isDropdownOpen && (
             <div className="absolute right-0 top-12 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
-              {/* Settings Button */}
+              {/* Conditionally render Settings or View Info based on role */}
               <button
                 className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1"
                 onClick={openSettingsModal}
               >
-                <FaCog /> Settings
+                {authUser.role === "STAFF" ? <FaInfoCircle /> : <FaCog />}
+                {authUser.role === "STAFF" ? "View Info" : "Settings"}
               </button>
 
               {/* Log Out Button */}
               <Link to="/Dashboard/Logout" className="w-full">
-                <button className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1 text-gray-700  ">
+                <button className="px-4 py-2 w-full cursor-pointer hover:bg-gray-100 flex items-center gap-1 text-gray-700">
                   <FaSignOutAlt /> Log Out
                 </button>
               </Link>

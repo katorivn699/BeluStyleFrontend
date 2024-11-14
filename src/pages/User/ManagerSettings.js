@@ -12,6 +12,7 @@ import { apiClient } from "../../core/api";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { toast, Zoom } from "react-toastify";
 import { PhotoCamera } from "@mui/icons-material";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const ManagerSettings = ({
   open,
@@ -20,6 +21,7 @@ const ManagerSettings = ({
   onFullNameUpdate,
 }) => {
   const [userData, setUserData] = useState(null);
+  const role = useAuthUser().role;
   const [formData, setFormData] = useState({
     email: "",
     fullName: "",
@@ -160,6 +162,7 @@ const ManagerSettings = ({
             onChange={handleImageUpload}
             style={{ display: "none" }}
             id="upload-avatar"
+            disabled={role === "STAFF"}
           />
           <label htmlFor="upload-avatar">
             <IconButton
@@ -220,6 +223,7 @@ const ManagerSettings = ({
           name="email"
           value={formData.email}
           onChange={handleInputChange}
+          disabled={role === "STAFF"}
         />
         <TextField
           label="Full Name"
@@ -228,6 +232,7 @@ const ManagerSettings = ({
           name="fullName"
           value={formData.fullName}
           onChange={handleInputChange}
+          disabled={role === "STAFF"}
         />
         <TextField
           label="Phone Number"
@@ -236,12 +241,15 @@ const ManagerSettings = ({
           name="phoneNumber"
           value={formData.phoneNumber}
           onChange={handleInputChange}
+          disabled={role === "STAFF"}
         />
 
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-          <Button variant="contained" color="primary" onClick={handleUpdate}>
-            Update
-          </Button>
+          {role === "STAFF" || (
+            <Button variant="contained" color="primary" onClick={handleUpdate}>
+              Update
+            </Button>
+          )}
           <Button variant="outlined" color="secondary" onClick={onClose}>
             Close
           </Button>

@@ -8,6 +8,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  FormHelperText,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -28,12 +29,14 @@ const validationSchema = Yup.object({
         schema.max(100, "Sale value cannot be greater than 100 for percentage"),
     })
     .max(999999999999, "Sale value cannot exceed 999999999999"),
+  saleStatus: Yup.string()
+    .required("Sale status is required")
+    .oneOf(["ACTIVE", "INACTIVE"], "Invalid sale status"),
   startDate: Yup.date().required("Start date is required"),
   // .min(new Date(), "Start date cannot be in the past"),
   endDate: Yup.date()
     .required("End date is required")
     .min(Yup.ref("startDate"), "End date must be after start date"),
-  saleStatus: Yup.string().required("Sale status is required"),
 });
 
 const DashboardEditSale = () => {
@@ -179,8 +182,12 @@ const DashboardEditSale = () => {
           error={formik.touched.endDate && Boolean(formik.errors.endDate)}
           helperText={formik.touched.endDate && formik.errors.endDate}
         />
-
-        <FormControl fullWidth margin="normal">
+        <FormControl
+          fullWidth
+          margin="normal"
+          error={formik.touched.saleStatus && Boolean(formik.errors.saleStatus)}
+          helperText={formik.touched.saleStatus && formik.errors.saleStatus}
+        >
           <InputLabel>Sale Status</InputLabel>
           <Select
             id="saleStatus"
@@ -194,9 +201,10 @@ const DashboardEditSale = () => {
             <MenuItem value="INACTIVE">Inactive</MenuItem>
             <MenuItem value="EXPIRED">Expired</MenuItem>
           </Select>
-          {formik.touched.saleStatus && formik.errors.saleStatus && (
-            <Typography color="error">{formik.errors.saleStatus}</Typography>
-          )}
+          <FormHelperText>
+            {" "}
+            {formik.touched.saleStatus && formik.errors.saleStatus}
+          </FormHelperText>
         </FormControl>
 
         <Button type="submit" variant="contained" color="primary" fullWidth>
