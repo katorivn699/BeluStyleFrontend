@@ -148,11 +148,12 @@ const DashboardProducts = () => {
               </Link>
               {role === "STAFF" || (
                 <div>
-                  <Link to="/Dashboard/Products/Add">
-                    <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
-                      <FaPlus className="mr-2" /> Add New Product
-                    </button>
-                  </Link>
+                  <button
+                    onClick={() => handleOpenModal(product)}
+                    className="absolute top-2 right-2 text-red-500 p-2 hover:text-red-700 bg-white"
+                  >
+                    <FaTrash />
+                  </button>
                   <Link
                     to={`/Dashboard/Products/Edit/${product.productId}`}
                     className="absolute top-2 right-10 text-blue-500 hover:text-blue-700 p-2 bg-white"
