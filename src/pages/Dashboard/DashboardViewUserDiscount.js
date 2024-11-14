@@ -85,8 +85,8 @@ const DashboardViewUserDiscount = () => {
           <p>End Date: {new Date(discount.endDate).toLocaleString()}</p>
           <p>Status: {discount.discountStatus}</p>
           <p>Description: {discount.discountDescription}</p>
-          <p>Minimum Order Value: {discount.minimumOrderValue}</p>
-          <p>Maximum Order Value: {discount.maximumDiscountValue}</p>
+          <p>Minimum Order Value: {discount.minimumOrderValue || "null"}</p>
+          <p>Maximum Order Value: {discount.maximumDiscountValue || "null"}</p>
           <p>Usage Limit: {discount.usageLimit}</p>
         </div>
       ) : (
