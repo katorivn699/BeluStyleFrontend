@@ -1,41 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { PieChart } from "@mui/x-charts";
+import React, { useEffect, useRef, useState } from "react";
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import { apiClient } from "../../core/api";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const Dashboard = () => {
-  const [brandPieData, setBrandPieData] = useState([]);
+  const chartRef = useRef(null);
+  const [brandPieChartData, setBrandPieChartData] = useState([]);
   const varToken = useAuthHeader();
 
-  const generateColors = (numColors) => {
-    const colors = [];
-    const colorPalette = [
-      "#FF5733", // Red-Orange
-      "#33FF57", // Green
-      "#3357FF", // Blue
-      "#FF33A6", // Pink
-      "#FFD700", // Yellow
-      "#00FF7F", // Spring Green
-      "#8A2BE2", // Blue-Violet
-      "#FF6347", // Tomato Red
-      "#20B2AA", // Light Sea Green
-      "#FF69B4", // Hot Pink
-      "#FF1493", // Deep Pink
-      "#FF4500", // Orange Red
-      "#2E8B57", // Sea Green
-      "#BA55D3", // Medium Orchid
-      "#FF8C00", // Dark Orange
-    ];
-
-    for (let i = 0; i < numColors; i++) {
-      colors.push(colorPalette[i % colorPalette.length]);
-    }
-
-    return colors;
-  };
-
   useEffect(() => {
-    const brandPie = async () => {
+    const fetchBrandPieChartData = async () => {
       try {
         const response = await apiClient.get(
           "http://localhost:8080/api/statistics/pie/brand",
@@ -45,41 +21,54 @@ const Dashboard = () => {
             },
           }
         );
-
-        const formattedData = response.data.map((item, index) => ({
-          id: index,
-          value: item[1], // sales count
-          label: item[0], // brand name
+        const formattedData = response.data.map((item) => ({
+          country: item[0],
+          litres: item[1],
         }));
-
-        setBrandPieData(formattedData);
+        setBrandPieChartData(formattedData);
       } catch (error) {
         console.error("Error fetching chart data:", error);
       }
     };
 
-    brandPie();
+    fetchBrandPieChartData();
   }, [varToken]);
 
-  // Generate colors based on the number of brands
-  const chartColors = generateColors(brandPieData.length);
+  useEffect(() => {
+    am4core.useTheme(am4themes_animated);
+
+    // Create the chart instance
+    const chart = am4core.create("chartdiv", am4charts.PieChart3D);
+    chart.hiddenState.properties.opacity = 0;
+    chart.legend = new am4charts.Legend();
+
+    // Disable the amCharts logo
+    chart.logo.disabled = true;
+
+    // Assign data to the chart
+    chart.data = brandPieChartData;
+
+    const series = chart.series.push(new am4charts.PieSeries3D());
+    series.dataFields.value = "litres";
+    series.dataFields.category = "country";
+
+    // Store chart instance in the ref for cleanup
+    chartRef.current = chart;
+
+    return () => {
+      // Dispose of chart instance on component unmount
+      chart.dispose();
+    };
+  }, [brandPieChartData]);
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+      <h2 className="text-2xl font-bold mb-4 ">Dashboard</h2>
       <p>Welcome to the admin dashboard!</p>
       <p>Here you can view your overall statistics and insights.</p>
-
-      <div className="w-fit">
-        <PieChart
-          colors={chartColors} // Dynamically assigned distinct colors
-          series={[{ data: brandPieData }]}
-          width={400}
-          height={200}
-        />
-        <div className="mt-4 font-semibold text-lg text-center">
-          Brand Distribution
-        </div>
+      <div className="flex flex-col items-center ">
+        <div id="chartdiv" style={{ width: "100%", height: "70vh" }}></div>
+        <div className="mt-4 font-semibold text-lg">Brand Distribution</div>
       </div>
     </div>
   );
