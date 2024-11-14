@@ -10,6 +10,7 @@ import * as Yup from "yup";
 const DashboardCreateBrand = () => {
   const [logoFile, setLogoFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageRequired, setIsImageRequired] = useState(true);
   const navigate = useNavigate();
   const varToken = useAuthHeader();
 
@@ -147,6 +148,9 @@ const DashboardCreateBrand = () => {
               />
             </Button>
           </Box>
+          {logoFile != null || (
+            <div className="text-red-500">Image is required</div>
+          )}
           {logoFile && (
             <Box mt={2}>
               <img

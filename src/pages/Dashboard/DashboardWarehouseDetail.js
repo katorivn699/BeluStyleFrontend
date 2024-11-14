@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { apiClient } from "../../core/api"; // Assuming you have an API client setup
+import { apiClient } from "../../core/api";
 import { FaPlus } from "react-icons/fa";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
@@ -139,79 +139,73 @@ const DashboardWarehouseDetail = () => {
         </label>
       </div>
 
-      {/* Products Display Section */}
-      <div>
+      {/* Products Display Section - Card Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((group) => (
-            <div key={group.productName} className="mb-8">
-              <div className="mb-4">
-                <h3 className="text-2xl font-semibold mb-2">
-                  {group.productName}
-                </h3>
-                <div className="flex items-center mb-2">
-                  <span className="mr-4 flex items-center font-bold">
-                    <span className="text-sm text-gray-500">
-                      {group.brandName}
-                    </span>
-                  </span>
-                  <span className="flex items-center">
-                    <span className="text-sm text-gray-500">
-                      {group.categoryName}
-                    </span>
-                  </span>
-                </div>
-              </div>
+            <div
+              key={group.productName}
+              className="border border-gray-300 rounded-lg p-4 shadow-lg"
+            >
+              <h3 className="text-2xl font-semibold mb-2">
+                {group.productName}
+              </h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Brand: {group.brandName}
+              </p>
+              <p className="text-sm text-gray-500 mb-4">
+                Category: {group.categoryName}
+              </p>
 
-              <table className="table-auto w-full border-collapse">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2 text-left">ID</th>
-                    <th className="px-4 py-2 text-left">Image</th>
-                    <th className="px-4 py-2 text-left">Size</th>
-                    <th className="px-4 py-2 text-left">Color</th>
-                    <th className="px-4 py-2 text-left">Price</th>
-                    <th className="px-4 py-2 text-left">Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {group.variations
-                    .filter((variation) =>
-                      showOnlyLowStock ? variation.quantity < 10 : true
-                    )
-                    .map((variation) => (
-                      <tr key={variation.variationId} className="border-t">
-                        <td className="px-4 py-2">{variation.variationId}</td>
-                        <td className="px-4 py-2">
-                          <img
-                            src={variation.productVariationImage}
-                            alt={`${variation.colorName} ${group.productName}`}
-                            className="w-12 h-12 object-cover"
-                          />
-                        </td>
-                        <td className="px-4 py-2">{variation.sizeName}</td>
-                        <td className="px-4 py-6 flex items-center">
+              {/* Product Variations */}
+              {group.variations
+                .filter((variation) =>
+                  showOnlyLowStock ? variation.quantity < 10 : true
+                )
+                .map((variation) => (
+                  <div
+                    key={variation.variationId}
+                    className="border-t pt-4 mb-4 flex justify-between items-center"
+                  >
+                    {/* Variation Image */}
+                    <div className="flex items-center">
+                      <img
+                        src={
+                          variation.productVariationImage ||
+                          "/images/placeholder.png"
+                        }
+                        alt={variation.colorName}
+                        className="w-10 h-10 object-cover mr-2 rounded"
+                      />
+                      <div>
+                        <div
+                          className="w-5 h-5 rounded-full mr-2"
+                          style={{
+                            backgroundColor: variation.hexCode,
+                            border: "1px solid gray",
+                          }}
+                        ></div>
+                        <p className="text-sm text-gray-500">
                           {variation.colorName}
-                          <span
-                            className="ml-2 inline-block w-4 h-4 border rounded"
-                            style={{
-                              backgroundColor: variation.hexCode,
-                            }}
-                          ></span>
-                        </td>
-                        <td className="px-4 py-2">
-                          ${variation.productPrice.toFixed(2)}
-                        </td>
-                        <td
-                          className={`px-4 py-2 ${
-                            variation.quantity < 10 ? "text-red-500" : ""
-                          }`}
-                        >
-                          {variation.quantity}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-semibold">
+                        ${variation.productPrice.toFixed(2)}
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          variation.quantity < 10
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {variation.quantity} in stock
+                      </p>
+                    </div>
+                  </div>
+                ))}
             </div>
           ))
         ) : (

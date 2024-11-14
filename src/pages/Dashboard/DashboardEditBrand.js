@@ -30,6 +30,7 @@ const DashboardEditBrand = () => {
   const [newImagePreview, setNewImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  console.log(brandId);
   useEffect(() => {
     const fetchBrand = async () => {
       try {

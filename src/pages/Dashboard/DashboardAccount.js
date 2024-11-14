@@ -13,6 +13,7 @@ const DashboardAccounts = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
@@ -24,12 +25,12 @@ const DashboardAccounts = () => {
   const varToken = useAuthHeader();
 
   useEffect(() => {
-    fetchUsers(currentPage, pageSize);
-  }, [currentPage]);
+    fetchUsers(currentPage, pageSize, searchTerm);
+  }, [currentPage, searchTerm]); // Re-fetch users when search term changes
 
-  const fetchUsers = (page, size) => {
+  const fetchUsers = (page, size, search = "") => {
     apiClient
-      .get(`/api/admin?page=${page}&size=${size}`, {
+      .get(`/api/admin?page=${page}&size=${size}&search=${search}`, {
         headers: {
           Authorization: varToken,
         },
@@ -42,6 +43,16 @@ const DashboardAccounts = () => {
       .catch((error) => {
         console.error("Error fetching users:", error);
       });
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setCurrentPage(0);
+    fetchUsers(0, pageSize, searchTerm);
   };
 
   const handlePageChange = (page) => {
@@ -95,7 +106,7 @@ const DashboardAccounts = () => {
         },
       })
       .then((response) => {
-        fetchUsers(currentPage, pageSize);
+        fetchUsers(currentPage, pageSize, searchTerm);
         handleClose();
         toast.success(response.data, {
           position: "bottom-right",
@@ -139,6 +150,18 @@ const DashboardAccounts = () => {
         </Link>
       </div>
 
+      {/* Search Bar */}
+
+      <div className="mb-2">
+        <input
+          type="text"
+          placeholder="Search by username or email"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="border border-gray-300 px-4 py-2  w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
@@ -151,55 +174,45 @@ const DashboardAccounts = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map(
-              (user) =>
-                user.role === "ADMIN" || (
-                  <tr key={user.username} className="hover:bg-gray-50">
-                    <td className="px-4 py-2">{user.username}</td>
-                    <td className="px-4 py-2">{user.email}</td>
-                    <td
-                      className={`px-4 py-2 font-bold ${getRoleStyle(
-                        user.role
-                      )}`}
-                    >
-                      {user.role}
-                    </td>
-                    {user.enable ? (
-                      <td className="px-4 py-2 text-emerald-600 font-bold">
-                        Enable
-                      </td>
-                    ) : (
-                      <td className="px-4 py-2 text-rose-600 font-bold">
-                        Disable
-                      </td>
-                    )}
-                    <td className="px-4 py-2 flex justify-center space-x-2">
-                      {
-                        <span
-                          className="w-6 h-6 flex justify-center items-center"
-                          onClick={() => handleViewUser(user.userId)}
-                        >
-                          <FaEye
-                            className={`cursor-pointer ${
-                              user.username === currentUser
-                                ? "text-orange-500"
-                                : "text-green-500"
-                            }`}
-                          />
-                        </span>
-                      }
-
-                      <Link to={`/Dashboard/Accounts/Edit/${user.userId}`}>
-                        <FaEdit className="text-blue-500 cursor-pointer" />
-                      </Link>
-                      <FaTrash
-                        className="text-red-500 cursor-pointer"
-                        onClick={() => openDeleteModal(user)}
-                      />
-                    </td>
-                  </tr>
-                )
-            )}
+            {users.map((user) => (
+              <tr key={user.username} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{user.username}</td>
+                <td className="px-4 py-2">{user.email}</td>
+                <td
+                  className={`px-4 py-2 font-bold ${getRoleStyle(user.role)}`}
+                >
+                  {user.role}
+                </td>
+                {user.enable ? (
+                  <td className="px-4 py-2 text-emerald-600 font-bold">
+                    Enable
+                  </td>
+                ) : (
+                  <td className="px-4 py-2 text-rose-600 font-bold">Disable</td>
+                )}
+                <td className="px-4 py-2 flex justify-center space-x-2">
+                  <span
+                    className="w-6 h-6 flex justify-center items-center"
+                    onClick={() => handleViewUser(user.userId)}
+                  >
+                    <FaEye
+                      className={`cursor-pointer ${
+                        user.username === currentUser
+                          ? "text-orange-500"
+                          : "text-green-500"
+                      }`}
+                    />
+                  </span>
+                  <Link to={`/Dashboard/Accounts/Edit/${user.userId}`}>
+                    <FaEdit className="text-blue-500 cursor-pointer" />
+                  </Link>
+                  <FaTrash
+                    className="text-red-500 cursor-pointer"
+                    onClick={() => openDeleteModal(user)}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -234,7 +247,6 @@ const DashboardAccounts = () => {
         isOpen={isOpen}
         onClose={handleClose}
         onConfirm={handleDelete}
-        name={userToDelete?.username || ""}
       />
     </>
   );

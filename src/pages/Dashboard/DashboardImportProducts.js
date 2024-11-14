@@ -3,10 +3,13 @@ import { apiClient } from "../../core/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const DashboardImportProducts = () => {
   const [products, setProducts] = useState([]);
   const [selectedVariations, setSelectedVariations] = useState({});
+  const authUser = useAuthUser();
+  const username = authUser.username;
   const varToken = useAuthHeader();
   const { stockId } = useParams();
   const navigate = useNavigate();
@@ -44,6 +47,7 @@ const DashboardImportProducts = () => {
 
     const payload = {
       stockId,
+      username,
       variations,
     };
 
@@ -74,6 +78,8 @@ const DashboardImportProducts = () => {
         Import Products into Stock #{stockId}
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {" "}
+        {/* Adjusted grid layout */}
         {products.map((product) => (
           <ProductCard
             key={product.productId}
@@ -111,7 +117,7 @@ const ProductCard = ({ product, onVariationChange, selectedVariations }) => {
   return (
     <div
       className="p-6 border rounded-lg shadow-sm bg-white hover:shadow-lg transition duration-200"
-      style={{ minWidth: "350px" }}
+      style={{ minWidth: "330px" }} // Ensure minimum width for product cards
     >
       <div className="flex items-center mb-4">
         <img
@@ -131,6 +137,8 @@ const ProductCard = ({ product, onVariationChange, selectedVariations }) => {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-3">
+        {" "}
+        {/* Set grid for variations */}
         {variations.map((variation) => (
           <VariationCard
             key={variation.variationId}
@@ -161,9 +169,15 @@ const VariationCard = ({ variation, onVariationChange, isSelected }) => {
   };
 
   const handleQuantityChange = (e) => {
-    const value = parseInt(e.target.value) || 0;
-    setQuantity(value);
-    onVariationChange(variation.variationId, value);
+    const value = e.target.value;
+    const parsedValue = parseInt(value, 10) || 0;
+    if (value === "0" || parsedValue === 0) {
+      setQuantity("");
+      onVariationChange(variation.variationId, 0);
+    } else {
+      setQuantity(parsedValue);
+      onVariationChange(variation.variationId, parsedValue);
+    }
   };
 
   return (
@@ -172,7 +186,7 @@ const VariationCard = ({ variation, onVariationChange, isSelected }) => {
         isSelected ? "border-green-500 bg-green-50" : "bg-gray-50"
       }`}
       onClick={handleCardClick}
-      style={{ minWidth: "100px", maxWidth: "110px" }}
+      style={{ minWidth: "90px", maxWidth: "110px" }} // Adjusted minWidth and maxWidth
     >
       <img
         src={variation.productVariationImage}

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api"; // Your API client
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardAddProductToSale = () => {
   const { saleId } = useParams(); // Get saleId from the URL
@@ -131,7 +132,9 @@ const DashboardAddProductToSale = () => {
               <p className="text-sm">{product.productDescription}</p>
               <p className="text-gray-500">Brand: {product.brandName}</p>
               <p className="text-gray-500">Category: {product.categoryName}</p>
-              <p className="font-bold">Price: ${product.productPrice}</p>
+              <p className="font-bold">
+                Price: {formatPrice(product.productPrice)}
+              </p>
               <p className="text-gray-400">
                 Avg. Rating: {product.averageRating} ({product.totalRatings}{" "}
                 ratings)

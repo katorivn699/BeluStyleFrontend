@@ -11,6 +11,7 @@ import {
   Box,
   Zoom,
   IconButton,
+  FormHelperText,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
@@ -20,10 +21,17 @@ const DashboardAddProductVariations = () => {
   const { productId } = useParams(); // Get productId from URL
   const [product, setProduct] = useState(null);
   const [variations, setVariations] = useState([
-    { sizeId: "", colorId: "", productPrice: 0, productVariationImage: null },
+    {
+      sizeId: "",
+      colorId: "",
+      productPrice: "",
+      productVariationImage: null,
+      isImageRequired: true,
+    },
   ]);
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const varToken = useAuthHeader();
   const navigate = useNavigate();
 
@@ -54,7 +62,13 @@ const DashboardAddProductVariations = () => {
   const handleAddVariation = () => {
     setVariations([
       ...variations,
-      { sizeId: "", colorId: "", productPrice: 0, productVariationImage: null },
+      {
+        sizeId: "",
+        colorId: "",
+        productPrice: "",
+        productVariationImage: null,
+        isImageRequired: true,
+      },
     ]);
   };
 
@@ -95,6 +109,7 @@ const DashboardAddProductVariations = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const uploadedVariations = await Promise.all(
       variations.map(async (variation) => {
@@ -123,23 +138,27 @@ const DashboardAddProductVariations = () => {
           position: "bottom-right",
           transition: Zoom,
         });
-        navigate(`/Dashboard/Products`);
+        navigate(`/Dashboard/Products/${productId}`);
       })
       .catch((error) => {
         toast.error(error.message || "Failed to add product variations", {
           position: "bottom-right",
           transition: Zoom,
         });
+        setIsSubmitting(false);
       });
   };
 
   const handleImageChange = (index, event) => {
     const file = event.target.files[0];
+    const newVariations = [...variations];
     if (file) {
-      const newVariations = [...variations];
       newVariations[index].productVariationImage = file;
-      setVariations(newVariations);
+      newVariations[index].isImageRequired = false;
+    } else {
+      newVariations[index].isImageRequired = true; // Image not uploaded, show the validation message
     }
+    setVariations(newVariations);
   };
 
   return (
@@ -212,6 +231,15 @@ const DashboardAddProductVariations = () => {
               handleVariationChange(index, "productPrice", e.target.value)
             }
             required
+            onBlur={(e) => {
+              const value = parseFloat(e.target.value);
+              if (value < 0) {
+                handleVariationChange(index, "productPrice", 0);
+              } else if (value > 999999999999) {
+                handleVariationChange(index, "productPrice", 999999999999);
+              }
+            }}
+            inputProps={{ min: 0, max: 999999999999 }}
           />
           <Button variant="outlined" component="label">
             Upload Image
@@ -219,8 +247,12 @@ const DashboardAddProductVariations = () => {
               type="file"
               hidden
               onChange={(e) => handleImageChange(index, e)}
+              required
             />
           </Button>
+          {variation.isImageRequired && (
+            <div className="text-red-500">Image is required</div>
+          )}
           {variation.productVariationImage && (
             <img
               src={URL.createObjectURL(variation.productVariationImage)}
@@ -237,10 +269,20 @@ const DashboardAddProductVariations = () => {
           </IconButton>
         </Box>
       ))}
-      <Button variant="outlined" onClick={handleAddVariation}>
+      <Button
+        variant="outlined"
+        onClick={handleAddVariation}
+        disabled={isSubmitting}
+      >
         Add Variation
       </Button>
-      <Button type="submit" variant="contained" color="primary">
+      <Button
+        className="ml-5"
+        type="submit"
+        variant="contained"
+        color="primary"
+        disabled={isSubmitting}
+      >
         Submit
       </Button>
     </form>

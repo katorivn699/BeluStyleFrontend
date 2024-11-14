@@ -22,7 +22,8 @@ const Sidebar = ({ isOpen }) => {
   const userRole = authUser.role; // Get the user's role
 
   // Function to check if the current link is active
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname.startsWith(path);
+  const isDashboard = (path) => location.pathname === path;
 
   return (
     <div
@@ -49,7 +50,7 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Dashboard") ? "bg-blue-500 text-white" : ""
+                isDashboard("/Dashboard") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
               <FaGaugeHigh className="mr-2" />
@@ -62,7 +63,7 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/Products"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Products") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Products") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
               <FaBorderAll className="mr-2" />
@@ -76,7 +77,9 @@ const Sidebar = ({ isOpen }) => {
               <Link
                 to="/Dashboard/Accounts?"
                 className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                  isActive("/Accounts") ? "bg-blue-500 text-white" : ""
+                  isActive("/Dashboard/Accounts")
+                    ? "bg-blue-500 text-white"
+                    : ""
                 } p-2 rounded-md`}
               >
                 <FaCircleUser className="mr-2" />
@@ -90,7 +93,9 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/Categories"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Categories") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Categories")
+                  ? "bg-blue-500 text-white"
+                  : ""
               } p-2 rounded-md`}
             >
               <FaTags className="mr-2" />
@@ -103,7 +108,7 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/Orders"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Orders") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Orders") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
               <FaList className="mr-2" />
@@ -116,7 +121,9 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/Notifications"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Notifications") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Notifications")
+                  ? "bg-blue-500 text-white"
+                  : ""
               } p-2 rounded-md`}
             >
               <FaBell className="mr-2" />
@@ -132,7 +139,7 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/Discounts"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Discounts") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Discounts") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
               <FaPercent className="mr-2" />
@@ -145,7 +152,7 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/Brands"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Brands") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Brands") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
               <FaStar className="mr-2" />
@@ -158,7 +165,7 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/Sales"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Sales") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Sales") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
               <FaGift className="mr-2" />
@@ -171,7 +178,7 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/Warehouse"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Warehouse") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Warehouse") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
               <FaWarehouse className="mr-2" />
@@ -184,7 +191,9 @@ const Sidebar = ({ isOpen }) => {
             <Link
               to="/Dashboard/StockTransactions"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/StockTransactions") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/StockTransactions")
+                  ? "bg-blue-500 text-white"
+                  : ""
               } p-2 rounded-md`}
             >
               <FaFileInvoice className="mr-2" />
@@ -193,20 +202,20 @@ const Sidebar = ({ isOpen }) => {
           </li>
 
           {/* Divider */}
-          <hr className="my-4 border-gray-300" />
+          {/* <hr className="my-4 border-gray-300" /> */}
 
           {/* Logout Link */}
-          <li>
+          {/* <li>
             <Link
               to="/Dashboard/Logout"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Logout") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Logout") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
               <FaSignOutAlt className="mr-2" />
               Logout
             </Link>
-          </li>
+          </li> */}
         </ul>
       )}
     </div>

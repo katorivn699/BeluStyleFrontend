@@ -191,6 +191,9 @@ const DashboardCreateStaffAccount = () => {
             />
           </Button>
         </Box>
+        {previewImage != null || (
+          <div className="text-red-500">Image is required</div>
+        )}
 
         {previewImage && (
           <Box mt={2}>

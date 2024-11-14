@@ -112,50 +112,54 @@ const DashboardBrands = () => {
           </thead>
 
           <tbody>
-            {brands.map((brand) => (
-              <tr key={brand.brandId} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{brand.brandId}</td>
-                <td className="px-4 py-2">
-                  <img
-                    src={brand.logoUrl}
-                    alt={brand.brandName}
-                    style={{ width: "50px", height: "auto" }} // Display logo
-                  />
-                </td>
-                <td className="px-4 py-2">
-                  <a
-                    href={brand.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 underline"
-                  >
-                    {brand.websiteUrl}
-                  </a>
-                </td>
-                <td className="px-4 py-2">{brand.brandName}</td>
-                <td className="px-4 py-2">{brand.brandDescription}</td>
-                <td className="px-4 py-2">{brand.totalQuantity}</td>
-                <td className="px-4 py-2 flex space-x-2">
-                  <button
-                    onClick={() => openDrawer(brand)}
-                    className="text-green-500 cursor-pointer"
-                  >
-                    <FaEye />
-                  </button>
-                  <Link to={`/Dashboard/Brands/Edit/${brand.brandId}`}>
-                    <FaEdit className="text-blue-500 cursor-pointer" />
-                  </Link>
-                  {userRole === "ADMIN" && ( // Show delete button only for Admin
-                    <button
-                      onClick={() => openDeleteModal(brand)}
-                      className="text-red-500 cursor-pointer"
+            {brands.length > 0 ? (
+              brands.map((brand) => (
+                <tr key={brand.brandId} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{brand.brandId}</td>
+                  <td className="px-4 py-2">
+                    <img
+                      src={brand.logoUrl}
+                      alt={brand.brandName}
+                      style={{ width: "50px", height: "auto" }} // Display logo
+                    />
+                  </td>
+                  <td className="px-4 py-2">
+                    <a
+                      href={brand.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 underline"
                     >
-                      <FaTrash />
+                      {brand.websiteUrl}
+                    </a>
+                  </td>
+                  <td className="px-4 py-2">{brand.brandName}</td>
+                  <td className="px-4 py-2">{brand.brandDescription}</td>
+                  <td className="px-4 py-2">{brand.totalQuantity}</td>
+                  <td className="px-4 py-2 flex space-x-2">
+                    <button
+                      onClick={() => openDrawer(brand)}
+                      className="text-green-500 cursor-pointer"
+                    >
+                      <FaEye />
                     </button>
-                  )}
-                </td>
-              </tr>
-            ))}
+                    <Link to={`/Dashboard/Brands/Edit/${brand.brandId}`}>
+                      <FaEdit className="text-blue-500 cursor-pointer" />
+                    </Link>
+                    {userRole === "ADMIN" && ( // Show delete button only for Admin
+                      <button
+                        onClick={() => openDeleteModal(brand)}
+                        className="text-red-500 cursor-pointer"
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <p className="text-red-500">No brands found.</p>
+            )}
           </tbody>
         </table>
       </div>

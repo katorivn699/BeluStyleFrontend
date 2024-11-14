@@ -6,12 +6,15 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardSales = () => {
   const [sales, setSales] = useState([]);
   const [saleToDelete, setSaleToDelete] = useState(null);
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false); // Manage modal open state
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const itemsPerPage = 10; // Set items per page
 
   const authUser = useAuthUser(); // Get the current user
   const userRole = authUser.role; // Get the user's role
@@ -77,12 +80,25 @@ const DashboardSales = () => {
       .catch((error) => {
         console.error("Error fetching sales:", error);
       });
-  }, []); // Empty dependency array means this useEffect runs once when the component mounts
+  }, []);
+
+  // Calculate the paginated sales for the current page
+  const paginatedSales = sales.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Total number of pages
+  const totalPages = Math.ceil(sales.length / itemsPerPage);
+
+  // Change page
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <>
       <div className="flex items-center justify-between">
-        {" "}
         <div>
           <h1 className="text-4xl font-bold mb-6">Sales List</h1>
         </div>
@@ -100,7 +116,6 @@ const DashboardSales = () => {
           <thead className="border border-gray-300">
             <tr>
               <th className="px-4 py-2 text-left">ID</th>
-
               <th className="px-4 py-2 text-left">Sale Type</th>
               <th className="px-4 py-2 text-left">Sale Value</th>
               <th className="px-4 py-2 text-left">Start Date</th>
@@ -111,53 +126,93 @@ const DashboardSales = () => {
           </thead>
 
           <tbody>
-            {sales.map((sale) => (
-              <tr key={sale.saleId} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{sale.saleId}</td>
-
-                <td className="px-4 py-2">{sale.saleType}</td>
-                <td className="px-4 py-2">{sale.saleValue}</td>
-                <td className="px-4 py-2">
-                  {new Date(sale.startDate).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-2">
-                  {new Date(sale.endDate).toLocaleDateString()}
-                </td>
-                <td
-                  className={`px-4 py-2 font-bold ${getStatusColor(
-                    sale.saleStatus
-                  )}`}
-                >
-                  {sale.saleStatus}
-                </td>
-                <td className="px-4 py-2 flex space-x-2 pt-6">
-                  <Link to={`/Dashboard/Sales/${sale.saleId}`}>
-                    <FaEye className="text-green-500 cursor-pointer" />
-                  </Link>
-                  <Link to={`/Dashboard/Sales/Edit/${sale.saleId}`}>
-                    <FaEdit className="text-blue-500 cursor-pointer" />
-                  </Link>
-                  {/* Add Product to Sale Button */}
-                  <Link to={`/Dashboard/Sales/${sale.saleId}/AddProduct`}>
-                    <FaPlusSquare
-                      className="text-blue-500 cursor-pointer"
-                      title="Add Product to Sale"
-                    />
-                  </Link>
-                  {userRole === "ADMIN" && (
-                    <button
-                      className="text-red-500 cursor-pointer"
-                      onClick={() => openDeleteModal(sale)}
-                    >
-                      <FaTrash />
-                    </button>
-                  )}
+            {paginatedSales.length > 0 ? (
+              paginatedSales.map((sale) => (
+                <tr key={sale.saleId} className="hover:bg-gray-50">
+                  <td className="px-4 py-2">{sale.saleId}</td>
+                  <td className="px-4 py-2">{sale.saleType}</td>
+                  <td className="px-4 py-2">
+                    {sale.saleType === "PERCENTAGE"
+                      ? sale.saleValue + "%"
+                      : formatPrice(sale.saleValue)}
+                  </td>
+                  <td className="px-4 py-2">
+                    {new Date(sale.startDate).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-2">
+                    {new Date(sale.endDate).toLocaleDateString()}
+                  </td>
+                  <td
+                    className={`px-4 py-2 font-bold ${getStatusColor(
+                      sale.saleStatus
+                    )}`}
+                  >
+                    {sale.saleStatus}
+                  </td>
+                  <td className="px-4 py-2 flex space-x-2 pt-6">
+                    <Link to={`/Dashboard/Sales/${sale.saleId}`}>
+                      <FaEye className="text-green-500 cursor-pointer" />
+                    </Link>
+                    <Link to={`/Dashboard/Sales/Edit/${sale.saleId}`}>
+                      <FaEdit className="text-blue-500 cursor-pointer" />
+                    </Link>
+                    <Link to={`/Dashboard/Sales/${sale.saleId}/AddProduct`}>
+                      <FaPlusSquare
+                        className="text-blue-500 cursor-pointer"
+                        title="Add Product to Sale"
+                      />
+                    </Link>
+                    {userRole === "ADMIN" && (
+                      <button
+                        className="text-red-500 cursor-pointer"
+                        onClick={() => openDeleteModal(sale)}
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="text-red-500 px-4 py-2">
+                  No sales found.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+          className="px-4 py-2 mx-1 border border-gray-300 rounded-lg disabled:opacity-50"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => handlePageChange(index + 1)}
+            className={`px-4 py-2 mx-1 border border-gray-300 rounded-lg ${
+              currentPage === index + 1 ? "bg-blue-500 text-white" : ""
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+          className="px-4 py-2 mx-1 border border-gray-300 rounded-lg disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
       <DeleteConfirmationModal
         isOpen={isOpen}
         onClose={handleClose}

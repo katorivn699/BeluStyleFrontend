@@ -10,6 +10,8 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardNotifications = () => {
   const [notifications, setNotifications] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const [itemsPerPage] = useState(10); // Số thông báo mỗi trang
   const [isOpen, setIsOpen] = useState(false);
   const [notificationToDelete, setNotificationToDelete] = useState(null);
   const [selectedNotification, setNotification] = useState(null);
@@ -17,6 +19,7 @@ const DashboardNotifications = () => {
   const authUser = useAuthUser();
   const varToken = useAuthHeader();
 
+  // Hàm mở modal xóa thông báo
   const openDeleteModal = (notification) => {
     setNotificationToDelete(notification);
     setIsOpen(true);
@@ -98,6 +101,22 @@ const DashboardNotifications = () => {
     }
   };
 
+  // Hàm để chia nhỏ dữ liệu thành từng trang
+  const indexOfLastNotification = currentPage * itemsPerPage;
+  const indexOfFirstNotification = indexOfLastNotification - itemsPerPage;
+  const currentNotifications = notifications.slice(
+    indexOfFirstNotification,
+    indexOfLastNotification
+  );
+
+  // Tính số trang tổng cộng
+  const totalPages = Math.ceil(notifications.length / itemsPerPage);
+
+  // Hàm thay đổi trang
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -126,8 +145,8 @@ const DashboardNotifications = () => {
             </tr>
           </thead>
           <tbody>
-            {notifications.length > 0 ? (
-              notifications.map((notification) => (
+            {currentNotifications.length > 0 ? (
+              currentNotifications.map((notification) => (
                 <tr
                   key={notification.notificationId}
                   className="hover:bg-gray-50"
@@ -162,15 +181,41 @@ const DashboardNotifications = () => {
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan="6" className="text-center px-4 py-2">
-                  No notifications found.
-                </td>
-              </tr>
+              <p className="text-red-500">No notifications found.</p>
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+          className="px-4 py-2 mx-1 border border-gray-300 rounded-lg disabled:opacity-50"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => handlePageChange(index + 1)}
+            className={`px-4 py-2 mx-1 border border-gray-300 rounded-lg ${
+              currentPage === index + 1 ? "bg-blue-500 text-white" : ""
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+          className="px-4 py-2 mx-1 border border-gray-300 rounded-lg disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
       <DeleteConfirmationModal
         isOpen={isOpen}
         onClose={handleClose}
@@ -182,7 +227,7 @@ const DashboardNotifications = () => {
         isOpen={isDrawerOpen}
         onClose={closeDrawer}
         notification={selectedNotification || {}}
-        onDelete={handleDelete}
+        onDelete={() => handleDelete(notificationToDelete)}
       />
     </>
   );
