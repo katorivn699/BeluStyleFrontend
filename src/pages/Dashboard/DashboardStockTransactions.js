@@ -130,7 +130,7 @@ const DashboardStockTransactions = () => {
                   </p>
                   <p>
                     <strong>Staff:</strong>{" "}
-                    {displayValue(transaction.user.username)}
+                    {displayValue(transaction.user?.username)}
                   </p>
                 </div>
               </div>

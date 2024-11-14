@@ -9,12 +9,13 @@ import { Link } from "react-router-dom";
 import ManagerSettings from "../pages/User/ManagerSettings";
 
 const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
-  const isAuth = useIsAuthenticated();
+  // const isAuth = useIsAuthenticated();
   const authUser = useAuthUser();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [userImage, setUserImage] = useState(authUser.userImage || userDefault);
+  const [fullName, setFullName] = useState(authUser.userFullName);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const openSettingsModal = () => {
@@ -62,7 +63,7 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
                 className="rounded-full w-8 h-8 "
               />
 
-              <span className="font-medium">{authUser.userFullName}</span>
+              <span className="font-medium">{fullName}</span>
             </div>
           </div>
           {/* Dropdown Menu */}
@@ -90,7 +91,8 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
         <ManagerSettings
           open={isSettingsModalOpen}
           onClose={closeSettingsModal}
-          onImageUpdate={(newImage) => setUserImage(newImage)} // Pass a callback for image updates
+          onImageUpdate={(newImage) => setUserImage(newImage)}
+          onFullNameUpdate={(newFullName) => setFullName(newFullName)}
         />
 
         {/* Breadcrumb */}

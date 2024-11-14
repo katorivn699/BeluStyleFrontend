@@ -6,13 +6,19 @@ import {
   Button,
   TextField,
   Avatar,
+  IconButton,
 } from "@mui/material";
-import { FaCamera } from "react-icons/fa"; // Import icon máy ảnh
 import { apiClient } from "../../core/api";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { toast, Zoom } from "react-toastify";
+import { PhotoCamera } from "@mui/icons-material";
 
-const ManagerSettings = ({ open, onClose, onImageUpdate }) => {
+const ManagerSettings = ({
+  open,
+  onClose,
+  onImageUpdate,
+  onFullNameUpdate,
+}) => {
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
@@ -43,7 +49,7 @@ const ManagerSettings = ({ open, onClose, onImageUpdate }) => {
           console.error("Error fetching user data:", error);
         });
     }
-  }, [open]);
+  }, [open, varToken]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -75,17 +81,16 @@ const ManagerSettings = ({ open, onClose, onImageUpdate }) => {
           ...prevData,
           userImage: data.data.url,
         }));
+        setUserData((prev) => ({ ...prev, userImage: data.data.url }));
       }
-      setUserData((prev) => ({ ...prev, userImage: data.data.url }));
-      onImageUpdate(data.data.url);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
   };
 
   const handleUpdate = async () => {
-    apiClient
-      .put(
+    try {
+      await apiClient.put(
         "/api/account",
         {
           email: formData.email,
@@ -98,20 +103,20 @@ const ManagerSettings = ({ open, onClose, onImageUpdate }) => {
             Authorization: varToken,
           },
         }
-      )
-      .then((response) => {
-        toast.success(response.data, {
-          position: "bottom-right",
-          transition: Zoom,
-        });
-        onClose();
-      })
-      .catch((error) => {
-        toast.error(error.data, {
-          position: "bottom-right",
-          transition: Zoom,
-        });
+      );
+      toast.success("Profile updated successfully!", {
+        position: "bottom-right",
+        transition: Zoom,
       });
+      onImageUpdate(formData.userImage);
+      onFullNameUpdate(formData.fullName);
+      onClose();
+    } catch (error) {
+      toast.error("Error updating profile.", {
+        position: "bottom-right",
+        transition: Zoom,
+      });
+    }
   };
 
   if (!userData) return null;
@@ -130,59 +135,54 @@ const ManagerSettings = ({ open, onClose, onImageUpdate }) => {
           textAlign: "center",
         }}
       >
-        {/* User Image */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          style={{ display: "none" }}
-          id="upload-avatar"
-        />
-        <label htmlFor="upload-avatar">
+        <Box
+          sx={{
+            position: "relative",
+            width: 80,
+            height: 80,
+            mx: "auto",
+            mb: 2,
+          }}
+        >
           <Avatar
             src={formData.userImage}
             alt={formData.fullName}
             sx={{
               width: 80,
               height: 80,
-              mx: "auto",
-              mb: 2,
               border: "3px solid #eee",
               cursor: "pointer",
-              position: "relative", // Make it a positioned element
             }}
-          >
-            {/* Show camera icon when hovering over the avatar */}
-            <Box
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ display: "none" }}
+            id="upload-avatar"
+          />
+          <label htmlFor="upload-avatar">
+            <IconButton
+              color="primary"
+              component="span"
               sx={{
                 position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                color: "white",
-                fontSize: "24px",
-                display: "none", // Hide initially
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(0, 0, 0, 0.3)",
+                opacity: 0,
+                transition: "opacity 0.3s ease-in-out",
+                "&:hover": { opacity: 1 },
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <FaCamera />
-            </Box>
-          </Avatar>
-        </label>
-
-        {/* Hover Effect */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            color: "white",
-            fontSize: "24px",
-            display: "none", // Initially hidden
-          }}
-          className="camera-icon"
-        >
-          <FaCamera />
+              <PhotoCamera sx={{ color: "gray" }} />
+            </IconButton>
+          </label>
         </Box>
 
         <Typography variant="h6" mb={3}>
@@ -205,13 +205,13 @@ const ManagerSettings = ({ open, onClose, onImageUpdate }) => {
           {userData.role}
         </Typography>
 
-        {/* User Information Fields */}
         <TextField
           label="Username"
           fullWidth
           margin="normal"
           value={userData.username}
           InputProps={{ readOnly: true }}
+          disabled
         />
         <TextField
           label="Email"
@@ -238,7 +238,6 @@ const ManagerSettings = ({ open, onClose, onImageUpdate }) => {
           onChange={handleInputChange}
         />
 
-        {/* Action Buttons */}
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
           <Button variant="contained" color="primary" onClick={handleUpdate}>
             Update

@@ -7,6 +7,7 @@ import {
   Grid,
   Divider,
   Button,
+  IconButton,
 } from "@mui/material";
 import {
   LocalShipping,
@@ -17,27 +18,34 @@ import {
   TrackChanges,
   CheckCircle,
   Cancel,
+  Visibility,
+  Person,
+  PersonOutline,
 } from "@mui/icons-material";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { formatPrice } from "../../components/format/formats";
+import { FaBarcode } from "react-icons/fa";
+import DashboardOrderDetailsDrawer from "../../components/drawer/DashboardOrderDetailsDrawer";
 
 const DashboardOrders = () => {
   const [orders, setOrders] = useState([]);
-  const [page, setPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const varToken = useAuthHeader();
   const authUser = useAuthUser();
 
   useEffect(() => {
     fetchOrders();
-  }, [page]);
+  }, [currentPage]);
 
   const fetchOrders = () => {
     apiClient
       .get("/api/orders", {
         headers: { Authorization: varToken },
-        params: { page, size: 10 },
+        params: { page: currentPage - 1, size: 10 },
       })
       .then((response) => {
         setOrders(response.data.content);
@@ -47,7 +55,7 @@ const DashboardOrders = () => {
   };
 
   const handlePageChange = (newPage) => {
-    setPage(newPage);
+    setCurrentPage(newPage);
   };
 
   const handleReview = (orderId, isApproved) => {
@@ -71,7 +79,16 @@ const DashboardOrders = () => {
       });
   };
 
-  // Define color styles for each order status
+  const openDrawer = (orderId) => {
+    setSelectedOrderId(orderId);
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+    setSelectedOrderId(null);
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "PENDING":
@@ -87,6 +104,11 @@ const DashboardOrders = () => {
       default:
         return "gray";
     }
+  };
+
+  const viewOrderDetails = (orderId) => {
+    // Implement navigation to order details page
+    console.log(`Viewing details for order ID: ${orderId}`);
   };
 
   return (
@@ -106,6 +128,14 @@ const DashboardOrders = () => {
                   <Grid item xs={12} sm={6} md={4}>
                     <Typography variant="h6" className="font-semibold mb-2">
                       <Info className="mr-2" /> Order ID: {order.orderId}
+                      <IconButton
+                        onClick={() => openDrawer(order.orderId)}
+                        color="primary"
+                        aria-label="view details"
+                        className="ml-2"
+                      >
+                        <Visibility />
+                      </IconButton>
                     </Typography>
                     <Typography
                       color="textSecondary"
@@ -121,6 +151,74 @@ const DashboardOrders = () => {
                     >
                       <TrackChanges className="mr-1" /> Status:{" "}
                       {order.orderStatus}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} md={4}>
+                    <Typography
+                      color="textSecondary"
+                      className="flex items-center mb-1"
+                    >
+                      <Home className="mr-1" /> Billing Address:{" "}
+                      {order.billingAddress}
+                    </Typography>
+                    <Typography
+                      color="textSecondary"
+                      className="flex items-center mb-1"
+                    >
+                      <LocalShipping className="mr-1" /> Shipping Method:{" "}
+                      {order.shippingMethod}
+                    </Typography>
+                    <Typography
+                      color="textSecondary"
+                      className="flex items-center mb-1"
+                    >
+                      <DateRange className="mr-1" /> Expected Delivery:{" "}
+                      {new Date(
+                        order.expectedDeliveryDate
+                      ).toLocaleDateString()}
+                    </Typography>
+                    <Typography
+                      color="textSecondary"
+                      className="flex items-center"
+                    >
+                      <FaBarcode className="mr-1" />
+                      Transaction Ref: {order.transactionReference || "N/A"}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} md={4}>
+                    <Typography
+                      color="textSecondary"
+                      className="flex items-center mb-1"
+                    >
+                      <Payment className="mr-1" /> Payment Method:{" "}
+                      {order.paymentMethod}
+                    </Typography>
+                    <Typography
+                      color="textSecondary"
+                      className="flex items-center mb-1"
+                    >
+                      <Payment className="mr-1" /> Total Amount:{" "}
+                      {formatPrice(order.totalAmount.toFixed(2))}
+                    </Typography>
+                    <Typography
+                      color="textSecondary"
+                      className="flex items-center"
+                    >
+                      <TrackChanges className="mr-1" /> Tracking #:{" "}
+                      {order.trackingNumber}
+                    </Typography>
+                    <Typography
+                      color="green"
+                      className="flex items-center mt-1"
+                    >
+                      <Person className="mr-1" />
+                      Customer: {order.customerUsername}
+                    </Typography>
+                    <Typography color="orange" className="flex items-center">
+                      <PersonOutline className="mr-1" />
+                      Staff: {order.staffUsername || "N/A"}
                     </Typography>
                   </Grid>
 
@@ -151,56 +249,6 @@ const DashboardOrders = () => {
                       </div>
                     </Grid>
                   )}
-
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Typography
-                      color="textSecondary"
-                      className="flex items-center mb-1"
-                    >
-                      <Home className="mr-1" /> Billing Address:{" "}
-                      {order.billingAddress}
-                    </Typography>
-                    <Typography
-                      color="textSecondary"
-                      className="flex items-center mb-1"
-                    >
-                      <LocalShipping className="mr-1" /> Shipping Method:{" "}
-                      {order.shippingMethod}
-                    </Typography>
-                    <Typography
-                      color="textSecondary"
-                      className="flex items-center"
-                    >
-                      <DateRange className="mr-1" /> Expected Delivery:{" "}
-                      {new Date(
-                        order.expectedDeliveryDate
-                      ).toLocaleDateString()}
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Typography
-                      color="textSecondary"
-                      className="flex items-center mb-1"
-                    >
-                      <Payment className="mr-1" /> Payment Method:{" "}
-                      {order.paymentMethod}
-                    </Typography>
-                    <Typography
-                      color="textSecondary"
-                      className="flex items-center mb-1"
-                    >
-                      <Payment className="mr-1" /> Total Amount: ${" "}
-                      {order.totalAmount.toFixed(2)}
-                    </Typography>
-                    <Typography
-                      color="textSecondary"
-                      className="flex items-center"
-                    >
-                      <TrackChanges className="mr-1" /> Tracking #:{" "}
-                      {order.trackingNumber}
-                    </Typography>
-                  </Grid>
                 </Grid>
 
                 <Divider style={{ margin: "16px 0" }} />
@@ -211,44 +259,45 @@ const DashboardOrders = () => {
                 >
                   Notes: {order.notes || "N/A"}
                 </Typography>
-
-                <Typography variant="h6" className="mt-4">
-                  Order Details:
-                </Typography>
-                {order.orderDetails.map((detail) => (
-                  <Typography key={detail.orderDetailId} color="textSecondary">
-                    - Item {detail.variationId}, Quantity:{" "}
-                    {detail.orderQuantity}, Unit Price:{" "}
-                    {detail.unitPrice ? formatPrice(detail.unitPrice) : "N/A"},
-                    Discount:{" "}
-                    {detail.discountAmount
-                      ? formatPrice(detail.discountAmount)
-                      : "N/A"}
-                  </Typography>
-                ))}
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
 
+      <DashboardOrderDetailsDrawer
+        open={drawerOpen}
+        onClose={closeDrawer}
+        orderId={selectedOrderId}
+      />
+
       <div className="flex justify-center items-center mt-4">
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page === 0}
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
         >
           Previous
         </Button>
-        <Typography className="mx-4">
-          Page {page + 1} of {totalPages}
-        </Typography>
+
+        {[...Array(totalPages)].map((_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => handlePageChange(index + 1)}
+            className={`px-4 py-2 mx-1 border border-gray-300 rounded-lg ${
+              currentPage === index + 1 ? "bg-blue-500 text-white" : ""
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handlePageChange(page + 1)}
-          disabled={page >= totalPages - 1}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
         >
           Next
         </Button>
