@@ -16,28 +16,28 @@ const Footer = () => {
           <GoTrophy className="text-6xl sm:text-7xl" />
           <div className="conQuality text-center md:text-left mt-4 md:mt-0 md:ml-4">
             <h1 className="font-semibold">High Quality</h1>
-            <p className="text-base-100">Made in China</p>
+            {/* <p className="text-base-100">Made in China</p> */}
           </div>
         </div>
         <div className="Protection flex flex-col items-center md:flex-row">
           <IoShieldCheckmarkOutline className="text-6xl sm:text-7xl" />
           <div className="conProtection text-center md:text-left mt-4 md:mt-0 md:ml-4">
             <h1 className="font-semibold">Warranty Protection</h1>
-            <p className="text-base-100">Over 2 seconds</p>
+            {/* <p className="text-base-100">Over 2 seconds</p> */}
           </div>
         </div>
         <div className="Shipping flex flex-col items-center md:flex-row">
           <FaShippingFast className="text-6xl sm:text-7xl" />
           <div className="conShipping text-center md:text-left mt-4 md:mt-0 md:ml-4">
             <h1 className="font-semibold">Free Shipping</h1>
-            <p className="text-base-100">Only for admin</p>
+            {/* <p className="text-base-100">Only for admin</p> */}
           </div>
         </div>
         <div className="Support flex flex-col items-center md:flex-row">
           <MdOutlineSupportAgent className="text-6xl sm:text-7xl" />
           <div className="conSupport text-center md:text-left mt-4 md:mt-0 md:ml-4">
             <h1 className="font-semibold">24/7 Support</h1>
-            <p className="text-base-100">Only for admin</p>
+            {/* <p className="text-base-100">Only for admin</p> */}
           </div>
         </div>
       </div>

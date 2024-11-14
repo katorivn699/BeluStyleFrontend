@@ -29,14 +29,14 @@ export function ConfirmRegister() {
                     Once it’s done you will be able to start shopping!</p>
             </div>
             <div className="button flex space-x-5">
-                <button className="btn bg-blueOcean rounded-2xl font-inter text-white w-44 h-12" onClick={handleResendEmail}>
+                {/* <button className="btn bg-blueOcean rounded-2xl font-inter text-white w-44 h-12" onClick={handleResendEmail}>
                     <p>Resend email</p>
-                </button>
-                <button className="btn Return btn flex bg-transparent items-center space-x-2 font-inter shadow-none border-none w-44 h-12" onClick={handleReturnToSite}>
+                </button> */}
+                <button className="btn Return btn flex bg-transparent items-center space-x-2 font-inter shadow-none border-2 border-gray-300 rounded-full py-2 px-5" onClick={handleReturnToSite}>
                     <p>Return to Site</p><FaArrowRight />
                 </button>
             </div>
-            <p className="py-20 font-inter text-gray-500">This process will be as quick as the way your money gone.</p>
+            <p className="py-20 font-inter text-gray-500">Please confirm your registration, and you will be officially become a valued customer of BeluStyle.</p>
         </div>
     );
 }

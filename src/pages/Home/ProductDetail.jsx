@@ -422,6 +422,7 @@ const ProductDetailPage = () => {
               textTransform: "capitalize",
               fontSize: "1rem",
               fontWeight: "bold",
+              fontFamily: "Montserrat",
               color: "#757575",
               "&.Mui-selected": {
                 color: "#177CD8", // Color for selected tab text
@@ -438,6 +439,7 @@ const ProductDetailPage = () => {
               textTransform: "capitalize",
               fontSize: "1rem",
               fontWeight: "bold",
+              fontFamily: "Montserrat",
               color: "#757575",
               "&.Mui-selected": {
                 color: "#177CD8", // Color for selected tab text

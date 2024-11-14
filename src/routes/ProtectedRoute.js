@@ -36,6 +36,8 @@ export const ProtectedRoute = ({ children, types = "" }) => {
   if (types.includes("CUSTOMER") && isAuth) {
     if (userRole === "ADMIN" || userRole === "STAFF") {
       return <Navigate to="/Dashboard" />;
+    }else if(userRole === "REGISTER" && !isAuth) {
+      return <Navigate to="/register/confirm-registration" />;
     }
     return children;
   }

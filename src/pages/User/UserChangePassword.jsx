@@ -13,7 +13,6 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { ChangePassword } from "../../service/UserService";
 import { toast, Zoom } from "react-toastify";
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
@@ -93,6 +92,7 @@ const UserChangePassword = () => {
     <React.Fragment>
       <Button
         sx={{
+          fontFamily: "Montserrat",
           boxShadow: "none",
           width: "170px",
           textTransform: "none",

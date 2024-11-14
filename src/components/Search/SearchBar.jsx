@@ -1,31 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import useSearchBar from "../hooks/SearchHook";
-import { getProductList } from "../../service/ShopService";
 import { Link } from "react-router-dom";
+import { useProduct } from "../Providers/Product";
 
 const SearchBar = ({ toggleSearchBar }) => {
   const [query, setQuery] = useState("");
   const { isSearchOpen } = useSearchBar();
-  const [products, setProducts] = useState([]);
+  const { products } = useProduct();
   const searchBarRef = useRef(null);
   const inputRef = useRef(null);
   const buttonRef = useRef(null);
   const searchResultsRef = useRef(null); // Added for search results
   const [left, setLeft] = useState("50%");
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProductList();
-        setProducts(response);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    };
-    fetchProducts();
-  }, [products]);
-
-  // Filter products based on the query
   const filteredProducts = products.filter((product) =>
     product.productName.toLowerCase().includes(query.toLowerCase())
   );

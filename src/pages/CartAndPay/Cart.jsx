@@ -68,7 +68,7 @@ const CartPage = () => {
       position: "top-center",
       transition: Zoom,
     });
-  }
+  };
 
   return (
     <>
@@ -124,7 +124,7 @@ const CartPage = () => {
                     <TableRow>
                       <TableCell colSpan={6} align="center">
                         <Typography variant="h6" color="text.secondary">
-                          Giỏ hàng của bạn đang trống.
+                          "Your cart is empty."
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -176,7 +176,11 @@ const CartPage = () => {
                   <p className="text-blueOcean">{cartTotal.toFixed(2)}$</p>
                 </div>
                 <div className="btnCheckout">
-                  <CheckOut context={"Checkout"} handleClick={handleCheckout} isEmpty={isEmpty}/>
+                  <CheckOut
+                    context={"Checkout"}
+                    handleClick={handleCheckout}
+                    isEmpty={isEmpty}
+                  />
                 </div>
               </div>
             </div>

@@ -4,30 +4,15 @@ import ProductList from "../../components/lists/ProductList";
 import { useNavigate } from "react-router-dom";
 import { getProductList } from "../../service/ShopService";
 import { useEffect, useState } from "react";
+import { useProduct } from "../../components/Providers/Product";
 
 export function Home() {
-  const [products, setProducts] = useState([]);
-  
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const response = await getProductList();
-        if (response && response.length > 0) {
-          const filteredProducts = response.filter(product => product.quantity > 0);
-          setProducts(filteredProducts);
-        }
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    }
-    
-    fetchProducts();
-  }, []);
+  const { products } = useProduct();
 
   const navigate = useNavigate();
   const handleShowMore = () => {
     navigate("/shop");
-  }
+  };
 
   const latestProducts = products.slice(-6);
 
@@ -67,7 +52,7 @@ export function Home() {
               Our Products
             </h1>
             {/* Pass only the latest 6 products */}
-            <ProductList products={latestProducts}/>
+            <ProductList products={latestProducts} />
             <div className="showMore flex justify-center py-4">
               <ShowMore onClick={handleShowMore} />
             </div>

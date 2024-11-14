@@ -70,6 +70,7 @@ export const RegisterUser = async (data, navigate) => {
       fullName: data.fullname,
       email: data.email,
       passwordHash: data.password,
+      phoneNumber: data.phoneNumber
     });
     localStorage.setItem("mail", data.email);
     navigate("/register/confirm-registration");
@@ -123,7 +124,10 @@ export const HandleLoginGoogle = async (accessToken, navigate, signIn) => {
       },
     });
 
-    // Navigate to home
+    toast.success("Login successful!" || response?.data?.message, {
+      position: "bottom-center",
+      transition: Zoom
+    })
     navigate("/");
   } catch (error) {
     console.error("Error in HandleLoginGoogle:", error);

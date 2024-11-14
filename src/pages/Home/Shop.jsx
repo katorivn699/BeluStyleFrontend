@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
-import products from "../../MockData/DataDemo";
+import React, { useState, useRef } from "react";
 import ProductList from "../../components/lists/ProductList";
 import MainLayout from "../../layouts/MainLayout";
 import bg from "../../assets/images/bg.svg";
@@ -8,13 +7,13 @@ import FilterComponent from "../../components/filters/MultipleFilter";
 import { Pagination } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
-import { getProductList } from "../../service/ShopService";
+import { useProduct } from "../../components/Providers/Product";
 
 const itemsPerPage = 9;
 
 export function Shop() {
   const [page, setPage] = useState(1);
-  const [productData, setProductData] = useState([]);
+  const { products: productData } = useProduct(); // Lấy danh sách sản phẩm từ context
   const productListRef = useRef(null);
   const countProductRef = useRef(null); // Add reference for "New({countProduct})"
   const [filter, setFilter] = useState({
@@ -23,25 +22,6 @@ export function Shop() {
     priceOrder: "",
     rating: 0,
   });
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProductList();
-        if (response && response.length > 0) {
-          const filteredProducts = response.filter(product => product.quantity > 0);
-          setProductData(filteredProducts);
-        } else {
-          setProductData(products);
-        }
-      } catch (error) {
-        console.log("Error! trycatch : " + error.data);
-        setProductData(products);
-      }
-    };
-
-    fetchProducts();
-  }, []);
 
   const handleFilterChange = (data) => {
     setFilter(data);

@@ -189,6 +189,8 @@ export const Drawerbtn = ({ context, handleClick, isEmpty }) => {
       fullWidth
       disabled={isEmpty}
       sx={{
+        textTransform: "none",
+        fontFamily: "Poppins",
         backgroundColor: "white",
         color: "black",
         border: "black solid 1px",

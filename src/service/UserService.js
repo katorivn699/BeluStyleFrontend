@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import { apiClient } from "../core/api";
 import { toast, Zoom } from "react-toastify";
 
@@ -22,9 +23,9 @@ export const GetUserInfo = (authHeader) => {
   }
 };
 
-export const UpdateUserInfo = (data, authHeader) => {
+export const UpdateUserInfo = async (data, authHeader, signIn) => {
   try {
-    apiClient.put(
+    const response = await apiClient.put(
       "/api/account",
       {
         userId: data.userId,
@@ -32,15 +33,35 @@ export const UpdateUserInfo = (data, authHeader) => {
         userImage: data.userImage,
         fullName: data.fullName,
         userAddress: data.userAddress,
+        phoneNumber: data.phoneNumber
       },
       {
         headers: {
-          Authorization: authHeader
-        }
+          Authorization: authHeader,
+        },
       }
     );
+
+    const userData = jwtDecode(authHeader.split(" ")[1]);
+    signIn({
+      auth: {
+        token: authHeader.split(" ")[1],
+        type: "Bearer",
+      },
+      userState: {
+        username: data.username,
+        userImage: data.userImage,
+        role: userData.role,
+        email: userData.email,
+      },
+    });
+
+    return response;
   } catch (error) {
-    console.log(error?.data);
+    console.error(
+      "Failed to update user info:",
+      error?.response?.data || error.message
+    );
   }
 };
 
@@ -69,17 +90,19 @@ export const RequestDeleteAccount = (authHeader) => {
 
 export const ChangePassword = async (data, authHeader, email) => {
   try {
-    const response = await apiClient.post("/api/auth/reset-password", {
-      email: email,
-      newPassword: data.newPassword,
-      oldPassword: data.currentPassword,
-    },
-    {
-      headers: {
-        Authorization: authHeader
+    const response = await apiClient.post(
+      "/api/auth/reset-password",
+      {
+        email: email,
+        newPassword: data.newPassword,
+        oldPassword: data.currentPassword,
+      },
+      {
+        headers: {
+          Authorization: authHeader,
+        },
       }
-    }
-  );
+    );
     return response;
   } catch (error) {
     console.log(error);
@@ -96,5 +119,31 @@ export const GetNotifications = async (authHeader) => {
     return response;
   } catch (error) {
     console.log(error?.data);
+  }
+};
+
+export const getMyorders = async (authHeader, page) => {
+  try {
+    const response = apiClient.get("/api/orders/my-orders?page=" + page + "&size=6", {
+      headers: {
+        Authorization: authHeader
+      },
+    })
+    return response;
+  } catch (error) {
+    console.log(error.data);
+  }
+};
+
+export const getMyDiscount = async (authHeader) => {
+  try {
+    const response = apiClient.get("/api/discounts/me", {
+      headers: { 
+        Authorization: authHeader
+      },
+    })
+    return response;
+  } catch (error) {
+    console.log(error.data);
   }
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardMedia,
@@ -23,12 +23,12 @@ function OrderStatus({ status }) {
       statusText = "Processing";
       statusColor = "text-blue-500"; // Or a suitable blue
       break;
-    case "SHIPPED":
-      statusText = "Shipped";
+    case "COMPLETED":
+      statusText = "Completed";
       statusColor = "text-green-500"; // Or a suitable green
       break;
-    case "DELIVERED":
-      statusText = "Delivered";
+    case "PAID":
+      statusText = "Paid";
       statusColor = "text-green-700"; // A darker green
       break;
     case "CANCELLED":
@@ -43,21 +43,56 @@ function OrderStatus({ status }) {
   return (
     <Typography
       variant="subtitle2"
-      className={`ml-2 flex justify-end font-semibold ${statusColor}`}
+      className={`ml-2 flex font-montserrat justify-end font-semibold ${statusColor}`}
     >
       {statusText}
     </Typography>
   );
 }
 
-function OrderItemCard({ Order }) {
+function OrderItemCard({ Order, loading }) {
+  if (loading) {
+    return (
+      <Card variant="outlined" className="max-w-[800px] font-poppins p-4">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="flex items-center">
+            <Skeleton variant="text" width="30%" />
+            <Skeleton variant="text" width="40%" />
+          </div>
+
+          <div className="grid grid-cols-12 gap-4">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="col-span-12 sm:col-span-4">
+                <Skeleton variant="rectangular" width="100%" height={120} />
+                <Skeleton variant="text" />
+                <Skeleton variant="text" width="60%" />
+              </div>
+            ))}
+          </div>
+
+          <Divider />
+
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-6 flex justify-start items-center">
+              <Skeleton variant="text" width="40%" />
+            </div>
+
+            <div className="col-span-6 flex justify-end items-center">
+              <Skeleton variant="text" width="40%" />
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card variant="outlined" className="max-w-[800px] font-poppins p-4">
       <div className="grid grid-cols-1 gap-4">
         <div className="flex items-center">
           <Typography
             variant="subtitle1"
-            className="ml-2 flex-grow font-semibold"
+            className="ml-2 flex-grow font-semibold font-montserrat"
           >
             Order: {Order.orderId}
           </Typography>
@@ -73,8 +108,12 @@ function OrderItemCard({ Order }) {
         <Divider />
 
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-6 flex justify-start items-center">
-            <Typography variant="body1" className="font-bold mr-2">
+          <div className="col-span-6 flex justify-start items-center font-montserrat">
+            <Typography
+              variant="body1"
+              className="font-bold mr-2"
+              fontFamily="Montserrat"
+            >
               Total: {formatPrice(Order.totalAmount)}
             </Typography>
           </div>
@@ -82,7 +121,15 @@ function OrderItemCard({ Order }) {
           <div className="col-span-6 flex justify-end items-center">
             <Typography>
               <Link to={`/user/orders/${Order.orderId}`}>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    textTransform: "none",
+                    fontFamily: "Montserrat",
+                    borderRadius: "30px",
+                  }}
+                >
                   View Order
                 </Button>
               </Link>
@@ -103,12 +150,15 @@ function ProductDetail({ item }) {
         {imageLoaded ? (
           <CardMedia
             component="img"
-            width="80"
-            height="80"
             image={item.productImage}
             alt={item.productName}
             onError={() => setImageLoaded(false)}
-            className="mr-2"
+            sx={{
+              width: 110, 
+              height: 110, 
+              objectFit: "cover", 
+              marginRight: 2, 
+            }}
           />
         ) : (
           <Skeleton variant="rectangular" width={110} height={110} />
@@ -117,16 +167,35 @@ function ProductDetail({ item }) {
       <div className="col-span-10 ml-2 grid grid-cols-2 gap-4">
         {/* Product Details Section: Align to the left */}
         <div className="flex flex-col justify-start">
-          <Typography variant="body1" className="font-bold">
+          <Typography
+            variant="body1"
+            fontFamily="Montserrat"
+            className="font-bold"
+          >
             {item.productName}
           </Typography>
-          <Typography variant="body2" color="text.secondary" className="mt-1">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            fontFamily="Montserrat"
+            className="mt-1"
+          >
             Color: {item.color}
           </Typography>
-          <Typography variant="body2" color="text.secondary" className="mt-1">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            fontFamily="Montserrat"
+            className="mt-1"
+          >
             Size: {item.size}
           </Typography>
-          <Typography variant="body2" color="text.secondary" className="mt-1">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            fontFamily="Montserrat"
+            className="mt-1"
+          >
             x{item.orderQuantity}
           </Typography>
         </div>
@@ -137,12 +206,13 @@ function ProductDetail({ item }) {
             variant="body2"
             color="text.primary"
             className="font-bold"
+            fontFamily="Montserrat"
           >
             Price:
             {item.discountAmount > 0 ? (
               <>
                 {/* Original Price with Strikethrough */}
-                <span className="text-red-500 line-through mr-2">
+                <span className="text-red-500 line-through font-montserrat mr-2 ml-1">
                   {formatPrice(item.unitPrice)}
                 </span>
                 {/* Discounted Price */}
@@ -156,7 +226,12 @@ function ProductDetail({ item }) {
 
           {/* If there's a discount, show the discount amount */}
           {item.discountAmount > 0 && (
-            <Typography variant="body2" color="text.secondary" className="mt-1">
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              fontFamily="Montserrat"
+              className="mt-1"
+            >
               Discount: {formatPrice(item.discountAmount)}
             </Typography>
           )}
@@ -166,6 +241,7 @@ function ProductDetail({ item }) {
             variant="body2"
             color="text.primary"
             className="font-bold mt-1"
+            fontFamily="Montserrat"
           >
             Final Price: {formatPrice(item.unitPrice - item.discountAmount)}
           </Typography>

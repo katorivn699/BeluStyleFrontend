@@ -11,6 +11,7 @@ import { jwtDecode } from "jwt-decode";
 import AppRoutes from "./routes/AppRoutes.js";
 import ScrollToTop from "./Scroll.js";
 import SearchBar from "./components/Search/SearchBar.jsx";
+import { ProductProvider } from "./components/Providers/Product.js";
 
 function App() {
   const location = useLocation();
@@ -54,7 +55,7 @@ function App() {
     location.pathname !== "/reset-password" &&
     !location.pathname.startsWith("/LoginForStaffAndAdmin") &&
     location.pathname !== "/confirm-registration/success" &&
-    location.pathname !== "/orders/success";
+    !location.pathname.startsWith("/orders");
 
   const showFooter =
     location.pathname !== "/login" &&
@@ -70,7 +71,7 @@ function App() {
     !location.pathname.startsWith("/user") &&
     !location.pathname.startsWith("/Dashboard") &&
     !location.pathname.startsWith("/confirm-registration") &&
-    location.pathname !== "/orders/success" &&
+    !location.pathname.startsWith("/orders") &&
     location.pathname !== "/discounts";
 
   const applyPadding = () => {
@@ -99,11 +100,13 @@ function App() {
 
   return (
     <>
-      {HideNav && (showNavbar ? <Navbar /> : <NavLogin />)}
-      <div className={applyPadding()}>
-        <ScrollToTop />
-        <AppRoutes toggleSidebar={toggleSidebar} isOpen={isOpen} />
-      </div>
+      <ProductProvider>
+        {HideNav && (showNavbar ? <Navbar /> : <NavLogin />)}
+        <div className={applyPadding()}>
+          <ScrollToTop />
+          <AppRoutes toggleSidebar={toggleSidebar} isOpen={isOpen} />
+        </div>
+      </ProductProvider>
       <ToastContainer
         autoClose={2500}
         hideProgressBar={false}

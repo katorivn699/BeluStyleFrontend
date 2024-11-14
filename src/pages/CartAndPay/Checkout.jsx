@@ -1,10 +1,7 @@
-import RadioCommon from "../../components/inputs/Radio";
 import React, { useEffect, useState } from "react";
-import SelectLocation from "../../service/LocationService";
 import {
   Badge,
   Button,
-  Container,
   Divider,
   InputAdornment,
   List,
@@ -21,6 +18,9 @@ import { formatPrice } from "../../components/format/formats";
 import ShipmentSelector from "../../service/ShipmentService";
 import { CommonRadioCard } from "../../components/inputs/Radio";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { checkDiscount, checkoutOrder } from "../../service/CheckoutService";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { toast, Zoom } from "react-toastify";
 
 const style = {
   py: 0,
@@ -39,34 +39,121 @@ const CheckoutPage = () => {
   });
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [houseNumber, setHouseNumber] = useState("");
-  const { items, cartTotal, isEmpty } = useCart();
+  const { items, isEmpty } = useCart();
   const [discountApply, setDiscountApply] = useState({
     discountType: "",
     discountValue: 0,
+    maximumDiscountValue: 0,
   });
+  const [note, setNote] = useState("");
   const navigate = useNavigate();
   const [discountCode, setDiscountCode] = useState("");
   const [discountMinus, setDiscountMinus] = useState(0);
   const [subTT, setSubTT] = useState(0);
   const [shippingFee, setShippingFee] = useState(0);
+  const [finalTotal, setFinalTotal] = useState(0);
   const calculateFinalCheckoutPrice = () => {
-    return subTT + shippingFee - discountMinus;
+    return Math.max(0, subTT + shippingFee - discountMinus);
   };
   const userState = useAuthUser();
+  const authHeader = useAuthHeader();
 
   useEffect(() => {
     if (isEmpty) {
       navigate(-1);
     }
-  },[isEmpty, navigate]);
-
-  const finalCheckoutPrice = calculateFinalCheckoutPrice();
+  }, [isEmpty, navigate]);
 
   const handleFeeCalculated = (fee) => {
     setShippingFee(fee);
   };
 
+  const subTotal = () => {
+    const total = items.reduce((accumulator, item) => {
+      return accumulator + item.saledPrice * item.quantity;
+    }, 0);
+    setSubTT(total);
+  };
+
+  useEffect(() => {
+    const calculatedFinalTotal = calculateFinalCheckoutPrice();
+    setFinalTotal(calculatedFinalTotal);
+  }, [subTT, shippingFee, discountMinus]); // Only trigger when these values change
+
+  useEffect(() => {
+    subTotal();
+  }, [items]);
+
+  const handleHouseNumberBlur = (e) => {
+    setHouseNumber(e.target.value);
+    updateShippingAddress(houseNumber, location);
+  };
+
+  const handleNoteBlur = (e) => {
+    const newNote = e.target.value;
+    setNote(newNote);
+  };
+
+  const updateShippingAddress = (houseNumber, location) => {
+    const fullAddress = `${houseNumber}, ${location.phuong || ""}, ${
+      location.quan || ""
+    }, ${location.tinh || ""}`;
+    setCheckoutData((prevData) => ({
+      ...prevData,
+      shippingAddress: fullAddress,
+    }));
+  };
+
+  const handleLocationChange = (newLocation) => {
+    setLocation(newLocation);
+    updateShippingAddress(houseNumber, newLocation); // update with current house number
+  };
+
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
+  const handleDiscountCheck = async () => {
+    try {
+      const response = await checkDiscount(discountCode, authHeader, subTT);
+
+      if (response?.data) {
+        const discount = {
+          discountType: response.data.discountType,
+          discountValue: response.data.discountValue,
+          maximumDiscountValue: response.data.maximumDiscountValue,
+        };
+
+        setDiscountApply(discount);
+        const discountAmount = calculateDiscount(subTT, discount);
+        setDiscountMinus(discountAmount);
+      }
+    } catch (error) {
+      console.error("Failed to check discount:", error);
+    }
+  };
+
+  // Discount calculation function
+  const calculateDiscount = (originalPrice, discount) => {
+    let discountAmount = 0;
+
+    if (discount.discountType === "PERCENTAGE") {
+      discountAmount =
+        (originalPrice * discount.discountValue) / 100 >
+        (discount.maximumDiscountValue !== null || undefined
+          ? discount.maximumDiscountValue
+          : discount.discountValue)
+          ? discount.maximumDiscountValue
+          : (originalPrice * discount.discountValue) / 100;
+    } else if (discount.discountType === "FIXED_AMOUNT") {
+      discountAmount = discount.discountValue;
+    }
+    return discountAmount;
+  };
+
+  // Định nghĩa itemCheckout sau khi tính toán subtotal
   const itemCheckout = items.map((item, index) => ({
+    id: item.id.split("@")[1],
     image: item.image,
     name: item.name,
     quantity: item.quantity,
@@ -76,67 +163,129 @@ const CheckoutPage = () => {
     saledPrice: item.saledPrice,
   }));
 
-  const handleLocationChange = (newLocation) => {
-    setLocation(newLocation);
-  };
-
-  const subTotal = () => {
-    const total = itemCheckout.reduce((accumulator, item) => {
-      return accumulator + item.saledPrice * item.quantity;
-    }, 0);
-    setSubTT(total);
-  };
+  const [checkoutData, setCheckoutData] = useState({
+    notes: "",
+    discountCode: "",
+    discountMinus: 0,
+    totalAmount: finalTotal,
+    shippingFee: 0,
+    orderDetails: [],
+    userEmail: userState?.email || "",
+    shippingAddress: {
+      houseNumber: houseNumber,
+      location: location,
+    },
+    paymentMethod: paymentMethod,
+  });
 
   useEffect(() => {
-    subTotal();
-  }, items);
+    // Recalculate the final price and order details whenever there's a change
+    const finalCheckoutPrice = calculateFinalCheckoutPrice();
 
-  const handleHouseNumberChange = (e) => {
-    setHouseNumber(e.target.value);
-  };
+    // Create the updated order details based on the items and discounts applied
+    const updatedOrderDetails = items.map((item) => {
+      const itemDiscount = calculateItemDiscount(
+        item.saledPrice * item.quantity,
+        discountApply
+      ); // apply discount to each item
 
-  const handlePaymentMethodChange = (e) => {
-    setPaymentMethod(e.target.value);
-  };
-
-  const handleDiscountCheck = () => {
-    if (discountCode === "SinhVienFPT") {
-      const discount = {
-        discountType: "PERCENTAGE",
-        discountValue: 15,
+      return {
+        variationId: item.id.split("@")[1],
+        orderQuantity: item.quantity,
+        unitPrice: item.saledPrice,
+        discountAmount: itemDiscount,
       };
+    });
 
-      // Đặt discountApply trước khi tính toán
-      setDiscountApply(discount);
+    // Create the new checkout data based on updated values
+    const newCheckoutData = {
+      ...checkoutData,
+      orderDetails: updatedOrderDetails, // Updated order details with discount applied
+      totalAmount: finalCheckoutPrice, // Updated total with shipping fee and discount
+      shippingFee: shippingFee, // Updated shipping fee
+      discountMinus: discountMinus, // Updated discount value
+      discountCode: discountCode,
+      paymentMethod: paymentMethod, // Updated payment method
+      userAddress: `${houseNumber}, ${location.phuong || ""}, ${
+        location.quan || ""
+      }, ${location.tinh || ""}`, // Updated shipping address
+      notes: note,
+    };
 
-      // Tính số tiền giảm giá
-      const discountAmount = calculateDiscount(cartTotal, discount);
-      setDiscountMinus(discountAmount); // Cập nhật discountMinus với giá trị giảm giá
-    } else if (discountCode === "SinhVienCTU") {
-      const discount = {
-        discountType: "FIXED_AMOUNT",
-        discountValue: 10000,
-      };
-
-      // Đặt discountApply trước khi tính toán
-      setDiscountApply(discount);
-
-      // Tính số tiền giảm giá
-      const discountAmount = calculateDiscount(cartTotal, discount);
-      setDiscountMinus(discountAmount); // Cập nhật discountMinus với giá trị giảm g
+    // Only update `checkoutData` if there's an actual change
+    if (
+      newCheckoutData.totalAmount !== checkoutData.totalAmount ||
+      newCheckoutData.shippingFee !== checkoutData.shippingFee ||
+      newCheckoutData.discountMinus !== checkoutData.discountMinus ||
+      JSON.stringify(newCheckoutData.orderDetails) !==
+        JSON.stringify(checkoutData.orderDetails) ||
+      newCheckoutData.paymentMethod !== checkoutData.paymentMethod ||
+      newCheckoutData.shippingAddress !== checkoutData.shippingAddress ||
+      newCheckoutData.notes !== checkoutData.notes ||
+      newCheckoutData.discountCode !== checkoutData.discountCode
+    ) {
+      setCheckoutData(newCheckoutData);
+      console.log("Checkout Data Updated:", newCheckoutData);
     }
+  }, [
+    items, // Trigger when items change
+    subTT, // Trigger when subtotal changes
+    shippingFee, // Trigger when shipping fee changes
+    discountMinus, // Trigger when discount value changes
+    discountCode,
+    paymentMethod, // Trigger when payment method changes
+    houseNumber, // Trigger when house number changes
+    location, // Trigger when location changes
+    note, // Trigger when note changes
+    discountApply, // Ensure that the discount data is correctly tracked
+  ]);
+
+  const calculateItemDiscount = (originalPrice, discount) => {
+    let itemDiscount = 0;
+
+    if (originalPrice > 0) {
+      itemDiscount = (originalPrice / subTT) * discountMinus;
+    }
+    return itemDiscount;
   };
 
-  // Cập nhật hàm calculateDiscount
-  const calculateDiscount = (originalPrice, discount) => {
-    let discountAmount = 0; // Số tiền giảm
+  const handlePlaceOrder = async () => {
+    const payload = {
+      notes: checkoutData.note || checkoutData.notes,
+      discountCode: checkoutData.discountCode,
+      billingAddress: checkoutData.userAddress,
+      shippingMethod: "Standard",
+      totalAmount: checkoutData.totalAmount,
+      paymentMethod: checkoutData.paymentMethod,
+      userAddress: checkoutData.userAddress,
+      orderDetails: checkoutData.orderDetails.map((item) => ({
+        variationId: item.variationId,
+        orderQuantity: item.orderQuantity,
+        unitPrice: item.unitPrice,
+        discountAmount: item.discountAmount,
+      })),
+    };
 
-    if (discount.discountType === "PERCENTAGE") {
-      discountAmount = (originalPrice * discount.discountValue) / 100;
-    } else if (discount.discountType === "FIXED_AMOUNT") {
-      discountAmount = discount.discountValue;
+    try {
+      const response = await checkoutOrder(payload, authHeader);
+      if (response && response.data) {
+        console.log(response.data.redirectUrl);
+        if (response.data.redirectUrl) {
+          localStorage.setItem("orderId", response.data.orderId);
+          window.location.href = response.data.redirectUrl;
+        } else {
+          // Handle other payment methods or display success message
+          toast.success("Order placed successfully!", {
+            position: "top-center",
+            transition: Zoom,
+          });
+          // Navigate to order confirmation or success page
+          navigate("/order/success");
+        }
+      }
+    } catch (error) {
+      console.error("Order placement failed:", error);
     }
-    return discountAmount; // Trả về số tiền giảm
   };
 
   return (
@@ -167,7 +316,7 @@ const CheckoutPage = () => {
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="max-w-24 rounded-lg"
+                        className="max-w-24 max-h-24 rounded-lg"
                       />
                     </Badge>
                   </ListItemIcon>
@@ -256,7 +405,7 @@ const CheckoutPage = () => {
           <Divider sx={{ py: "15px" }} />
           <div className="lastOrderPrice flex justify-between py-5 font-poppins text-xl">
             <p className="font-semibold">Total</p>
-            <p className="font-bold">{formatPrice(finalCheckoutPrice)}</p>
+            <p className="font-bold">{formatPrice(finalTotal)}</p>
           </div>
         </div>
       </div>
@@ -265,13 +414,13 @@ const CheckoutPage = () => {
           <h1>Your Infomation</h1>
         </div>
         <div className="userInfomation">
-          <p className="font-poppins font-semibold text-2xl py-3">Email</p>
+          <p className="font-poppins font-semibold text-2xl pt-3">Email</p>
           <TextField
             variant="outlined"
             fullWidth
             placeholder="Your email address"
-            value={userState?.email?.length > 0 ? userState?.email : "" }
-            disabled={userState?.email?.length > 0 ? true : false }
+            value={userState?.email?.length > 0 ? userState?.email : ""}
+            disabled={userState?.email?.length > 0 ? true : false}
             // onChange={}
           />
         </div>
@@ -282,10 +431,10 @@ const CheckoutPage = () => {
             variant="outlined"
             fullWidth
             placeholder="House number, village"
-            onChange={handleHouseNumberChange}
+            onBlur={handleHouseNumberBlur}
           />
         </div>
-        <div className="Payment py-3 space-y-3">
+        <div className="Payment pt-3 space-y-3">
           <p className=" font-poppins font-semibold text-2xl">Payments</p>
           <CommonRadioCard
             value="COD"
@@ -295,16 +444,16 @@ const CheckoutPage = () => {
             description="Pay for your order in cash when it is delivered to your doorstep."
           />
           <CommonRadioCard
-            value="PayOs"
+            value="PAYOS"
             label="Payment via PayOs"
-            checked={paymentMethod === "PayOs"}
+            checked={paymentMethod === "PAYOS"}
             onChange={handlePaymentMethodChange}
             description="Complete your payment through PayOs using a QR code for a quick and secure transaction."
           />
           <CommonRadioCard
-            value="VNPay"
+            value="VNPAY"
             label="Payment via VNPay"
-            checked={paymentMethod === "VNPay"}
+            checked={paymentMethod === "VNPAY"}
             onChange={handlePaymentMethodChange}
             description="Use VNPay to pay via QR code, ensuring a fast and reliable payment experience."
           />
@@ -316,8 +465,19 @@ const CheckoutPage = () => {
             description="Transfer the total amount to our bank account prior to delivery."
           />
         </div>
-        <div className="btnCheckout flex justify-end">
+        <div className="note py-5">
+          <p className="font-poppins font-semibold text-2xl pt-3">Note</p>
+          <TextField
+            variant="outlined"
+            fullWidth
+            placeholder="Any special request?"
+            onBlur={handleNoteBlur}
+            multiline
+          />
+        </div>
+        <div className="btnCheckout flex justify-end pb-3">
           <Button
+            onClick={handlePlaceOrder}
             sx={{
               backgroundColor: "black",
               color: "white",
@@ -325,7 +485,7 @@ const CheckoutPage = () => {
               textTransform: "none",
             }}
           >
-            Pay {formatPrice(finalCheckoutPrice)}
+            Pay {formatPrice(finalTotal)}
           </Button>
         </div>
       </div>
