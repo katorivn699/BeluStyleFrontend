@@ -49,18 +49,18 @@ const DashboardCreateDiscount = () => {
       .min(0, "Maximum discount value cannot be negative")
       .max(999999999999, "Maximum discount value cannot exceed 999999999999")
       .nullable()
-      .when("minimumOrderValue", {
-        is: (minValue) => minValue != null,
+      .when("discountType", {
+        is: "FIXED_AMOUNT",
         then: (schema) =>
-          schema
-            .min(
-              Yup.ref("minimumOrderValue"),
-              "Must be greater than minimum order value"
-            )
-            .nullable(),
+          schema.test(
+            "is-null",
+            "For fixed amount, Maximum discount value should be null",
+            (value) => value === null || value === undefined
+          ),
       }),
+
     usageLimit: Yup.number()
-      .min(1, "Usage limit cannot be negative")
+      .min(1, "Usage limit must be positive")
       .required("Usage limit cannot be null"),
   });
 

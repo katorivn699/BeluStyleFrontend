@@ -60,8 +60,21 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
   }
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose}>
-      <div className="p-4" style={{ width: 450 }}>
+    <Drawer
+      style={{ margin: "10px 2px" }}
+      anchor="right"
+      open={open}
+      onClose={onClose}
+    >
+      <div
+        className="p-4"
+        style={{
+          width: 450,
+          marginTop: "5vh",
+          marginLeft: "1vw",
+          marginRight: "1vw",
+        }}
+      >
         {/* Close Button */}
         <IconButton
           onClick={onClose}
@@ -70,38 +83,45 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
           <Close />
         </IconButton>
 
-        {/* Order Information */}
-        <Typography
-          variant="h5"
-          className="mb-4"
-          style={{ fontWeight: "bold" }}
-        >
-          Order ID: {orderDetails.orderId}
-        </Typography>
+        <div className="my-4">
+          {/* Order Information */}
+          <Typography
+            variant="h5"
+            className="mb-4"
+            style={{ fontWeight: "bold" }}
+          >
+            Order ID: {orderDetails.orderId}
+          </Typography>
 
-        <Typography
-          variant="h6"
-          className="mb-2"
-          style={{ fontWeight: "bold" }}
-        >
-          Total Amount: {formatPrice(orderDetails.totalAmount)}
-        </Typography>
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          className="mb-4"
-          style={{
-            fontWeight: "bold",
-            color: getStatusColor(orderDetails.orderStatus),
-          }}
-        >
-          Order Status: {orderDetails.orderStatus}
-        </Typography>
+          <Typography
+            variant="h6"
+            className="mb-2"
+            style={{ fontWeight: "bold" }}
+          >
+            Total Amount: {formatPrice(orderDetails.totalAmount)}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            className="mb-4"
+            style={{
+              fontWeight: "bold",
+              color: getStatusColor(orderDetails.orderStatus),
+            }}
+          >
+            Order Status: {orderDetails.orderStatus}
+          </Typography>
+        </div>
 
         <Divider />
 
         {/* Order Details */}
-        <Grid container spacing={2} className="mt-4">
+        <Grid
+          container
+          spacing={2}
+          className="mt-4"
+          style={{ marginTop: "2vh" }}
+        >
           {orderDetails.orderDetails.map((item, index) => (
             <Grid item xs={12} key={index}>
               <Card variant="outlined" className="mb-4">

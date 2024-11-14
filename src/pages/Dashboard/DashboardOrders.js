@@ -142,7 +142,7 @@ const DashboardOrders = () => {
                       className="flex items-center mb-1"
                     >
                       <DateRange className="mr-1" /> Date:{" "}
-                      {new Date(order.orderDate).toLocaleDateString()}
+                      {new Date(order.orderDate).toLocaleString()}
                     </Typography>
                     <Typography
                       color="textSecondary"

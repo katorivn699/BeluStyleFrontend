@@ -60,7 +60,7 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
               <img
                 src={userImage}
                 alt="User"
-                className="rounded-full w-8 h-8 "
+                className="w-8 h-8 rounded-full object-cover"
               />
 
               <span className="font-medium">{fullName}</span>
