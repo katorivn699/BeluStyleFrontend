@@ -30,7 +30,19 @@ const OrderPage = () => {
   };
 
   useEffect(() => {
+    // Check if there's a saved page number in localStorage
+    const savedPage = localStorage.getItem("currentPage");
+    if (savedPage) {
+      setCurrentPage(Number(savedPage)); // Set the saved page if available
+    } else {
+      setCurrentPage(0); // Default to the first page if no saved page
+    }
+  }, []);
+
+  useEffect(() => {
     fetchOrders(currentPage);
+    // Save the current page in localStorage whenever it changes
+    localStorage.setItem("currentPage", currentPage);
   }, [authHeader, currentPage]);
 
   const handlePageChange = (event, page) => {

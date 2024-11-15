@@ -29,6 +29,7 @@ import vnpay from "../../assets/images/vnpay.jpg";
 import payos from "../../assets/images/payos.svg";
 import { BiSolidBank } from "react-icons/bi";
 import cod from "../../assets/images/cod.png";
+import DeleteAccountButton from "../../components/buttons/DeleteConfirmationModal";
 
 export const UserProfile = () => {
   const authHeader = useAuthHeader();
@@ -61,7 +62,7 @@ export const UserProfile = () => {
           email: userInfo.email || "Email not provided",
           username: userInfo.username || "Name not set",
           fullName: userInfo.fullName || "Full name not specified",
-          userAddress: userInfo.address || "Address not provided",
+          userAddress: userInfo.userAddress || "Address not provided",
           currentPaymentMethod:
             userInfo.currentPaymentMethod ||
             "Place an order to add a payment method",
@@ -83,26 +84,12 @@ export const UserProfile = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
+    console.log(userData);
   };
 
-  const handleRequestDelete = async () => {
-    try {
-      await RequestDeleteAccount(authHeader);
-      toast.success("Account deletion requested successfully.", {
-        position: "top-center",
-        transition: Zoom,
-      });
-
-      setTimeout(() => {
-        signOut();
-        navigate("/");
-      }, 3000);
-    } catch (error) {
-      toast.error("Error requesting account deletion.", {
-        position: "top-center",
-        transition: Zoom,
-      });
-    }
+  const handleDeleteSuccess = () => {
+    signOut();
+    navigate("/");
   };
 
   const handleImageChange = (e) => {
@@ -382,19 +369,10 @@ export const UserProfile = () => {
                 Save
               </Button>
               <UserChangePassword />
-              <Button
-                variant="contained"
-                color="error"
-                sx={{
-                  fontFamily: "Montserrat",
-                  width: "170px",
-                  textTransform: "none",
-                  borderRadius: "8px",
-                }}
-                onClick={handleRequestDelete}
-              >
-                Delete account
-              </Button>
+              <DeleteAccountButton
+                authHeader={authHeader}
+                onDeleteSuccess={handleDeleteSuccess}
+              />
             </Box>
           </Box>
         </Container>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Badge,
   Button,
@@ -57,6 +57,7 @@ const CheckoutPage = () => {
   };
   const userState = useAuthUser();
   const authHeader = useAuthHeader();
+  const [isCheckoutReady, setIsCheckoutReady] = useState(false);
 
   useEffect(() => {
     if (isEmpty) {
@@ -222,7 +223,8 @@ const CheckoutPage = () => {
       newCheckoutData.paymentMethod !== checkoutData.paymentMethod ||
       newCheckoutData.shippingAddress !== checkoutData.shippingAddress ||
       newCheckoutData.notes !== checkoutData.notes ||
-      newCheckoutData.discountCode !== checkoutData.discountCode
+      newCheckoutData.discountCode !== checkoutData.discountCode ||
+      newCheckoutData.userAddress !== checkoutData.userAddress
     ) {
       setCheckoutData(newCheckoutData);
       console.log("Checkout Data Updated:", newCheckoutData);
@@ -239,6 +241,31 @@ const CheckoutPage = () => {
     note, // Trigger when note changes
     discountApply, // Ensure that the discount data is correctly tracked
   ]);
+
+  const isCheckoutDataComplete = useMemo(() => {
+    return (
+      (checkoutData.notes.trim().length === 0 ||
+        checkoutData.notes.trim().length > 0) &&
+      (discountCode.length === 0 || discountCode.length > 0) &&
+      checkoutData.totalAmount > 0 &&
+      checkoutData.shippingFee > 0 &&
+      checkoutData.orderDetails.length > 0 &&
+      checkoutData.paymentMethod.length > 0 &&
+      houseNumber.trim().length > 0
+    );
+  }, [
+    checkoutData.notes,
+    discountCode,
+    checkoutData.totalAmount,
+    checkoutData.shippingFee,
+    checkoutData.orderDetails,
+    checkoutData.paymentMethod,
+    houseNumber,
+  ]);
+
+  useEffect(() => {
+    setIsCheckoutReady(isCheckoutDataComplete);
+  }, [checkoutData, isCheckoutDataComplete]);
 
   const calculateItemDiscount = (originalPrice, discount) => {
     let itemDiscount = 0;
@@ -274,13 +301,13 @@ const CheckoutPage = () => {
           localStorage.setItem("orderId", response.data.orderId);
           window.location.href = response.data.redirectUrl;
         } else {
-          // Handle other payment methods or display success message
-          toast.success("Order placed successfully!", {
-            position: "top-center",
-            transition: Zoom,
-          });
-          // Navigate to order confirmation or success page
-          navigate("/order/success");
+          if (paymentMethod === "TRANSFER") {
+            localStorage.setItem("orderId", response.data.orderId);
+            navigate("/orders/bankTransfer?total=" + checkoutData.totalAmount);
+          } else {
+            localStorage.setItem("orderId", response.data.orderId);
+            navigate("/orders/success");
+          }
         }
       }
     } catch (error) {
@@ -358,7 +385,7 @@ const CheckoutPage = () => {
             variant="outlined"
             fullWidth
             disabled={discountApply.discountType.length > 0}
-            onChange={(e) => setDiscountCode(e.target.value)}
+            onBlur={(e) => setDiscountCode(e.target.value)}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -478,14 +505,17 @@ const CheckoutPage = () => {
         <div className="btnCheckout flex justify-end pb-3">
           <Button
             onClick={handlePlaceOrder}
+            disabled={!isCheckoutReady}
             sx={{
-              backgroundColor: "black",
-              color: "white",
+              backgroundColor: isCheckoutReady && "black",
+              color: !isCheckoutReady ? "gray" : "white", // Set text color to gray when disabled
               borderRadius: "10px",
               textTransform: "none",
             }}
           >
-            Pay {formatPrice(finalTotal)}
+            {isCheckoutReady
+              ? `Pay ${formatPrice(finalTotal)}`
+              : "Please complete the information"}
           </Button>
         </div>
       </div>

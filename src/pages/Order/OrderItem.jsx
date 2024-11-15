@@ -6,9 +6,13 @@ import {
   Divider,
   Skeleton,
   Button,
+  Zoom,
 } from "@mui/material";
 import { formatPrice } from "../../components/format/formats";
 import { Link } from "react-router-dom";
+import { confirmOrder } from "../../service/OrderSevice";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { toast } from "react-toastify";
 
 function OrderStatus({ status }) {
   let statusText = "";
@@ -27,8 +31,8 @@ function OrderStatus({ status }) {
       statusText = "Completed";
       statusColor = "text-green-500"; // Or a suitable green
       break;
-    case "PAID":
-      statusText = "Paid";
+    case "SHIPPED":
+      statusText = "Shipped";
       statusColor = "text-green-700"; // A darker green
       break;
     case "CANCELLED":
@@ -39,6 +43,7 @@ function OrderStatus({ status }) {
       statusText = "Unknown";
       statusColor = "text-gray-500";
   }
+
 
   return (
     <Typography
@@ -51,6 +56,18 @@ function OrderStatus({ status }) {
 }
 
 function OrderItemCard({ Order, loading }) {
+  const [orderStatus, setOrderStatus] = useState(Order.orderStatus);
+  const authHeader = useAuthHeader();
+
+  const handleConfirmOrder = async () => {
+    try {
+      await confirmOrder(Order.orderId, authHeader);
+      setOrderStatus("COMPLETED");
+    } catch (error) {
+      // Error handling is already done inside confirmOrder
+    }
+  };
+
   if (loading) {
     return (
       <Card variant="outlined" className="max-w-[800px] font-poppins p-4">
@@ -96,7 +113,7 @@ function OrderItemCard({ Order, loading }) {
           >
             Order: {Order.orderId}
           </Typography>
-          <OrderStatus status={Order.orderStatus} />
+          <OrderStatus status={orderStatus} />
         </div>
 
         <div className="grid grid-cols-12 gap-4">
@@ -118,7 +135,23 @@ function OrderItemCard({ Order, loading }) {
             </Typography>
           </div>
 
-          <div className="col-span-6 flex justify-end items-center">
+          <div className="col-span-6 space-x-3 flex justify-end items-center">
+            {orderStatus === "SHIPPED" && (
+              <Typography>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleConfirmOrder}
+                  sx={{
+                    textTransform: "none",
+                    fontFamily: "Montserrat",
+                    borderRadius: "30px",
+                  }}
+                >
+                  Confirm Delivery
+                </Button>
+            </Typography>
+            )}
             <Typography>
               <Link to={`/user/orders/${Order.orderId}`}>
                 <Button
@@ -154,10 +187,10 @@ function ProductDetail({ item }) {
             alt={item.productName}
             onError={() => setImageLoaded(false)}
             sx={{
-              width: 110, 
-              height: 110, 
-              objectFit: "cover", 
-              marginRight: 2, 
+              width: 110,
+              height: 110,
+              objectFit: "cover",
+              marginRight: 2,
             }}
           />
         ) : (

@@ -35,8 +35,8 @@ export const checkoutOrder = async (checkoutItem, authHeader) => {
     const response = await apiClient.post("/api/orders", {
       notes: checkoutItem.notes,
       discountCode: checkoutItem.discountCode,
-      billingAddress: checkoutItem.userAddress,
-      shippingMethod: checkoutItem.shippingMethod,
+      billingAddress: checkoutItem.billingAddress,
+      shippingMethod: checkoutItem.userAddress,
       totalAmount: checkoutItem.totalAmount,
       paymentMethod: checkoutItem.paymentMethod,
       userAddress: checkoutItem.userAddress,

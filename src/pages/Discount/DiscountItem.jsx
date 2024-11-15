@@ -14,7 +14,7 @@ const DiscountCard = ({ discount, brand, timesUsed, expiry, discountType }) => {
   };
 
   return (
-    <div className="relative bg-belugradient text-white rounded-lg p-4 shadow-lg w-52 h-44">
+    <div className="relative bg-belugradient text-white rounded-lg p-4 shadow-lg w-full sm:w-52 h-44">
       <div className="flex justify-between items-center">
         <span className="bg-red-500 text-xs font-semibold px-2 py-1 rounded-md font-montserrat">
           {timesUsed} TIME USED

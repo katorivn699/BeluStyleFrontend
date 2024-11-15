@@ -91,7 +91,7 @@ function App() {
       path === "/cart" ||
       path === "/checkout" ||
       path.startsWith("/reset-password") ||
-      path === "/orders/success"
+      path.startsWith("/orders")
     ) {
       return "pt-[100px]";
     }

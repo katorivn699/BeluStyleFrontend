@@ -100,7 +100,7 @@ export function Navbar() {
             </li>
             <li>
               <NavLink
-                to="https://www.facebook.com/profile.php?id=100014062039112"
+                to="https://www.facebook.com/profile.php?id=61552976986503&locale=vi_VN"
                 className={({ isActive }) =>
                   `font-poppins text-sm md:text-base hover:text-base-300 transition duration-300 relative ${
                     isActive ? "text-base-300" : ""
