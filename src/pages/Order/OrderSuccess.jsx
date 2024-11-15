@@ -7,7 +7,6 @@ import { TbReorder } from "react-icons/tb";
 import { paymentCallback } from "../../service/CheckoutService";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { useCart } from "react-use-cart";
-import { order } from "@amcharts/amcharts4/.internal/core/utils/Number";
 
 function OrderSuccess() {
   const navigate = useNavigate();

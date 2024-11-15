@@ -14,7 +14,7 @@ import {
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import {
   GetUserInfo,
-  RequestDeleteAccount,
+
   UpdateUserInfo,
 } from "../../service/UserService";
 import { toast, Zoom } from "react-toastify";
@@ -29,7 +29,7 @@ import vnpay from "../../assets/images/vnpay.jpg";
 import payos from "../../assets/images/payos.svg";
 import { BiSolidBank } from "react-icons/bi";
 import cod from "../../assets/images/cod.png";
-import DeleteAccountButton from "../../components/buttons/DeleteConfirmationModal";
+import DeleteAccountButton from "../../components/buttons/DeleteAccount";
 
 export const UserProfile = () => {
   const authHeader = useAuthHeader();
@@ -329,10 +329,10 @@ export const UserProfile = () => {
                           <p className="pl-5">PAYOS</p>
                         </>
                       );
-                    case "BANKING":
+                    case "TRANSFER":
                       return (
                         <>
-                          <BiSolidBank />
+                          <BiSolidBank className="text-3xl"/>
                           <p className="pl-5">Bank Transfer</p>
                         </>
                       );
