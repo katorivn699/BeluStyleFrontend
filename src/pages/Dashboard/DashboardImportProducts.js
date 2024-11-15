@@ -7,7 +7,14 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const DashboardImportProducts = () => {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedVariations, setSelectedVariations] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+
   const authUser = useAuthUser();
   const username = authUser.username;
   const varToken = useAuthHeader();
@@ -15,6 +22,7 @@ const DashboardImportProducts = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch products
     apiClient
       .get("/api/products", {
         headers: {
@@ -23,7 +31,45 @@ const DashboardImportProducts = () => {
       })
       .then((response) => setProducts(response.data))
       .catch((error) => console.error("Error fetching products:", error));
+
+    // Fetch brands
+    apiClient
+      .get("/api/brands", {
+        headers: {
+          Authorization: varToken,
+        },
+      })
+      .then((response) => setBrands(response.data))
+      .catch((error) => console.error("Error fetching brands:", error));
+
+    // Fetch categories
+    apiClient
+      .get("/api/categories", {
+        headers: {
+          Authorization: varToken,
+        },
+      })
+      .then((response) => setCategories(response.data))
+      .catch((error) => console.error("Error fetching categories:", error));
   }, [varToken]);
+
+  // Filter products based on search term, selected brand, and selected category
+  useEffect(() => {
+    setFilteredProducts(
+      products.filter((product) => {
+        const matchesSearch = product.productName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesBrand = selectedBrand
+          ? product.brandId === parseInt(selectedBrand)
+          : true;
+        const matchesCategory = selectedCategory
+          ? product.categoryId === parseInt(selectedCategory)
+          : true;
+        return matchesSearch && matchesBrand && matchesCategory;
+      })
+    );
+  }, [products, searchTerm, selectedBrand, selectedCategory]);
 
   const handleVariationChange = (variationId, quantity) => {
     setSelectedVariations((prev) => {
@@ -77,10 +123,45 @@ const DashboardImportProducts = () => {
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
         Import Products into Stock #{stockId}
       </h1>
+
+      {/* Search and Filter Controls */}
+      <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search by product name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="p-2 border rounded-md"
+        />
+        <select
+          value={selectedBrand}
+          onChange={(e) => setSelectedBrand(e.target.value)}
+          className="p-2 border rounded-md"
+        >
+          <option value="">All Brands</option>
+          {brands.map((brand) => (
+            <option key={brand.brandId} value={brand.brandId}>
+              {brand.brandName}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="p-2 border rounded-md"
+        >
+          <option value="">All Categories</option>
+          {categories.map((category) => (
+            <option key={category.categoryId} value={category.categoryId}>
+              {category.categoryName}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Product Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {" "}
-        {/* Adjusted grid layout */}
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <ProductCard
             key={product.productId}
             product={product}
@@ -89,6 +170,7 @@ const DashboardImportProducts = () => {
           />
         ))}
       </div>
+
       <button
         onClick={handleSubmit}
         className="block mt-8 mx-auto px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600 transition duration-200"

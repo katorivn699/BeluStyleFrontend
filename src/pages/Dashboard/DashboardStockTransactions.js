@@ -73,9 +73,17 @@ const DashboardStockTransactions = () => {
                           transaction.productVariation?.product?.productName
                       )}
                     </h2>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm font-bold text-gray-600">
                       {displayValue(transaction.stock?.stockName)} |{" "}
-                      {displayValue(transaction.transactionType)}
+                      <span
+                        className={`${
+                          transaction.transactionType === "IN"
+                            ? "text-blue-500"
+                            : "text-green-500"
+                        }`}
+                      >
+                        {displayValue(transaction.transactionType)}
+                      </span>
                     </p>
                   </div>
                 </div>
