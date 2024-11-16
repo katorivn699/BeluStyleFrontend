@@ -13,20 +13,20 @@ const DashboardAccounts = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search term
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-
   const navigate = useNavigate();
   const authUser = useAuthUser();
   const currentUser = authUser.username;
   const varToken = useAuthHeader();
 
+  // Fetch users when search term, currentPage, or pageSize changes
   useEffect(() => {
     fetchUsers(currentPage, pageSize, searchTerm);
-  }, [currentPage, searchTerm]); // Re-fetch users when search term changes
+  }, [currentPage, searchTerm, pageSize, navigate]);
 
   const fetchUsers = (page, size, search = "") => {
     apiClient
@@ -47,12 +47,9 @@ const DashboardAccounts = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    setCurrentPage(0);
-    fetchUsers(0, pageSize, searchTerm);
+    if (e.target.value.length > 0) {
+      setCurrentPage(0);
+    }
   };
 
   const handlePageChange = (page) => {
@@ -113,7 +110,7 @@ const DashboardAccounts = () => {
           transition: Zoom,
         });
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error("Delete user failed", {
           position: "bottom-right",
           transition: Zoom,
@@ -151,7 +148,6 @@ const DashboardAccounts = () => {
       </div>
 
       {/* Search Bar */}
-
       <div className="mb-2">
         <input
           type="text"
@@ -191,10 +187,7 @@ const DashboardAccounts = () => {
                   <td className="px-4 py-2 text-rose-600 font-bold">Disable</td>
                 )}
                 <td className="px-4 py-2 flex justify-center space-x-2">
-                  <span
-                    className="w-6 h-6 flex justify-center items-center"
-                    onClick={() => handleViewUser(user.userId)}
-                  >
+                  <button onClick={() => handleViewUser(user.userId)}>
                     <FaEye
                       className={`cursor-pointer ${
                         user.username === currentUser
@@ -202,7 +195,7 @@ const DashboardAccounts = () => {
                           : "text-green-500"
                       }`}
                     />
-                  </span>
+                  </button>
                   <Link to={`/Dashboard/Accounts/Edit/${user.userId}`}>
                     <FaEdit className="text-blue-500 cursor-pointer" />
                   </Link>
@@ -247,6 +240,7 @@ const DashboardAccounts = () => {
         isOpen={isOpen}
         onClose={handleClose}
         onConfirm={handleDelete}
+        name={userToDelete?.username}
       />
     </>
   );

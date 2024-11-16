@@ -149,7 +149,7 @@ const DashboardSales = () => {
                   >
                     {sale.saleStatus}
                   </td>
-                  <td className="px-4 py-2 flex space-x-2 pt-6">
+                  <td className="px-4 py-2 flex space-x-2 items-center ">
                     <Link to={`/Dashboard/Sales/${sale.saleId}`}>
                       <FaEye className="text-green-500 cursor-pointer" />
                     </Link>
@@ -174,11 +174,7 @@ const DashboardSales = () => {
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan="7" className="text-red-500 px-4 py-2">
-                  No sales found.
-                </td>
-              </tr>
+              <p className="text-red-500">No sales found.</p>
             )}
           </tbody>
         </table>

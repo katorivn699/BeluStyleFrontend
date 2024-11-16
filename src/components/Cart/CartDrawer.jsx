@@ -25,6 +25,10 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
     }
   };
 
+  const handleClearAll = (e) => {
+    emptyCart();
+  }
+
   useEffect(() => {
     if (isCartOpen) {
       document.addEventListener("mousedown", handleClickOutside);
@@ -50,12 +54,12 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
       }}
     >
       <div ref={drawerRef} className="p-10">
-        <Typography variant="h5" className="font-bold" gutterBottom>
+        <Typography variant="h5" className="font-bold" gutterBottom fontFamily="Poppins">
           Shopping Cart
         </Typography>
 
         {isEmpty ? (
-          <Typography variant="body1">Giỏ hàng của bạn đang trống.</Typography>
+          <Typography variant="body1" fontFamily="Poppins">Your cart is empty.</Typography>
         ) : (
           <List>
             {items.map((item) => (
@@ -81,14 +85,14 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
                 />
                 <Box>
                   {/* Product Name */}
-                  <Typography variant="body1" color="text.primary">
+                  <Typography variant="body1" color="text.primary" fontFamily="Poppins">
                     {item.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" fontFamily="Poppins">
                     {item.color} - {item.size}
                   </Typography>
                   {/* Quantity and Price */}
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" fontFamily="Poppins">
                     {item.quantity} x {formatPrice(item.price)}
                   </Typography>
                 </Box>
@@ -113,10 +117,10 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
 
         {/* Subtotal and Checkout */}
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="body1" color="text.primary" fontWeight="bold">
+          <Typography variant="body1" color="text.primary" fontWeight="bold" fontFamily="Poppins">
             Subtotal
           </Typography>
-          <Typography variant="body1" color="primary" fontWeight="bold">
+          <Typography variant="body1" color="primary" fontWeight="bold" fontFamily="Poppins">
             {formatPrice(cartTotal)}
           </Typography>
         </Box>
@@ -132,9 +136,7 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
         >
           <Drawerbtn
             context={"Clear All"}
-            handleClick={() => {
-              emptyCart();
-            }}
+            handleClick={handleClearAll}
             isEmpty={isEmpty}
           />
           <Drawerbtn

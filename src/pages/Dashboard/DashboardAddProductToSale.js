@@ -11,6 +11,7 @@ const DashboardAddProductToSale = () => {
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [existingProducts, setExistingProducts] = useState([]); // Track products already in sale
   const navigate = useNavigate();
   const varToken = useAuthHeader();
 
@@ -21,10 +22,9 @@ const DashboardAddProductToSale = () => {
         headers: {
           Authorization: varToken,
         },
-      }) // Adjust this endpoint based on your API
+      })
       .then((response) => {
         setProducts(response.data);
-        setFilteredProducts(response.data);
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -38,10 +38,12 @@ const DashboardAddProductToSale = () => {
         },
       })
       .then((response) => {
-        const existingProductIds = response.data.map(
-          (product) => product.productId
-        );
+        const existingProductIds = response.data.flat(); // Flatten the array of product ids
+        setExistingProducts(existingProductIds); // Store the existing product ids
         // Filter out products that are already in the sale
+        const availableProducts = response.data
+          .flat()
+          .filter((productId) => !existingProductIds.includes(productId));
         setProducts((prevProducts) =>
           prevProducts.filter(
             (product) => !existingProductIds.includes(product.productId)

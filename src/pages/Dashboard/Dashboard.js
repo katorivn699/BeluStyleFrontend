@@ -1,14 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import { apiClient } from "../../core/api";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import PieChart from "../../components/chart/pieChart";
+import Column3DChart from "../../components/chart/3dColunmChart";
+import CylinderChart3D from "../../components/chart/3dCylinderChart";
 
 const Dashboard = () => {
   const chartRef = useRef(null);
   const [brandPieChartData, setBrandPieChartData] = useState([]);
   const varToken = useAuthHeader();
+
+  const chartData = [
+    { category: "Category 1", value: 45 },
+    { category: "Category 2", value: 78 },
+    { category: "Category 3", value: 62 },
+    { category: "Category 4", value: 54 },
+    { category: "Category 5", value: 90 },
+  ];
 
   useEffect(() => {
     const fetchBrandPieChartData = async () => {
@@ -31,40 +39,49 @@ const Dashboard = () => {
     fetchBrandPieChartData();
   }, [varToken]);
 
-  useEffect(() => {
-    am4core.useTheme(am4themes_animated);
-
-    // Create the chart instance
-    const chart = am4core.create("chartdiv", am4charts.PieChart3D);
-    chart.hiddenState.properties.opacity = 0;
-    chart.legend = new am4charts.Legend();
-
-    // Disable the amCharts logo
-    chart.logo.disabled = true;
-
-    // Assign data to the chart
-    chart.data = brandPieChartData;
-
-    const series = chart.series.push(new am4charts.PieSeries3D());
-    series.dataFields.value = "litres";
-    series.dataFields.category = "country";
-
-    // Store chart instance in the ref for cleanup
-    chartRef.current = chart;
-
-    return () => {
-      chart.dispose();
-    };
-  }, [brandPieChartData]);
-
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4 ">Dashboard</h2>
-      <p>Welcome to the admin dashboard!</p>
-      <p>Here you can view your overall statistics and insights.</p>
-      <div className="flex flex-col items-center ">
-        <div id="chartdiv" style={{ width: "100%", height: "70vh" }}></div>
-        <div className="mt-4 font-semibold text-lg">Brand Distribution</div>
+    <div className="p-2">
+      {/* Header Section */}
+      <div className="bg-gray-100 p-6 rounded-lg shadow-md mb-6">
+        <h2 className="text-2xl font-bold mb-2">Dashboard</h2>
+        <p>Welcome to the admin dashboard!</p>
+        <p>Here you can view your overall statistics and insights.</p>
+      </div>
+
+      {/* Statistics Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Example Stats Cards */}
+        <div className="bg-white p-4 rounded-lg shadow-md text-center">
+          <h3 className="text-lg font-semibold">Total Sales</h3>
+          <p className="text-2xl font-bold text-blue-600">$12,345</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md text-center">
+          <h3 className="text-lg font-semibold">Total Orders</h3>
+          <p className="text-2xl font-bold text-green-600">543</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md text-center">
+          <h3 className="text-lg font-semibold">Active Users</h3>
+          <p className="text-2xl font-bold text-red-600">1,234</p>
+        </div>
+      </div>
+
+      {/* Chart Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        {/* Pie Chart */}
+        <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Brand Distribution</h3>
+          <PieChart brandPieChartData={brandPieChartData} />
+        </div>
+
+        {/* Placeholder for Future Charts */}
+        <div className="bg-gray-50 p-6 rounded-lg shadow-md ">
+          <h3 className="text-xl font-semibold mb-4">Total revenue</h3>
+          <Column3DChart />
+        </div>
+        <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold mb-4">Best-selling products</h3>
+          <CylinderChart3D chartData={chartData} />
+        </div>
       </div>
     </div>
   );

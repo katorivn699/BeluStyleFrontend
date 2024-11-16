@@ -6,8 +6,8 @@ import { FaPlus, FaTrash } from "react-icons/fa";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardViewUserDiscount = () => {
-  const [accounts, setAccounts] = useState([]);
   const [discount, setDiscount] = useState(null);
+  const [userDiscounts, setUserDiscounts] = useState([]);
   const { discountId } = useParams();
 
   const varToken = useAuthHeader();
@@ -35,7 +35,7 @@ const DashboardViewUserDiscount = () => {
         },
       })
       .then((response) => {
-        setAccounts(response.data.users);
+        setUserDiscounts(response.data.userDiscounts);
       })
       .catch((error) => {
         console.error("Error fetching users for discount:", error);
@@ -51,7 +51,9 @@ const DashboardViewUserDiscount = () => {
         },
       })
       .then(() => {
-        setAccounts(accounts.filter((account) => account.userId !== userId));
+        setUserDiscounts((prev) =>
+          prev.filter((userDiscount) => userDiscount.user.userId !== userId)
+        );
         toast.success("User removed from discount", {
           position: "bottom-center",
           transition: Zoom,
@@ -106,24 +108,24 @@ const DashboardViewUserDiscount = () => {
         <table className="table-auto w-full border-collapse">
           <thead className="border border-gray-300">
             <tr>
-              <th className="px-4 py-2 text-left">User ID</th>
+              <th className="px-4 py-2 text-left">Username</th>
               <th className="px-4 py-2 text-left">Full Name</th>
               <th className="px-4 py-2 text-left">Email</th>
-              <th className="px-4 py-2 text-left">Address</th>
+              <th className="px-4 py-2 text-left">Usage Count</th>
               <th className="px-4 py-2 text-left">Remove</th>
             </tr>
           </thead>
 
           <tbody>
-            {accounts.map((account) => (
-              <tr key={account.userId} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{account.userId}</td>
-                <td className="px-4 py-2">{account.fullName}</td>
-                <td className="px-4 py-2">{account.email}</td>
-                <td className="px-4 py-2">{account.userAddress}</td>
+            {userDiscounts.map((userDiscount) => (
+              <tr key={userDiscount.user.userId} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{userDiscount.user.username}</td>
+                <td className="px-4 py-2">{userDiscount.user.fullName}</td>
+                <td className="px-4 py-2">{userDiscount.user.email}</td>
+                <td className="px-4 py-2">{userDiscount.usageCount}</td>
                 <td className="px-4 py-2">
                   <button
-                    onClick={() => handleRemoveUser(account.userId)}
+                    onClick={() => handleRemoveUser(userDiscount.user.userId)}
                     className="text-red-500 hover:text-red-700"
                   >
                     <FaTrash />

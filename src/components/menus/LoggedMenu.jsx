@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Menu,
   MenuItem,
@@ -18,6 +18,19 @@ const LoggedMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const authUser = useAuthUser();
+  const [profileImageUrl, setProfileImageUrl] = useState(authUser?.userImage || userDefault);
+  
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (authUser?.userImage) {
+        setProfileImageUrl(`${authUser.userImage}?t=${new Date().getTime()}`);
+      } else {
+        setProfileImageUrl(userDefault);
+      }
+    }, 3000); 
+
+    return () => clearInterval(intervalId); 
+  }, [authUser]); 
 
   // Hàm mở menu
   const handleMenuOpen = (event) => {
@@ -31,8 +44,6 @@ const LoggedMenu = () => {
     setAnchorEl(null);
   };
 
-  const profileImageUrl = `${authUser.userImage}?t=${new Date().getTime()}`;
-
   return (
     <>
       {/* IconButton để mở menu */}
@@ -43,13 +54,13 @@ const LoggedMenu = () => {
         color="inherit"
       >
         <img
-          src={profileImageUrl ? profileImageUrl : userDefault}
+          src={profileImageUrl}
           className="rounded-full w-6 md:w-8 h-6 md:h-8 object-cover"
           loading="eager"
           alt="Profile"
           onError={(e) => {
-            e.target.onerror = null; 
-            e.target.src = userDefault;
+            e.target.onerror = null; // Prevent infinite loop if image fails
+            e.target.src = userDefault; // Fallback to default image on error
           }}
         />
       </IconButton>

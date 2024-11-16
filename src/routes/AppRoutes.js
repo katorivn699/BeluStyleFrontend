@@ -57,6 +57,8 @@ import DashboardEditProduct from "../pages/Dashboard/DashboardEditProduct.js";
 import DashboardAddProductVariations from "../pages/Dashboard/DashboardAddProductVariations.js";
 import DashboardEditProductVariation from "../pages/Dashboard/DashboardEditProductVariation.js";
 import OrderSuccess from "../pages/Order/OrderSuccess.jsx";
+import OrderFail from "../pages/Order/OrderFail.jsx";
+import OrderBankTransfer from "../pages/Order/OrderBankTransfer.jsx";
 
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
@@ -147,6 +149,22 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         element={
           <ProtectedRoute types={["CUSTOMER"]}>
             <OrderSuccess />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/orders/bankTransfer"
+        element={
+          <ProtectedRoute types={["CUSTOMER"]}>
+            <OrderBankTransfer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/orders/error"
+        element={
+          <ProtectedRoute types={["CUSTOMER"]}>
+            <OrderFail />
           </ProtectedRoute>
         }
       />

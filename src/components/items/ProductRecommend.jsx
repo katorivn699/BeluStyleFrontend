@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatPrice } from "../format/formats";
 
-const ProductItem = ({ product }) => {
+const ProductRecommend = ({ product }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   // Kiểm tra saleType và tính toán giá giảm nếu có
   let discountedPrice = product.productPrice;
@@ -94,4 +94,4 @@ const ProductItem = ({ product }) => {
   );
 };
 
-export default ProductItem;
+export default ProductRecommend;

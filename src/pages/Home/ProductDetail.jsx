@@ -5,6 +5,9 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Tabs, Tab, Box, Rating, Skeleton } from "@mui/material";
 import { formatPrice } from "../../components/format/formats";
 import { getProductItem } from "../../service/ShopService";
+import { useProduct } from "../../components/Providers/Product";
+import ProductItem from "../../components/items/ProductItem";
+import ProductRecommend from "../../components/items/ProductRecommend";
 
 const ProductDetailPage = () => {
   const { items, addItem } = useCart();
@@ -19,6 +22,7 @@ const ProductDetailPage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const [cartCheck, setCartCheck] = useState(true);
+  const { products } = useProduct(); // Access products from ProductContext
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -40,6 +44,18 @@ const ProductDetailPage = () => {
 
     fetchProduct();
   }, [productById]);
+
+  const recommendedProducts = useMemo(() => {
+    if (!product) return [];
+    
+    const otherProducts = products.filter(
+      (item) => item.productId !== product.productId
+    );
+
+    return otherProducts
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 5);
+  }, [products, product]);
 
   const { allImages, imageStartIndex } = useMemo(() => {
     if (!product) return { allImages: [], imageStartIndex: {} };
@@ -213,7 +229,7 @@ const ProductDetailPage = () => {
         </div>
       </div>
     );
-  }
+  };
 
   return (
     <div className="ProductDetail font-poppins">
@@ -422,6 +438,7 @@ const ProductDetailPage = () => {
               textTransform: "capitalize",
               fontSize: "1rem",
               fontWeight: "bold",
+              fontFamily: "Montserrat",
               color: "#757575",
               "&.Mui-selected": {
                 color: "#177CD8", // Color for selected tab text
@@ -438,6 +455,7 @@ const ProductDetailPage = () => {
               textTransform: "capitalize",
               fontSize: "1rem",
               fontWeight: "bold",
+              fontFamily: "Montserrat",
               color: "#757575",
               "&.Mui-selected": {
                 color: "#177CD8", // Color for selected tab text
@@ -475,6 +493,14 @@ const ProductDetailPage = () => {
             </div>
           )}
         </Box>
+        <div className="recommended-products mt-10">
+          <h2 className="text-3xl font-semibold mb-4">Recommended Products</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-1 py-5">
+            {recommendedProducts.map((item) => (
+              <ProductRecommend product={item} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

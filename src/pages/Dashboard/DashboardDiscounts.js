@@ -73,7 +73,7 @@ const DashboardDiscounts = () => {
           Authorization: varToken,
         },
       })
-      .then((response) => {
+      .then(() => {
         fetchDiscounts(currentPage, pageSize);
         handleClose();
         toast.success("Delete discount successfully", {
@@ -81,7 +81,7 @@ const DashboardDiscounts = () => {
           transition: Zoom,
         });
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error("Delete discount failed", {
           position: "bottom-right",
           transition: Zoom,
@@ -143,6 +143,7 @@ const DashboardDiscounts = () => {
               <th className="px-4 py-2 text-left">Value</th>
               <th className="px-4 py-2 text-left">Status</th>
               <th className="px-4 py-2 text-left">Usage Limit</th>
+              <th className="px-4 py-2 text-left">Usage Count</th>
               <th className="px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
@@ -167,8 +168,9 @@ const DashboardDiscounts = () => {
                     {discount.discountStatus}
                   </td>
                   <td className="px-4 py-2">{discount.usageLimit}</td>
+                  <td className="px-4 py-2">{discount.usageCount}</td>
 
-                  <td className="px-4 py-2 flex space-x-2 pt-6">
+                  <td className="px-4 py-2 flex space-x-2 items-center">
                     <Link to={`/Dashboard/Discounts/${discount.discountId}`}>
                       <FaEye className="text-green-500 cursor-pointer" />
                     </Link>

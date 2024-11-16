@@ -14,7 +14,7 @@ import {
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import {
   GetUserInfo,
-  RequestDeleteAccount,
+
   UpdateUserInfo,
 } from "../../service/UserService";
 import { toast, Zoom } from "react-toastify";
@@ -24,6 +24,12 @@ import { useNavigate } from "react-router-dom";
 import UserChangePassword from "./UserChangePassword";
 import userDefault from "../../assets/images/userdefault.webp";
 import UserSideMenu from "../../components/menus/UserMenu";
+import useSignIn from "react-auth-kit/hooks/useSignIn";
+import vnpay from "../../assets/images/vnpay.jpg";
+import payos from "../../assets/images/payos.svg";
+import { BiSolidBank } from "react-icons/bi";
+import cod from "../../assets/images/cod.png";
+import DeleteAccountButton from "../../components/buttons/DeleteAccount";
 
 export const UserProfile = () => {
   const authHeader = useAuthHeader();
@@ -38,11 +44,13 @@ export const UserProfile = () => {
     fullName: "",
     userAddress: "",
     currentPaymentMethod: "",
+    phoneNumber: "",
     userImage: "",
   });
   const [initialData, setInitialData] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const signIn = useSignIn();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -54,9 +62,12 @@ export const UserProfile = () => {
           email: userInfo.email || "Email not provided",
           username: userInfo.username || "Name not set",
           fullName: userInfo.fullName || "Full name not specified",
-          userAddress: userInfo.address || "Address not provided",
-          currentPaymentMethod: userInfo.currentPaymentMethod || "Place an order to add a payment method",
+          userAddress: userInfo.userAddress || "Address not provided",
+          currentPaymentMethod:
+            userInfo.currentPaymentMethod ||
+            "Place an order to add a payment method",
           userImage: userInfo.userImage || userDefault,
+          phoneNumber: userInfo.phoneNumber || "Phone number not provided", // Ensure phone number is populated
         };
         setUserData(userInfoData);
         setProfileImage(userInfo.userImage);
@@ -73,26 +84,12 @@ export const UserProfile = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
+    console.log(userData);
   };
 
-  const handleRequestDelete = async () => {
-    try {
-      await RequestDeleteAccount(authHeader);
-      toast.success("Account deletion requested successfully.", {
-        position: "top-center",
-        transition: Zoom,
-      });
-
-      setTimeout(() => {
-        signOut();
-        navigate("/");
-      }, 3000);
-    } catch (error) {
-      toast.error("Error requesting account deletion.", {
-        position: "top-center",
-        transition: Zoom,
-      });
-    }
+  const handleDeleteSuccess = () => {
+    signOut();
+    navigate("/");
   };
 
   const handleImageChange = (e) => {
@@ -132,7 +129,7 @@ export const UserProfile = () => {
 
         userData.userImage = uploadResult.data.url;
       }
-      await UpdateUserInfo(userData, authHeader);
+      await UpdateUserInfo(userData, authHeader, signIn);
       toast.success("Profile updated successfully!", {
         position: "top-center",
         transition: Zoom,
@@ -210,8 +207,14 @@ export const UserProfile = () => {
               </label>
             </Box>
             <Box display="flex" flexDirection="column" px={3}>
-              <Typography variant="h5">{userData.fullName}</Typography>
-              <Typography variant="body1" color="textSecondary">
+              <Typography variant="h5" className="font-montserrat">
+                {userData.fullName}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                className="font-montserrat"
+              >
                 {userData.email}
               </Typography>
             </Box>
@@ -220,6 +223,14 @@ export const UserProfile = () => {
             <TextField
               fullWidth
               margin="normal"
+              sx={{
+                "& .MuiInputBase-input": {
+                  fontFamily: "Montserrat",
+                },
+                label: {
+                  fontFamily: "Montserrat",
+                },
+              }}
               label="Email"
               name="email"
               value={userData.email}
@@ -231,6 +242,14 @@ export const UserProfile = () => {
               label="Username"
               name="username"
               value={userData.username}
+              sx={{
+                "& .MuiInputBase-input": {
+                  fontFamily: "Montserrat",
+                },
+                label: {
+                  fontFamily: "Montserrat",
+                },
+              }}
               readOnly
             />
             <TextField
@@ -240,6 +259,30 @@ export const UserProfile = () => {
               name="fullName"
               value={userData.fullName}
               onChange={handleInputChange}
+              sx={{
+                "& .MuiInputBase-input": {
+                  fontFamily: "Montserrat",
+                },
+                label: {
+                  fontFamily: "Montserrat",
+                },
+              }}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Phone number"
+              name="phoneNumber"
+              value={userData.phoneNumber}
+              onChange={handleInputChange}
+              sx={{
+                "& .MuiInputBase-input": {
+                  fontFamily: "Montserrat",
+                },
+                label: {
+                  fontFamily: "Montserrat",
+                },
+              }}
             />
             <TextField
               fullWidth
@@ -248,20 +291,74 @@ export const UserProfile = () => {
               name="userAddress"
               value={userData.userAddress}
               onChange={handleInputChange}
+              sx={{
+                "& .MuiInputBase-input": {
+                  fontFamily: "Montserrat",
+                },
+                label: {
+                  fontFamily: "Montserrat",
+                },
+              }}
             />
-            <TextField
+            {/* <TextField
               fullWidth
               margin="normal"
               label="Payment Method"
               name="currentPaymentMethod"
               value={userData.currentPaymentMethod}
               readOnly
-            />
+              sx={{
+                fontFamily: "Poppins",
+              }}
+            /> */}
+            <div className="pt-3">
+              <div className="flex justify-start items-center w-auto h-20 border-2 rounded-lg px-10 font-montserrat">
+                {(() => {
+                  switch (userData.currentPaymentMethod) {
+                    case "VNPAY":
+                      return (
+                        <>
+                          <img src={vnpay} alt="VNPAY" className="w-16 h-16" />
+                          <p className="pl-5">VNPAY</p>
+                        </>
+                      );
+                    case "PAYOS":
+                      return (
+                        <>
+                          <img src={payos} alt="PAYOS" className="w-16 h-16" />
+                          <p className="pl-5">PAYOS</p>
+                        </>
+                      );
+                    case "TRANSFER":
+                      return (
+                        <>
+                          <BiSolidBank className="text-3xl"/>
+                          <p className="pl-5">Bank Transfer</p>
+                        </>
+                      );
+                    case "COD":
+                      return (
+                        <>
+                          <img
+                            src={cod}
+                            alt="Cash on Delivery"
+                            className="w-16 h-16"
+                          />
+                          <p className="pl-5">Cash on Delivery</p>
+                        </>
+                      );
+                    default:
+                      return <p className="pl-5">No previous payment method</p>;
+                  }
+                })()}
+              </div>
+            </div>
             <Box display="flex" justifyContent="center" gap={3} mt={3}>
               <Button
                 type="submit"
                 variant="contained"
                 sx={{
+                  fontFamily: "Montserrat",
                   width: "150px",
                   textTransform: "none",
                   borderRadius: "8px",
@@ -272,18 +369,10 @@ export const UserProfile = () => {
                 Save
               </Button>
               <UserChangePassword />
-              <Button
-                variant="contained"
-                color="error"
-                sx={{
-                  width: "170px",
-                  textTransform: "none",
-                  borderRadius: "8px",
-                }}
-                onClick={handleRequestDelete}
-              >
-                Delete account
-              </Button>
+              <DeleteAccountButton
+                authHeader={authHeader}
+                onDeleteSuccess={handleDeleteSuccess}
+              />
             </Box>
           </Box>
         </Container>

@@ -44,34 +44,77 @@ export function Navbar() {
             <li>
               <NavLink
                 to="/"
-                className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
+                className={({ isActive }) =>
+                  `font-poppins text-sm md:text-base hover:text-base-300 transition duration-300 relative ${
+                    isActive ? "text-base-300" : ""
+                  }`
+                }
               >
                 Home
+                <span
+                  className={({ isActive }) =>
+                    `absolute left-0 bottom-[-2px] w-full h-[2px] bg-base-300 transition-transform duration-300 ${
+                      isActive ? "scale-x-100" : "scale-x-0"
+                    }`
+                  }
+                ></span>
               </NavLink>
             </li>
             <li>
               <NavLink
                 to="/shop"
-                className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
+                className={({ isActive }) =>
+                  `font-poppins text-sm md:text-base hover:text-base-300 transition duration-300 relative ${
+                    isActive ? "text-base-300" : ""
+                  }`
+                }
               >
                 Shop
+                <span
+                  className={({ isActive }) =>
+                    `absolute left-0 bottom-[-2px] w-full h-[2px] bg-base-300 transition-transform duration-300 ${
+                      isActive ? "scale-x-100" : "scale-x-0"
+                    }`
+                  }
+                ></span>
               </NavLink>
             </li>
             <li>
               <NavLink
                 to="/about"
-                className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
+                className={({ isActive }) =>
+                  `font-poppins text-sm md:text-base hover:text-base-300 transition duration-300 relative ${
+                    isActive ? "text-base-300" : ""
+                  }`
+                }
               >
                 About
+                <span
+                  className={({ isActive }) =>
+                    `absolute left-0 bottom-[-2px] w-full h-[2px] bg-base-300 transition-transform duration-300 ${
+                      isActive ? "scale-x-100" : "scale-x-0"
+                    }`
+                  }
+                ></span>
               </NavLink>
             </li>
             <li>
               <NavLink
-                referrerPolicy="no-referrer"
-                to="https://www.facebook.com/profile.php?id=100014062039112"
-                className="font-poppins text-sm md:text-base hover:text-base-300 transition duration-300"
+                to="https://www.facebook.com/profile.php?id=61552976986503&locale=vi_VN"
+                className={({ isActive }) =>
+                  `font-poppins text-sm md:text-base hover:text-base-300 transition duration-300 relative ${
+                    isActive ? "text-base-300" : ""
+                  }`
+                }
               >
                 Contact
+                <span
+                  className={({ isActive }) =>
+                    `absolute left-0 bottom-[-2px] w-full h-[2px] bg-base-300 transition-transform duration-300 ${
+                      isActive ? "scale-x-100" : "scale-x-0"
+                    }`
+                  }
+                ></span>
               </NavLink>
             </li>
           </ul>
@@ -87,7 +130,7 @@ export function Navbar() {
           )}
 
           <div className="searchBtn hover:text-base-300 transition duration-300">
-            <Tooltip title="Ctrl + I">
+            <Tooltip title="Ctrl + F">
               <IconButton onClick={toggleSearchBar}>
                 <IoSearchOutline className="text-2xl md:text-3xl text-black" />
               </IconButton>

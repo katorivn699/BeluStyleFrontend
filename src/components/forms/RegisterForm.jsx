@@ -34,17 +34,19 @@ export function RegisterForm() {
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
+    phoneNumber: Yup.string()
+      .matches(
+        /^(?:\+84|0)\d{9,10}$/,
+        "Phone number must start with '+84' or '0' and be 10-11 digits"
+      )
+      .required("Phone number is required"),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
-      // .matches(
-      //   /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,}$/,
-      //   "Password must contain at least one number and be at least 8 characters long"
-      // ),
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-      "Password must contain one uppercase, one lowercase, and one number"
-    ),
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+        "Password must contain one uppercase, one lowercase, and one number"
+      ),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Please confirm your password"),
@@ -54,10 +56,11 @@ export function RegisterForm() {
     try {
       await RegisterUser(values, navigate);
     } catch (error) {
-      // toast.error("Error during registration: " + error?.data?.message, {
-      //   position: "top-center",
-      //   transition: Zoom,
-      // });
+      // Handle registration error
+      toast.error("Error during registration: " + error?.data?.message, {
+        position: "top-center",
+        transition: Zoom,
+      });
     }
   };
 
@@ -69,6 +72,7 @@ export function RegisterForm() {
           username: "",
           fullname: "",
           email: "",
+          phoneNumber: "",
           password: "",
           confirmPassword: "",
         }}
@@ -116,6 +120,21 @@ export function RegisterForm() {
               />
               <ErrorMessage
                 name="email"
+                component="p"
+                className="text-red-500 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-gray-500 text-xl">
+                Phone Number
+              </label>
+              <Field
+                type="text"
+                name="phoneNumber"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all duration-200 outline-none text-lg"
+              />
+              <ErrorMessage
+                name="phoneNumber"
                 component="p"
                 className="text-red-500 text-sm"
               />

@@ -8,13 +8,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 const DashboardEditAccount = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
-  const [isCustomer, setIsCustomer] = useState(false);
   const [enable, setEnable] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const varToken = useAuthHeader();
 
-  useEffect(() => {
+  const fetchAccounts = useEffect(() => {
     apiClient
       .get(`/api/admin/${userId}`, {
         headers: {
@@ -24,7 +23,6 @@ const DashboardEditAccount = () => {
       .then((response) => {
         setUser(response.data);
         setEnable(response.data.enable);
-        setIsCustomer(response.data.role === "CUSTOMER");
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
@@ -51,6 +49,7 @@ const DashboardEditAccount = () => {
               position: "bottom-right",
               transition: Zoom,
             }),
+
           navigate("/Dashboard/Accounts")
         )
         .catch((error) => {

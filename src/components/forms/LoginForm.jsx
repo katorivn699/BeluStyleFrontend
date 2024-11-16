@@ -19,7 +19,7 @@ const LoginSchema = Yup.object().shape({
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  // const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const signIn = useSignIn();
 
@@ -27,9 +27,9 @@ export function LoginForm() {
     setShowPassword(!showPassword);
   };
 
-  const handleRememberMeChange = () => {
-    setRememberMe((prev) => !prev);
-  };
+  // const handleRememberMeChange = () => {
+  //   setRememberMe((prev) => !prev);
+  // };
 
   const onSubmit = async (values, { setSubmitting }) => {
     try {
@@ -87,7 +87,7 @@ export function LoginForm() {
               />
             </div>
 
-            <AnimatedCheckbox handleRememberMeChange={handleRememberMeChange} rememberMe={rememberMe}/>
+            {/* <AnimatedCheckbox handleRememberMeChange={handleRememberMeChange} rememberMe={rememberMe}/> */}
 
             <LoginBtn/>
           </Form>

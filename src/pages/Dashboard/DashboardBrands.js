@@ -120,7 +120,7 @@ const DashboardBrands = () => {
                     <img
                       src={brand.logoUrl}
                       alt={brand.brandName}
-                      style={{ width: "50px", height: "auto" }} // Display logo
+                      className="h-12 w-12 object-cover"
                     />
                   </td>
                   <td className="px-4 py-2">
@@ -136,7 +136,7 @@ const DashboardBrands = () => {
                   <td className="px-4 py-2">{brand.brandName}</td>
                   <td className="px-4 py-2">{brand.brandDescription}</td>
                   <td className="px-4 py-2">{brand.totalQuantity}</td>
-                  <td className="px-4 py-2 flex space-x-2">
+                  <td className="px-4 py-2 flex space-x-2 pt-6">
                     <button
                       onClick={() => openDrawer(brand)}
                       className="text-green-500 cursor-pointer"
@@ -146,7 +146,7 @@ const DashboardBrands = () => {
                     <Link to={`/Dashboard/Brands/Edit/${brand.brandId}`}>
                       <FaEdit className="text-blue-500 cursor-pointer" />
                     </Link>
-                    {userRole === "ADMIN" && ( // Show delete button only for Admin
+                    {userRole === "ADMIN" && (
                       <button
                         onClick={() => openDeleteModal(brand)}
                         className="text-red-500 cursor-pointer"

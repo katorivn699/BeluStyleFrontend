@@ -8,13 +8,15 @@ import {
   Divider,
   IconButton,
   Button,
+  Box,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { apiClient } from "../../core/api";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { formatPrice } from "../format/formats";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
-// Hàm lấy màu trạng thái
+// Status color mapping
 const getStatusColor = (status) => {
   switch (status) {
     case "PENDING":
@@ -32,6 +34,7 @@ const getStatusColor = (status) => {
   }
 };
 
+// Component
 const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
   const [orderDetails, setOrderDetails] = useState(null);
   const varToken = useAuthHeader();
@@ -58,6 +61,56 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
   if (!orderDetails) {
     return null;
   }
+
+  const getStarColor = (rating) => {
+    switch (rating) {
+      case 5:
+        return "#4CAF50";
+      case 4:
+        return "#2196F3";
+      case 3:
+        return "#FFC107";
+      case 2:
+        return "#FF5722";
+      default:
+        return "#F44336";
+    }
+  };
+
+  const getRatingIcon = (rating) => {
+    const icons = ["😢", "😟", "😐", "😊", "😍"];
+    return icons[rating - 1];
+  };
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span
+          key={i}
+          style={{
+            color: i <= rating ? getStarColor(rating) : "#E0E0E0",
+            marginRight: 2,
+            cursor: "pointer",
+            fontSize: "20px",
+            transition: "transform 0.3s",
+          }}
+          // onMouseEnter={(e) => (e.target.style.transform = "scale(1.2)")}
+          // onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+        >
+          {i <= rating ? <FaStar /> : <FaRegStar />}
+        </span>
+      );
+    }
+    return (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {stars}
+        <span style={{ marginLeft: 8, fontSize: "18px" }}>
+          {getRatingIcon(rating)}
+        </span>
+      </div>
+    );
+  };
 
   return (
     <Drawer
@@ -127,9 +180,10 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
               <Card variant="outlined" className="mb-4">
                 <CardContent>
                   <Grid container spacing={2} alignItems="center">
+                    {/* Product Image */}
                     <Grid item xs={12} sm={6}>
                       <img
-                        src={`path_to_images/${item.productImage}`} // Đảm bảo đường dẫn hình ảnh chính xác
+                        src={`path_to_images/${item.productImage}`}
                         alt={item.productName}
                         style={{
                           width: "100%",
@@ -138,6 +192,8 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
                         }}
                       />
                     </Grid>
+
+                    {/* Product Details */}
                     <Grid item xs={12} sm={6}>
                       <Typography variant="h6" style={{ fontWeight: "bold" }}>
                         {item.productName}
@@ -175,6 +231,37 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
                       </Typography>
                     </Grid>
                   </Grid>
+
+                  {/* Reviews Section */}
+                  <Divider style={{ margin: "1vh 0" }} />
+                  <Typography variant="h6" style={{ marginBottom: "1vh" }}>
+                    Reviews:
+                  </Typography>
+                  {item.reviews && item.reviews.length > 0 ? (
+                    item.reviews.map((review, reviewIndex) => (
+                      <Box key={reviewIndex} style={{ marginBottom: "1vh" }}>
+                        <Typography
+                          variant="body2"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {review.fullName}
+                        </Typography>
+                        <Box style={{ display: "flex", alignItems: "center" }}>
+                          {renderStars(review.reviewRating)}
+                        </Box>
+                        <Typography
+                          variant="body2"
+                          style={{ marginTop: "1vh" }}
+                        >
+                          {review.reviewComment}
+                        </Typography>
+                      </Box>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="textSecondary">
+                      No reviews yet for this product.
+                    </Typography>
+                  )}
                 </CardContent>
               </Card>
             </Grid>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
 import CategoryDrawer from "../../components/drawer/DashboardCategoryDrawer"; // Import CategoryDrawer
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 
 const DashboardCategories = () => {
   const [categories, setCategories] = useState([]); // State to store categories
@@ -129,7 +129,7 @@ const DashboardCategories = () => {
                     <img
                       src={category.imageUrl}
                       alt={category.categoryName}
-                      className="h-12 w-12"
+                      className="h-12 w-12  object-cover"
                     />
                   </td>
                   <td className="px-4 py-2">{category.categoryName}</td>
@@ -147,7 +147,7 @@ const DashboardCategories = () => {
                     >
                       <FaEdit className="text-blue-500 cursor-pointer" />
                     </Link>
-                    {userRole === "ADMIN" && ( // Show delete button only for Admin
+                    {userRole === "ADMIN" && (
                       <button
                         onClick={() => openDeleteModal(category)}
                         className="text-red-500 cursor-pointer"
