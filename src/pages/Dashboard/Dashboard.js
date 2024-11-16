@@ -13,14 +13,11 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchBrandPieChartData = async () => {
       try {
-        const response = await apiClient.get(
-          "http://localhost:8080/api/statistics/pie/brand",
-          {
-            headers: {
-              Authorization: varToken,
-            },
-          }
-        );
+        const response = await apiClient.get("/api/statistics/pie/brand", {
+          headers: {
+            Authorization: varToken,
+          },
+        });
         const formattedData = response.data.map((item) => ({
           country: item[0],
           litres: item[1],
@@ -56,7 +53,6 @@ const Dashboard = () => {
     chartRef.current = chart;
 
     return () => {
-      // Dispose of chart instance on component unmount
       chart.dispose();
     };
   }, [brandPieChartData]);

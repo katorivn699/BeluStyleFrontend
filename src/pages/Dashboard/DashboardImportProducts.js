@@ -199,7 +199,7 @@ const ProductCard = ({ product, onVariationChange, selectedVariations }) => {
   return (
     <div
       className="p-6 border rounded-lg shadow-sm bg-white hover:shadow-lg transition duration-200"
-      style={{ minWidth: "330px" }} // Ensure minimum width for product cards
+      style={{ minWidth: "330px" }}
     >
       <div className="flex items-center mb-4">
         <img
