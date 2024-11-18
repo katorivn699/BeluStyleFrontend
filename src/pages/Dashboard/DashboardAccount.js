@@ -186,7 +186,7 @@ const DashboardAccounts = () => {
                 ) : (
                   <td className="px-4 py-2 text-rose-600 font-bold">Disable</td>
                 )}
-                <td className="px-4 py-2 flex justify-center space-x-2">
+                <td className="px-4 py-2 flex space-x-2">
                   <button onClick={() => handleViewUser(user.userId)}>
                     <FaEye
                       className={`cursor-pointer ${
