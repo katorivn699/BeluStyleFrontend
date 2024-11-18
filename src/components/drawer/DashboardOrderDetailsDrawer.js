@@ -255,6 +255,14 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
                         >
                           {review.reviewComment}
                         </Typography>
+                        <Typography
+                          variant="caption"
+                          color="textSecondary"
+                          style={{ display: "block", marginBottom: "0.5vh" }}
+                        >
+                          Reviewed on:{" "}
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </Typography>
                       </Box>
                     ))
                   ) : (

@@ -8,15 +8,20 @@ import {
   DialogContent,
   DialogTitle,
   Button,
+  Card,
+  CardContent,
+  Typography,
+  Divider,
 } from "@mui/material";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import { FaEdit, FaPlus, FaStar, FaTrash } from "react-icons/fa";
 import { toast, Zoom } from "react-toastify";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 
 const DashboardProductVariations = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [variationToDelete, setVariationToDelete] = useState(null);
@@ -25,6 +30,7 @@ const DashboardProductVariations = () => {
 
   useEffect(() => {
     fetchProductDetails();
+    fetchProductReviews();
   }, [productId]);
 
   const fetchProductDetails = () => {
@@ -42,6 +48,21 @@ const DashboardProductVariations = () => {
       .catch((error) => {
         console.error("Error fetching product details:", error);
         setLoading(false);
+      });
+  };
+
+  const fetchProductReviews = () => {
+    apiClient
+      .get(`/api/reviews/products/${productId}`, {
+        headers: {
+          Authorization: varToken,
+        },
+      })
+      .then((response) => {
+        setReviews(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching product reviews:", error);
       });
   };
 
@@ -87,6 +108,26 @@ const DashboardProductVariations = () => {
   if (loading) {
     return <Skeleton variant="rectangular" width="100%" height={400} />;
   }
+
+  const getStarColor = (rating) => {
+    switch (rating) {
+      case 5:
+        return "#4CAF50";
+      case 4:
+        return "#2196F3";
+      case 3:
+        return "#FFC107";
+      case 2:
+        return "#FF5722";
+      default:
+        return "#F44336";
+    }
+  };
+
+  const getRatingIcon = (rating) => {
+    const icons = ["😢", "😟", "😐", "😊", "😍"];
+    return icons[rating - 1];
+  };
 
   return (
     <div className="p-4">
@@ -152,7 +193,7 @@ const DashboardProductVariations = () => {
             <Link
               to={`/Dashboard/Products/${productId}/Edit/${variation.variationId}`}
               className="absolute top-2 right-10 text-blue-500 hover:text-blue-700 p-2 bg-white"
-              aria-label="Delete Variation"
+              aria-label="Edit Variation"
             >
               <FaEdit size={18} />
             </Link>
@@ -174,6 +215,38 @@ const DashboardProductVariations = () => {
               Price: ${variation.productPrice.toFixed(2)}
             </p>
           </div>
+        ))}
+      </div>
+
+      <div className="mt-4 grid gap-4">
+        {reviews.map((review) => (
+          <Card key={review.reviewId} variant="outlined" className="p-4">
+            <CardContent>
+              <div className="flex items-center mb-2">
+                <Typography variant="h6" className="font-semibold mr-2">
+                  {review.username}
+                </Typography>
+                <span>{getRatingIcon(review.reviewRating)}</span>
+              </div>
+              <div className="flex items-center mb-4">
+                {[...Array(review.reviewRating)].map((_, index) => (
+                  <FaStar
+                    key={index}
+                    size={16}
+                    style={{
+                      color: getStarColor(review.reviewRating),
+                      marginRight: "4px",
+                    }}
+                  />
+                ))}
+              </div>
+              <Typography variant="body2" color="textSecondary">
+                {new Date(review.createdAt).toLocaleString()}
+              </Typography>
+              <Divider className="my-2" />
+              <Typography variant="body1">{review.reviewComment}</Typography>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
