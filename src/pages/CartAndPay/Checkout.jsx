@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Badge,
   Button,
@@ -11,8 +11,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useCart } from "react-use-cart";
-import { Link, useNavigate } from "react-router-dom";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import LocationSelector from "../../service/LocationService";
 import { formatPrice } from "../../components/format/formats";
 import ShipmentSelector from "../../service/ShipmentService";
@@ -20,7 +19,8 @@ import { CommonRadioCard } from "../../components/inputs/Radio";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { checkDiscount, checkoutOrder } from "../../service/CheckoutService";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import { toast, Zoom } from "react-toastify";
+import { toast } from "react-toastify";
+import { GetUserInfo } from "../../service/UserService";
 
 const style = {
   py: 0,
@@ -38,12 +38,21 @@ const CheckoutPage = () => {
     phuong: "",
   });
   const [paymentMethod, setPaymentMethod] = useState("COD");
-  const [houseNumber, setHouseNumber] = useState("");
   const { items, isEmpty } = useCart();
   const [discountApply, setDiscountApply] = useState({
     discountType: "",
     discountValue: 0,
     maximumDiscountValue: 0,
+  });
+  const [userData, setUserData] = useState({
+    userId: "",
+    email: "",
+    username: "",
+    fullName: "",
+    userAddress: "",
+    currentPaymentMethod: "",
+    phoneNumber: "",
+    userImage: "",
   });
   const [note, setNote] = useState("");
   const navigate = useNavigate();
@@ -58,6 +67,40 @@ const CheckoutPage = () => {
   const userState = useAuthUser();
   const authHeader = useAuthHeader();
   const [isCheckoutReady, setIsCheckoutReady] = useState(false);
+  const [houseNumber, setHouseNumber] = useState("");
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await GetUserInfo(authHeader);
+        const userInfo = response.data;
+        const userInfoData = {
+          userId: userInfo.userId || "ID not available",
+          email: userInfo.email || "Email not provided",
+          username: userInfo.username || "Name not set",
+          fullName: userInfo.fullName || "Full name not specified",
+          userAddress: userInfo.userAddress || "Address not provided",
+          currentPaymentMethod:
+            userInfo.currentPaymentMethod ||
+            "Place an order to add a payment method",
+        };
+        setUserData(userInfoData);
+      } catch (error) {
+        toast.error("Failed to load user data.");
+      }
+    };
+    fetchUserInfo();
+  }, [authHeader]);
+
+  useEffect(() => {
+    // Ensure this runs only once on mount
+    if (userData.userAddress) {
+      setHouseNumber(userData.userAddress.split(',')[0].trim());
+    }
+    if (userData.currentPaymentMethod) {
+      setPaymentMethod(userData.currentPaymentMethod);
+    }
+  }, [userData]);
 
   useEffect(() => {
     if (isEmpty) {
@@ -65,9 +108,9 @@ const CheckoutPage = () => {
     }
   }, [isEmpty, navigate]);
 
-  const handleFeeCalculated = (fee) => {
+  const handleFeeCalculated = useCallback((fee) => {
     setShippingFee(fee);
-  };
+  }, []);
 
   const subTotal = () => {
     const total = items.reduce((accumulator, item) => {
@@ -77,13 +120,12 @@ const CheckoutPage = () => {
   };
 
   useEffect(() => {
-    const calculatedFinalTotal = calculateFinalCheckoutPrice();
-    setFinalTotal(calculatedFinalTotal);
-  }, [subTT, shippingFee, discountMinus]); // Only trigger when these values change
-
-  useEffect(() => {
-    subTotal();
-  }, [items]);
+    if (items.length > 0) {
+      const calculatedFinalTotal = calculateFinalCheckoutPrice();
+      setFinalTotal(calculatedFinalTotal);
+      subTotal();
+    }
+  }, [items, subTT, shippingFee, discountMinus]);
 
   const handleHouseNumberBlur = (e) => {
     setHouseNumber(e.target.value);
@@ -105,14 +147,14 @@ const CheckoutPage = () => {
     }));
   };
 
-  const handleLocationChange = (newLocation) => {
+  const handleLocationChange = useCallback((newLocation) => {
     setLocation(newLocation);
     updateShippingAddress(houseNumber, newLocation); // update with current house number
-  };
+  }, [houseNumber]);
 
-  const handlePaymentMethodChange = (e) => {
+  const handlePaymentMethodChange = useCallback((e) => {
     setPaymentMethod(e.target.value);
-  };
+  }, []);
 
   const handleDiscountCheck = async () => {
     try {
@@ -230,16 +272,16 @@ const CheckoutPage = () => {
       console.log("Checkout Data Updated:", newCheckoutData);
     }
   }, [
-    items, // Trigger when items change
-    subTT, // Trigger when subtotal changes
-    shippingFee, // Trigger when shipping fee changes
-    discountMinus, // Trigger when discount value changes
+    items,
+    subTT,
+    shippingFee,
+    discountMinus, 
     discountCode,
-    paymentMethod, // Trigger when payment method changes
-    houseNumber, // Trigger when house number changes
-    location, // Trigger when location changes
-    note, // Trigger when note changes
-    discountApply, // Ensure that the discount data is correctly tracked
+    paymentMethod, 
+    houseNumber, 
+    location, 
+    note, 
+    discountApply, 
   ]);
 
   const isCheckoutDataComplete = useMemo(() => {
@@ -319,12 +361,8 @@ const CheckoutPage = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">
       <div className="checkoutInfomation w-full">
         <div className="bgCartItem bg-gray-100 md:px-9">
-          <div className="checkoutHeader md:p-10 flex justify-between items-center font-poppins">
+          <div className="checkoutHeader md:p-10 flex justify-start items-center font-poppins">
             <p className="font-semibold text-2xl">Your Order</p>
-            <Link className="flex items-center" to="/cart">
-              <p>Edit Cart</p>
-              <MdOutlineKeyboardArrowRight className="text-xl" />
-            </Link>
           </div>
           <List sx={style}>
             {itemCheckout.map((item, index) => (
@@ -453,12 +491,14 @@ const CheckoutPage = () => {
         </div>
         <div className="BillingAddress font-poppins space-y-5">
           <p className=" font-semibold text-2xl pt-3">Billing Address</p>
-          <LocationSelector onLocationChange={handleLocationChange} />
+          <LocationSelector onLocationChange={handleLocationChange} initialAddress={userData.userAddress} />
           <TextField
             variant="outlined"
             fullWidth
             placeholder="House number, village"
+            value={houseNumber}
             onBlur={handleHouseNumberBlur}
+            onChange={(e) => setHouseNumber(e.target.value)}
           />
         </div>
         <div className="Payment pt-3 space-y-3">

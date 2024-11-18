@@ -20,7 +20,6 @@ export const RadioCommon = ({ value, current, handleChecked, context, id }) => {
   );
 };
 
-
 export const CommonRadioCard = ({ value, label, checked, onChange, description }) => {
   return (
     <Card
@@ -28,9 +27,10 @@ export const CommonRadioCard = ({ value, label, checked, onChange, description }
       sx={{
         border: checked ? '2px solid #1976d2' : '1px solid #ccc',
         borderRadius: '8px',
-        transition: 'border 0.3s',
+        transition: 'all 0.3s ease-in-out', // Smooth transition for all properties
         '&:hover': {
           border: '2px solid #1976d2',
+          transform: 'scale(1.05)', // Slight scaling on hover
         },
       }}
     >
@@ -40,7 +40,13 @@ export const CommonRadioCard = ({ value, label, checked, onChange, description }
             checked={checked}
             onChange={onChange}
             value={value}
-            sx={{ display: 'none' }} // Hide default radio button
+            sx={{
+              display: 'none', // Hide default radio button
+              transition: 'transform 0.3s ease-in-out', // Smooth transition for scaling
+              '&.Mui-checked': {
+                transform: 'scale(1.2)', // Scale up the radio button when checked
+              },
+            }}
           />
         }
         label={
@@ -59,5 +65,6 @@ export const CommonRadioCard = ({ value, label, checked, onChange, description }
     </Card>
   );
 };
+
 
 

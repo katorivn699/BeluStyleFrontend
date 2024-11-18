@@ -13,7 +13,6 @@ function Logout({ isDashboard }) {
       navigate(-1);
     }
   }, [isDashboard, navigate, signOut]);
-  return null;
 }
 
 export default Logout;

@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress, Grid as Grid2 } from "@mui/material";
+import { Backdrop, CircularProgress, Grid2 } from "@mui/material";
 import UserSideMenu from "../../components/menus/UserMenu";
 import DiscountCard from "./DiscountItem";
 import { useEffect, useState, useCallback } from "react";
@@ -16,8 +16,12 @@ const DiscountPage = () => {
     if (remainingTime <= 0) return "Expired";
 
     const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+    const hours = Math.floor(
+      (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor(
+      (remainingTime % (1000 * 60 * 60)) / (1000 * 60)
+    );
     const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
     return `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
@@ -55,35 +59,41 @@ const DiscountPage = () => {
     return () => clearInterval(intervalId); // Clear interval on component unmount
   }, [authHeader]);
 
-  if (loading)
-    return (
-      <Backdrop sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })} open={loading}>
-        <CircularProgress />
-      </Backdrop>
-    );
-  if (error) return <p>Error loading discounts: {error.message}</p>;
-
   return (
     <Grid2 container>
-      <Grid2 item xs={4}>
+      {/* UserSideMenu is displayed immediately */}
+      <Grid2 size={4}>
         <UserSideMenu />
       </Grid2>
-      <Grid2 item xs={7}>
-        <div className="w-2/3">
-          <Grid2 container spacing={2} className="DiscountItem">
-            {discounts.map((discount) => (
-              <Grid2 item xs={12} sm={6} md={4} key={discount.id}>
-                <DiscountCard
-                  brand={discount.discountCode}
-                  discountType={discount.discountType}
-                  discount={discount.discountValue}
-                  expiry={formatRemainingTime(discount.remainingTime)}
-                  timesUsed={discount.usageCount}
-                />
-              </Grid2>
-            ))}
-          </Grid2>
-        </div>
+
+      {/* Main content: Discount cards */}
+      <Grid2 size={7}>
+        {loading ? (
+          <Backdrop
+            sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+            open={loading}
+          >
+            <CircularProgress />
+          </Backdrop>
+        ) : error ? (
+          <p>Error loading discounts: {error.message}</p>
+        ) : (
+          <div className="w-2/3">
+            <Grid2 container spacing={2} className="DiscountItem">
+              {discounts.map((discount) => (
+                <Grid2 item xs={12} sm={6} md={4} key={discount.id}>
+                  <DiscountCard
+                    brand={discount.discountCode}
+                    discountType={discount.discountType}
+                    discount={discount.discountValue}
+                    expiry={formatRemainingTime(discount.remainingTime)}
+                    timesUsed={discount.usageCount}
+                  />
+                </Grid2>
+              ))}
+            </Grid2>
+          </div>
+        )}
       </Grid2>
     </Grid2>
   );

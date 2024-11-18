@@ -1,7 +1,7 @@
 import Lottie from "lottie-react";
 import React, { useEffect } from "react";
 import orderSuccess from "../../assets/anim/ordersuccess.json";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import { TbReorder } from "react-icons/tb";
 import { paymentCallback } from "../../service/CheckoutService";
@@ -9,33 +9,53 @@ import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { useCart } from "react-use-cart";
 
 function OrderSuccess() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const orderId = localStorage.getItem("orderId");
   const {emptyCart} = useCart();
   const authHeader = useAuthHeader();
-  const status = 1;
-
-  useEffect(() => {paymentCallback(orderId, authHeader, status);
-  },[orderId, authHeader]);
-
-  const handleReturnToHome = () => {
-    navigate("/");
-    emptyCart();
-    localStorage.removeItem("orderId");
-  };
 
   useEffect(() => {
+    const responseCode = searchParams.get("vnp_ResponseCode");
+    const transactionStatus = searchParams.get("vnp_TransactionStatus");
+  
+    // Check if the order ID exists
     if (!orderId) {
       navigate("/");
       emptyCart();
+      return;
     }
-  },[emptyCart,navigate,orderId]);
+  
+    // Handle cases where searchParams are missing
+    if (!responseCode || !transactionStatus) {
+      // Assume success for methods without response codes (e.g., PayOs, COD, Bank Transfer)
+      paymentCallback(orderId, authHeader, 1); // Status 1 for success
+      return;
+    }
+  
+    // Handle VNPay specific responses
+    if (responseCode === "00" && transactionStatus === "00") {
+      // Success: perform callback
+      paymentCallback(orderId, authHeader, 1); // Status 1 for success
+    } else {
+      // Failure: redirect to error page
+      navigate("/orders/error");
+      return;
+    }
+  }, [authHeader, emptyCart, navigate, orderId, searchParams]);
+  
 
   const handleViewOrder = () => {
     navigate("/user/orders/" + orderId);
     emptyCart();
     localStorage.removeItem("orderId");
   }
+
+  const handleReturnToHome = () => {
+    navigate("/");
+    emptyCart();
+    localStorage.removeItem("orderId");
+  };
 
   return (
     <div className="OrderConfirm flex flex-col items-center py-24">

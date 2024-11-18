@@ -59,10 +59,10 @@ export default function NotificationIcon() {
             ✕
           </button>
         </div>
-        <div className="p-4 max-h-[400px] overflow-y-auto">
+        <div className="p-4 max-h-[400px] overflow-y-scroll">
           {isPending ? (
             <div className="flex justify-center items-center">
-              <CircularProgress size={20} />
+              <CircularProgress color="inherit" size={20} />
               <span className="ml-2">Loading notifications...</span>
             </div>
           ) : notifications.length > 0 ? (

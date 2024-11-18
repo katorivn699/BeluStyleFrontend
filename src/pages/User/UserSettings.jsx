@@ -12,11 +12,7 @@ import {
   Backdrop,
 } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import {
-  GetUserInfo,
-
-  UpdateUserInfo,
-} from "../../service/UserService";
+import { GetUserInfo, UpdateUserInfo } from "../../service/UserService";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
@@ -144,163 +140,162 @@ export const UserProfile = () => {
     }
   };
 
-  if (loading)
-    return (
-      <div>
-        <Backdrop
-          sx={{ color: "#858585", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={loading}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </div>
-    );
-
   return (
     <Grid2 container>
       <Grid2 size={4}>
         <UserSideMenu></UserSideMenu>
       </Grid2>
       <Grid2 size={7}>
-        <Container maxWidth="sm" sx={{ marginLeft: 0 }}>
-          <Box display="flex" flexDirection="row" alignItems="center" mt={5}>
-            <Box
-              sx={{
-                position: "relative",
-                width: 100,
-                height: 100,
-              }}
-            >
-              <Avatar
-                alt="Profile Picture"
-                src={profileImage}
-                sx={{ width: 100, height: 100 }}
-              />
-              <input
-                accept="image/*"
-                style={{ display: "none" }}
-                id="profile-image-upload"
-                type="file"
-                onChange={handleImageChange}
-              />
-              <label htmlFor="profile-image-upload">
-                <IconButton
-                  color="primary"
-                  component="span"
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "rgba(0, 0, 0, 0.3)",
-                    opacity: 0,
-                    transition: "opacity 0.3s ease-in-out",
-                    "&:hover": { opacity: 1 },
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <PhotoCamera sx={{ color: "white" }} />
-                </IconButton>
-              </label>
-            </Box>
-            <Box display="flex" flexDirection="column" px={3}>
-              <Typography variant="h5" className="font-montserrat">
-                {userData.fullName}
-              </Typography>
-              <Typography
-                variant="body1"
-                color="textSecondary"
-                className="font-montserrat"
+        {loading ? (
+          <Backdrop
+            sx={{
+              color: "#858585",
+              zIndex: (theme) => theme.zIndex.drawer + 1,
+            }}
+            open={loading}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        ) : (
+          <Container maxWidth="sm" sx={{ marginLeft: 0 }}>
+            <Box display="flex" flexDirection="row" alignItems="center" mt={5}>
+              <Box
+                sx={{
+                  position: "relative",
+                  width: 100,
+                  height: 100,
+                }}
               >
-                {userData.email}
-              </Typography>
+                <Avatar
+                  alt="Profile Picture"
+                  src={profileImage}
+                  sx={{ width: 100, height: 100 }}
+                />
+                <input
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  id="profile-image-upload"
+                  type="file"
+                  onChange={handleImageChange}
+                />
+                <label htmlFor="profile-image-upload">
+                  <IconButton
+                    color="primary"
+                    component="span"
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: "rgba(0, 0, 0, 0.3)",
+                      opacity: 0,
+                      transition: "opacity 0.3s ease-in-out",
+                      "&:hover": { opacity: 1 },
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <PhotoCamera sx={{ color: "white" }} />
+                  </IconButton>
+                </label>
+              </Box>
+              <Box display="flex" flexDirection="column" px={3}>
+                <Typography variant="h5" className="font-montserrat">
+                  {userData.fullName}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  className="font-montserrat"
+                >
+                  {userData.email}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-          <Box component="form" mt={3} onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              margin="normal"
-              sx={{
-                "& .MuiInputBase-input": {
-                  fontFamily: "Montserrat",
-                },
-                label: {
-                  fontFamily: "Montserrat",
-                },
-              }}
-              label="Email"
-              name="email"
-              value={userData.email}
-              readOnly
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Username"
-              name="username"
-              value={userData.username}
-              sx={{
-                "& .MuiInputBase-input": {
-                  fontFamily: "Montserrat",
-                },
-                label: {
-                  fontFamily: "Montserrat",
-                },
-              }}
-              readOnly
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Full Name"
-              name="fullName"
-              value={userData.fullName}
-              onChange={handleInputChange}
-              sx={{
-                "& .MuiInputBase-input": {
-                  fontFamily: "Montserrat",
-                },
-                label: {
-                  fontFamily: "Montserrat",
-                },
-              }}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Phone number"
-              name="phoneNumber"
-              value={userData.phoneNumber}
-              onChange={handleInputChange}
-              sx={{
-                "& .MuiInputBase-input": {
-                  fontFamily: "Montserrat",
-                },
-                label: {
-                  fontFamily: "Montserrat",
-                },
-              }}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Address"
-              name="userAddress"
-              value={userData.userAddress}
-              onChange={handleInputChange}
-              sx={{
-                "& .MuiInputBase-input": {
-                  fontFamily: "Montserrat",
-                },
-                label: {
-                  fontFamily: "Montserrat",
-                },
-              }}
-            />
-            {/* <TextField
+            <Box component="form" mt={3} onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                margin="normal"
+                sx={{
+                  "& .MuiInputBase-input": {
+                    fontFamily: "Montserrat",
+                  },
+                  label: {
+                    fontFamily: "Montserrat",
+                  },
+                }}
+                label="Email"
+                name="email"
+                value={userData.email}
+                readOnly
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Username"
+                name="username"
+                value={userData.username}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    fontFamily: "Montserrat",
+                  },
+                  label: {
+                    fontFamily: "Montserrat",
+                  },
+                }}
+                readOnly
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Full Name"
+                name="fullName"
+                value={userData.fullName}
+                onChange={handleInputChange}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    fontFamily: "Montserrat",
+                  },
+                  label: {
+                    fontFamily: "Montserrat",
+                  },
+                }}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Phone number"
+                name="phoneNumber"
+                value={userData.phoneNumber}
+                onChange={handleInputChange}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    fontFamily: "Montserrat",
+                  },
+                  label: {
+                    fontFamily: "Montserrat",
+                  },
+                }}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Address"
+                name="userAddress"
+                value={userData.userAddress}
+                onChange={handleInputChange}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    fontFamily: "Montserrat",
+                  },
+                  label: {
+                    fontFamily: "Montserrat",
+                  },
+                }}
+              />
+              {/* <TextField
               fullWidth
               margin="normal"
               label="Payment Method"
@@ -311,71 +306,82 @@ export const UserProfile = () => {
                 fontFamily: "Poppins",
               }}
             /> */}
-            <div className="pt-3">
-              <div className="flex justify-start items-center w-auto h-20 border-2 rounded-lg px-10 font-montserrat">
-                {(() => {
-                  switch (userData.currentPaymentMethod) {
-                    case "VNPAY":
-                      return (
-                        <>
-                          <img src={vnpay} alt="VNPAY" className="w-16 h-16" />
-                          <p className="pl-5">VNPAY</p>
-                        </>
-                      );
-                    case "PAYOS":
-                      return (
-                        <>
-                          <img src={payos} alt="PAYOS" className="w-16 h-16" />
-                          <p className="pl-5">PAYOS</p>
-                        </>
-                      );
-                    case "TRANSFER":
-                      return (
-                        <>
-                          <BiSolidBank className="text-3xl"/>
-                          <p className="pl-5">Bank Transfer</p>
-                        </>
-                      );
-                    case "COD":
-                      return (
-                        <>
-                          <img
-                            src={cod}
-                            alt="Cash on Delivery"
-                            className="w-16 h-16"
-                          />
-                          <p className="pl-5">Cash on Delivery</p>
-                        </>
-                      );
-                    default:
-                      return <p className="pl-5">No previous payment method</p>;
-                  }
-                })()}
+              <div className="pt-3">
+                <div className="flex justify-start items-center w-auto h-20 border-2 rounded-lg px-10 font-montserrat">
+                  {(() => {
+                    switch (userData.currentPaymentMethod) {
+                      case "VNPAY":
+                        return (
+                          <>
+                            <img
+                              src={vnpay}
+                              alt="VNPAY"
+                              className="w-16 h-16"
+                            />
+                            <p className="pl-5">VNPay</p>
+                          </>
+                        );
+                      case "PAYOS":
+                        return (
+                          <>
+                            <img
+                              src={payos}
+                              alt="PAYOS"
+                              className="w-16 h-16"
+                            />
+                            <p className="pl-5">PayOs</p>
+                          </>
+                        );
+                      case "TRANSFER":
+                        return (
+                          <>
+                            <BiSolidBank className="text-3xl" />
+                            <p className="pl-5">Bank Transfer</p>
+                          </>
+                        );
+                      case "COD":
+                        return (
+                          <>
+                            <img
+                              src={cod}
+                              alt="Cash on Delivery"
+                              className="w-16 h-16"
+                            />
+                            <p className="pl-5">Cash on Delivery</p>
+                          </>
+                        );
+                      default:
+                        return (
+                          <p className="pl-5">No previous payment method</p>
+                        );
+                    }
+                  })()}
+                </div>
               </div>
-            </div>
-            <Box display="flex" justifyContent="center" gap={3} mt={3}>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  fontFamily: "Montserrat",
-                  width: "150px",
-                  textTransform: "none",
-                  borderRadius: "8px",
-                  backgroundColor: "green",
-                }}
-                disabled={!hasChanges()}
-              >
-                Save
-              </Button>
-              <UserChangePassword />
-              <DeleteAccountButton
-                authHeader={authHeader}
-                onDeleteSuccess={handleDeleteSuccess}
-              />
+              <Box display="flex" justifyContent="center" gap={3} mt={3}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    fontFamily: "Montserrat",
+                    width: "150px",
+                    textTransform: "none",
+                    borderRadius: "8px",
+                    backgroundColor: "green",
+                  }}
+                  disabled={!hasChanges()}
+                >
+                  Save
+                </Button>
+                <UserChangePassword />
+                <DeleteAccountButton
+                  authHeader={authHeader}
+                  onDeleteSuccess={handleDeleteSuccess}
+                />
+              </Box>
             </Box>
-          </Box>
-        </Container>
+          </Container>
+        )}
       </Grid2>
     </Grid2>
   );

@@ -66,7 +66,7 @@ const DeleteAccountButton = ({ authHeader, onDeleteSuccess }) => {
         }}
         onClick={handleRequestDelete}
       >
-        Delete account
+        Delete Account
       </Button>
 
       {/* Confirmation Dialog for account deletion */}

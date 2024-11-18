@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useCart } from "react-use-cart";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { Tabs, Tab, Box, Rating, Skeleton } from "@mui/material";
+import { Navigate, NavLink, useNavigate, useParams } from "react-router-dom";
+import { Tabs, Tab, Box, Rating, Skeleton, Breadcrumbs } from "@mui/material";
 import { formatPrice } from "../../components/format/formats";
 import { getProductItem } from "../../service/ShopService";
 import { useProduct } from "../../components/Providers/Product";
@@ -47,14 +47,12 @@ const ProductDetailPage = () => {
 
   const recommendedProducts = useMemo(() => {
     if (!product) return [];
-    
+
     const otherProducts = products.filter(
       (item) => item.productId !== product.productId
     );
 
-    return otherProducts
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 5);
+    return otherProducts.sort(() => 0.5 - Math.random()).slice(0, 5);
   }, [products, product]);
 
   const { allImages, imageStartIndex } = useMemo(() => {
@@ -229,11 +227,19 @@ const ProductDetailPage = () => {
         </div>
       </div>
     );
-  };
+  }
 
   return (
     <div className="ProductDetail font-poppins">
-      <div className="headerBreadcums h-32 bg-blueOcean"></div>
+      <div className="headerBreadcums flex items-center h-32 bg-beluBlue">
+        <div className="pl-16">
+          <Breadcrumbs>
+            <NavLink to={"/"}>Home</NavLink>
+            <NavLink to={"/shop"}>Shop</NavLink>
+            <p>{product.productName}</p>
+          </Breadcrumbs>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 px-4 sm:px-10 lg:px-20 py-10">
         <div className="col-span-1 lg:col-span-3 place-items-center">
           {selectedVariation?.images ? (
