@@ -611,7 +611,7 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         }
       />
 
-      <Route path="/Dashboard/Logout" element={<Logout />} />
+      <Route path="/Dashboard/Logout" element={<Logout isDashboard={true} />} />
     </Routes>
   );
 };
