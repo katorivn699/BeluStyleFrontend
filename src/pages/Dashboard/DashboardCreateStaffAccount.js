@@ -34,6 +34,12 @@ const DashboardCreateStaffAccount = () => {
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
+    phoneNumber: Yup.string()
+      .matches(
+        /^(?:\+84|0)\d{9,10}$/,
+        "Phone number must start with '+84' or '0' and be 10-11 digits"
+      )
+      .required("Phone number is required"),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
@@ -51,6 +57,7 @@ const DashboardCreateStaffAccount = () => {
       email: "",
       username: "",
       fullName: "",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
       userAddress: "",
@@ -84,6 +91,7 @@ const DashboardCreateStaffAccount = () => {
             email: values.email,
             username: values.username,
             fullName: values.fullName,
+            phoneNumber: values.phoneNumber, // Send the phone number to the backend
             passwordHash: values.password,
             userImage: imageUrl,
             userAddress: values.userAddress,
@@ -150,6 +158,17 @@ const DashboardCreateStaffAccount = () => {
           {...formik.getFieldProps("fullName")}
           error={formik.touched.fullName && Boolean(formik.errors.fullName)}
           helperText={formik.touched.fullName && formik.errors.fullName}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Phone Number"
+          {...formik.getFieldProps("phoneNumber")}
+          error={
+            formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)
+          }
+          helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
           variant="outlined"
           fullWidth
           margin="normal"
