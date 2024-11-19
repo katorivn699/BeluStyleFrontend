@@ -62,20 +62,24 @@ QontoStepIcon.propTypes = {
   completed: PropTypes.bool,
 };
 
-const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+const ColorlibConnector = styled(StepConnector)(({ theme, status }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 22,
   },
   [`&.${stepConnectorClasses.active}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
-        "linear-gradient(95deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)",
+        status === 4
+          ? "linear-gradient(95deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)"  // Red gradient for "Canceled"
+          : "linear-gradient(95deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)", // Normal gradient
     },
   },
   [`&.${stepConnectorClasses.completed}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
-        "linear-gradient(95deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)",
+        status === 4
+          ? "linear-gradient(95deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)" // Red gradient for "Canceled"
+          : "linear-gradient(95deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)", // Normal gradient
     },
   },
   [`& .${stepConnectorClasses.line}`]: {
@@ -89,7 +93,8 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   },
 }));
 
-const ColorlibStepIconRoot = styled("div")(({ theme }) => ({
+
+const ColorlibStepIconRoot = styled("div")(({ theme, status }) => ({
   backgroundColor: "#ccc",
   zIndex: 1,
   color: "#fff",
@@ -101,6 +106,10 @@ const ColorlibStepIconRoot = styled("div")(({ theme }) => ({
   alignItems: "center",
   ...theme.applyStyles("dark", {
     backgroundColor: theme.palette.grey[700],
+  }),
+  // Apply a gradient based on the current status
+  ...(status === 4 && { // If the status is 4 (Canceled), apply a red gradient
+    backgroundImage: "linear-gradient(136deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)",
   }),
   variants: [
     {
@@ -121,8 +130,9 @@ const ColorlibStepIconRoot = styled("div")(({ theme }) => ({
   ],
 }));
 
+
 function ColorlibStepIcon(props) {
-  const { active, completed, className } = props;
+  const { active, completed, className, icon, status } = props;
 
   const icons = {
     1: <MdOutlinePendingActions />,
@@ -133,11 +143,12 @@ function ColorlibStepIcon(props) {
   };
 
   return (
-    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
-      {icons[String(props.icon)]}
+    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className} status={status}>
+      {icons[String(icon)]}
     </ColorlibStepIconRoot>
   );
 }
+
 
 ColorlibStepIcon.propTypes = {
   active: PropTypes.bool,
@@ -147,7 +158,6 @@ ColorlibStepIcon.propTypes = {
 };
 
 export default function CustomizedSteppers({ status }) {
-  // Conditionally add the "Canceled" step
   const steps = [
     "Waiting for Confirmation",
     "Being Prepared",
@@ -155,17 +165,24 @@ export default function CustomizedSteppers({ status }) {
     "Delivered",
   ];
 
-  if (status === 4) { // Show "Canceled" only if the status is 5
+  if (status === 4) { // Add "Canceled" step when status is 4
     steps.push("Canceled");
   }
 
   return (
-    <Stepper alternativeLabel activeStep={status} connector={<ColorlibConnector />}>
+    <Stepper
+      alternativeLabel
+      activeStep={status}
+      connector={<ColorlibConnector status={status} />} // Pass status to connector
+    >
       {steps.map((label, index) => (
         <Step key={index}>
-          <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+          <StepLabel StepIconComponent={(props) => <ColorlibStepIcon {...props} status={status} />}>
+            {label}
+          </StepLabel>
         </Step>
       ))}
     </Stepper>
   );
 }
+

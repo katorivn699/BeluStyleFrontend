@@ -18,19 +18,29 @@ const LoggedMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const authUser = useAuthUser();
-  const [profileImageUrl, setProfileImageUrl] = useState(authUser?.userImage || userDefault);
-  
+  const [profileImageUrl, setProfileImageUrl] = useState(
+    authUser?.userImage || userDefault
+  );
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (authUser?.userImage) {
-        setProfileImageUrl(`${authUser.userImage}?t=${new Date().getTime()}`);
+        // Check if the image is from Google and skip appending "?t="
+        const isGoogleImage = authUser.userImage.startsWith(
+          "https://lh3.googleusercontent.com/"
+        );
+        if (isGoogleImage) {
+          setProfileImageUrl(authUser.userImage); // Use the original Google image URL
+        } else {
+          setProfileImageUrl(`${authUser.userImage}?t=${new Date().getTime()}`); // Add timestamp only for non-Google images
+        }
       } else {
-        setProfileImageUrl(userDefault);
+        setProfileImageUrl(userDefault); // Default image
       }
-    }, 3000); 
+    }, 3000);
 
-    return () => clearInterval(intervalId); 
-  }, [authUser]); 
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
+  }, [authUser]);
 
   // Hàm mở menu
   const handleMenuOpen = (event) => {
@@ -73,7 +83,7 @@ const LoggedMenu = () => {
         PaperProps={{
           style: {
             borderRadius: 8,
-            minWidth: 220, 
+            minWidth: 220,
           },
         }}
         MenuListProps={{
@@ -101,7 +111,11 @@ const LoggedMenu = () => {
           <ListItemText primary="Orders" />
         </MenuItem>
 
-        <MenuItem component={Link} to="/user/discounts" onClick={handleMenuClose}>
+        <MenuItem
+          component={Link}
+          to="/user/discounts"
+          onClick={handleMenuClose}
+        >
           <ListItemIcon sx={{ fontSize: "1.75rem", minWidth: "40px" }}>
             <TbRosetteDiscount className="text-3xl" />
           </ListItemIcon>

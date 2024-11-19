@@ -3,10 +3,10 @@ import { FaEdit, FaEye, FaPlus, FaPlusSquare, FaTrash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api"; // Assuming you have an api client setup
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { formatPrice } from "../../components/format/formats";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const DashboardSales = () => {
   const [sales, setSales] = useState([]);

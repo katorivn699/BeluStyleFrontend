@@ -79,10 +79,10 @@ const CheckoutPage = () => {
           email: userInfo.email || "Email not provided",
           username: userInfo.username || "Name not set",
           fullName: userInfo.fullName || "Full name not specified",
-          userAddress: userInfo.userAddress || "Address not provided",
+          userAddress: userInfo.userAddress === "Address not provided" ? "" : userInfo.userAddress,
           currentPaymentMethod:
             userInfo.currentPaymentMethod ||
-            "Place an order to add a payment method",
+            "COD",
         };
         setUserData(userInfoData);
       } catch (error) {
@@ -95,7 +95,9 @@ const CheckoutPage = () => {
   useEffect(() => {
     // Ensure this runs only once on mount
     if (userData.userAddress) {
-      setHouseNumber(userData.userAddress.split(',')[0].trim());
+      if(userData.userAddress !== "Address not provided") {
+        setHouseNumber(userData.userAddress.split(',')[0].trim());
+      }
     }
     if (userData.currentPaymentMethod) {
       setPaymentMethod(userData.currentPaymentMethod);

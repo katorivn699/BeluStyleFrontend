@@ -6,17 +6,10 @@ import Column3DChart from "../../components/chart/3dColunmChart";
 import CylinderChart3D from "../../components/chart/3dCylinderChart";
 
 const Dashboard = () => {
-  const chartRef = useRef(null);
   const [brandPieChartData, setBrandPieChartData] = useState([]);
+  const [bestSellingData, setBestSellingData] = useState([]);
+  const [totalRevenue, setTotalRevenue] = useState([]);
   const varToken = useAuthHeader();
-
-  const chartData = [
-    { category: "Category 1", value: 45 },
-    { category: "Category 2", value: 78 },
-    { category: "Category 3", value: 62 },
-    { category: "Category 4", value: 54 },
-    { category: "Category 5", value: 90 },
-  ];
 
   useEffect(() => {
     const fetchBrandPieChartData = async () => {
@@ -35,8 +28,55 @@ const Dashboard = () => {
         console.error("Error fetching chart data:", error);
       }
     };
+    const fetchBestSellingData = async () => {
+      try {
+        const response = await apiClient.get(
+          "/api/statistics/best-selling-products",
+          {
+            headers: {
+              Authorization: varToken,
+            },
+          }
+        );
+        const BestData = response.data.map((item) => ({
+          category: item[1],
+          value: item[2],
+        }));
+        setBestSellingData(BestData);
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+      }
+    };
+
+    const fetchTotalRevenue = async () => {
+      try {
+        const response = await apiClient.get(
+          "/api/statistics/revenue/monthly",
+          {
+            headers: {
+              Authorization: varToken,
+            },
+          }
+        );
+
+        const tRevenue = response.data
+          .map((item) => ({
+            category: `${item.month},${item.year}`,
+            revenue: item.totalAmount,
+          }));
+        if (Array.isArray(tRevenue) && tRevenue.length > 0) {
+          setTotalRevenue(tRevenue);
+        } else {
+          console.warn("No valid data to set in totalRevenue.");
+        }
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+      }
+    };
 
     fetchBrandPieChartData();
+    fetchBestSellingData();
+    fetchTotalRevenue();
   }, [varToken]);
 
   return (
@@ -46,23 +86,6 @@ const Dashboard = () => {
         <h2 className="text-2xl font-bold mb-2">Dashboard</h2>
         <p>Welcome to the admin dashboard!</p>
         <p>Here you can view your overall statistics and insights.</p>
-      </div>
-
-      {/* Statistics Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Example Stats Cards */}
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h3 className="text-lg font-semibold">Total Sales</h3>
-          <p className="text-2xl font-bold text-blue-600">$12,345</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h3 className="text-lg font-semibold">Total Orders</h3>
-          <p className="text-2xl font-bold text-green-600">543</p>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h3 className="text-lg font-semibold">Active Users</h3>
-          <p className="text-2xl font-bold text-red-600">1,234</p>
-        </div>
       </div>
 
       {/* Chart Section */}
@@ -76,11 +99,11 @@ const Dashboard = () => {
         {/* Placeholder for Future Charts */}
         <div className="bg-gray-50 p-6 rounded-lg shadow-md ">
           <h3 className="text-xl font-semibold mb-4">Total revenue</h3>
-          <Column3DChart />
+          <Column3DChart chartData={totalRevenue} />
         </div>
         <div className="bg-gray-50 p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-4">Best-selling products</h3>
-          <CylinderChart3D chartData={chartData} />
+          <CylinderChart3D chartData={bestSellingData} />
         </div>
       </div>
     </div>

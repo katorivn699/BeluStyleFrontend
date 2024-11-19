@@ -10,9 +10,17 @@ export function About() {
     <MainLayout>
       <div className="grid grid-cols-1 md:grid-cols-3 px-4 md:px-40 py-10 items-center">
         <div className="AboutLeft md:col-span-2 space-y-10">
-          <h1 className="font-bold text-3xl md:text-5xl font-poppins">About BeluStyle</h1>
+          <h1 className="font-bold text-3xl md:text-5xl font-poppins">
+            About BeluStyle
+          </h1>
           <p className="font-poppins text-base md:text-xl text-justify">
-            BeluStyle is an online store created by Group 4 with the goal of fulfilling the requirements for the SWP391 course. We focus on providing customers with a simple and convenient fashion shopping experience from the comfort of their homes. With a commitment to product quality and service, BeluStyle not only offers stylish fashion products but also ensures customer satisfaction in every aspect of the shopping process.
+            BeluStyle is an online store created by Group 4 with the goal of
+            fulfilling the requirements for the SWP391 course. We focus on
+            providing customers with a simple and convenient fashion shopping
+            experience from the comfort of their homes. With a commitment to
+            product quality and service, BeluStyle not only offers stylish
+            fashion products but also ensures customer satisfaction in every
+            aspect of the shopping process.
           </p>
           <div className="btn bg-blueOcean rounded-lg w-48 md:w-56 h-14 md:h-20 text-white text-lg md:text-xl flex items-center justify-center">
             <Link to={"/"}>Explore BeluStyle {">"}</Link>
@@ -32,7 +40,8 @@ export function About() {
             With BeluStyle Your Satisfaction <br /> Is Guaranteed.
           </h1>
           <p className="text-lg md:text-xl mt-4">
-            You will be able to find 5 most important things for your shopping experience here.
+            You will be able to find 5 most important things for your shopping
+            experience here.
           </p>
         </div>
       </div>
@@ -47,13 +56,36 @@ export function About() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 place-items-center py-10 px-36 bg-green-to-white">
           {[
-            { name: "Võ Trương Nhật Đăng", id: "CE181699", img: "https://avatars.githubusercontent.com/u/114787562?v=4" },
-            { name: "Dương Nhật Anh", id: "CE181079", img: "https://avatars.githubusercontent.com/u/78785812?v=4" },
-            { name: "Nguyễn Tấn Minh", id: "CE180111", img: "https://avatars.githubusercontent.com/u/137702779?v=4" },
-            { name: "Lê Khắc Huy", id: "CE180311", img: "https://avatars.githubusercontent.com/u/129503367?v=4" },
-            { name: "Mai Hoàng Ân", id: "CE180552", img: "https://avatars.githubusercontent.com/u/145850099?v=4" },
+            {
+              name: "Võ Trương Nhật Đăng",
+              id: "CE181699",
+              img: "https://avatars.githubusercontent.com/u/114787562?v=4",
+            },
+            {
+              name: "Dương Nhật Anh",
+              id: "CE181079",
+              img: "https://avatars.githubusercontent.com/u/78785812?v=4",
+            },
+            {
+              name: "Nguyễn Tấn Minh",
+              id: "CE180111",
+              img: "https://avatars.githubusercontent.com/u/137702779?v=4",
+            },
+            {
+              name: "Lê Khắc Huy",
+              id: "CE180311",
+              img: "https://avatars.githubusercontent.com/u/129503367?v=4",
+            },
+            {
+              name: "Mai Hoàng Ân",
+              id: "CE180552",
+              img: "https://avatars.githubusercontent.com/u/145850099?v=4",
+            },
           ].map((member) => (
-            <div key={member.id} className="info bg-white rounded-full font-bold font-inter text-center w-48 md:w-64 h-80 md:h-96 shadow-lg space-y-4">
+            <div
+              key={member.id}
+              className="info bg-white rounded-full font-bold font-inter text-center w-48 md:w-64 h-80 md:h-96 shadow-lg space-y-4 transition-transform transform hover:scale-105 hover:shadow-2xl hover:bg-gray-50"
+            >
               <img
                 src={member.img}
                 alt={member.name}
@@ -65,7 +97,9 @@ export function About() {
           ))}
         </div>
         <div className="footerTeam font-poppins font-semibold text-lg md:text-2xl text-center py-16 md:py-44">
-          <h1>Thanks for reading, hope you have a great experience at BeluStyle</h1>
+          <h1>
+            Thanks for reading, hope you have a great experience at BeluStyle
+          </h1>
         </div>
       </div>
     </MainLayout>

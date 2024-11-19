@@ -6,7 +6,7 @@ import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const DashboardCategories = () => {
   const [categories, setCategories] = useState([]); // State to store categories

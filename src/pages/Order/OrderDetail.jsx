@@ -14,6 +14,9 @@ import CustomizedSteppers from "../../components/inputs/StepperCommon";
 import { formatPrice } from "../../components/format/formats";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { confirmOrder, getOrderById } from "../../service/OrderSevice";
+import { cancelOrder } from "../../service/CheckoutService";
+import ReviewModal from "../../components/modals/Review";
+import { createReview } from "../../service/ReviewService";
 
 function OrderDetail() {
   const { orderId } = useParams();
@@ -22,9 +25,12 @@ function OrderDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [orderStatus, setOrderStatus] = useState(""); // New state for order status
   const authHeader = useAuthHeader();
+  const [openReviewModal, setOpenReviewModal] = useState(false); // State for modal visibility
+  const [selectedProduct, setSelectedProduct] = useState(null); // State for the selected product to review
+  const [selectedProductDetails, setSelectedProductDetails] = useState(null); // Store selected product details
 
   const handleClickBack = () => {
-    navigate(-1);
+    navigate("/user/orders");
   };
 
   useEffect(() => {
@@ -54,6 +60,26 @@ function OrderDetail() {
     }
   };
 
+  const handleRejectOrder = async () => {
+    try {
+      await cancelOrder(orderId, authHeader);
+      setOrderStatus("CANCELLED"); // Update status after confirming order
+    } catch (error) {
+      console.error("Error Reject order:", error);
+      // Optionally handle the error here
+    }
+  };
+
+  const handleAddReview = (productId, name, image, orderDetails) => {
+    setSelectedProduct(productId);
+    setSelectedProductDetails(orderDetails);
+    setOpenReviewModal(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setOpenReviewModal(false); // Close the modal
+  };
+
   if (isLoading) {
     return (
       <Backdrop
@@ -69,12 +95,57 @@ function OrderDetail() {
     return <div>Error loading order details. Please try again.</div>;
   }
 
+  const handleSubmitReview = async (productId, reviewText) => {
+    console.log("Review submitted for product: ", reviewText);
+
+    // Construct the review object
+    const review = {
+      productId: productId,
+      reviewComment: reviewText.reviewComment,
+      reviewRating: reviewText.reviewRating,
+      orderDetailId: reviewText.orderDetailId,
+    };
+
+    try {
+      // Await the API call
+      const response = await createReview(review, authHeader);
+      console.log("response return: " + response);
+
+      if (response && response.data) {
+        // Update state if API call is successful
+        setOrder((prevOrder) => {
+          const updatedOrderDetails = prevOrder.orderDetails.map((item) => {
+            if (item.productId === productId) {
+              return {
+                ...item,
+                reviews: [...(item.reviews || []), review], // Add the new review
+              };
+            }
+            return item;
+          });
+
+          return {
+            ...prevOrder,
+            orderDetails: updatedOrderDetails, // Update the orderDetails
+          };
+        });
+
+        // Close the modal after success
+        setOpenReviewModal(false);
+      }
+    } catch (error) {
+      // Handle errors gracefully
+      console.error("Error submitting review:", error);
+      alert("Failed to submit review. Please try again.");
+    }
+  };
+
   const statusMapping = {
     PENDING: 0,
     PROCESSING: 1,
     SHIPPED: 2,
     COMPLETED: 3,
-    CANCELLED: 4
+    CANCELLED: 4,
   };
 
   const statusStep = statusMapping[orderStatus] || 1; // Use state value for status
@@ -209,13 +280,15 @@ function OrderDetail() {
                     variant="body1"
                     sx={{ fontFamily: "Poppins", fontWeight: "medium" }}
                   >
-                    <span style={{ fontWeight: "bold" }}>Unit Price:</span> $ {formatPrice(item.unitPrice)}
+                    <span style={{ fontWeight: "bold" }}>Unit Price:</span> ${" "}
+                    {formatPrice(item.unitPrice)}
                   </Typography>
                   <Typography
                     variant="body1"
                     sx={{ fontFamily: "Poppins", fontWeight: "medium" }}
                   >
-                    <span style={{ fontWeight: "bold" }}>Quantity:</span> {item.orderQuantity}
+                    <span style={{ fontWeight: "bold" }}>Quantity:</span>{" "}
+                    {item.orderQuantity}
                   </Typography>
                 </Box>
 
@@ -229,7 +302,8 @@ function OrderDetail() {
                       color: "green",
                     }}
                   >
-                    <span style={{ fontWeight: "bold" }}>Discount:</span> -$ {formatPrice(item.discountAmount)}
+                    <span style={{ fontWeight: "bold" }}>Discount:</span> -${" "}
+                    {formatPrice(item.discountAmount)}
                   </Typography>
                   <Typography
                     variant="body1"
@@ -239,61 +313,107 @@ function OrderDetail() {
                       color: "#1976d2",
                     }}
                   >
-                    <span style={{ fontWeight: "bold" }}>Total Price:</span> $
+                    <span style={{ fontWeight: "bold" }}>Total Price:</span> ${" "}
                     {formatPrice(
                       item.unitPrice * item.orderQuantity - item.discountAmount
                     )}
                   </Typography>
                 </Box>
               </Box>
+
+              {/* Add Review Button */}
+              {orderStatus === "COMPLETED" && item.reviews.length === 0 && (
+                <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() =>
+                      handleAddReview(
+                        item.productId,
+                        item.productName,
+                        item.productImage,
+                        item
+                      )
+                    }
+                    sx={{
+                      textTransform: "none",
+                      fontFamily: "Montserrat",
+                      borderRadius: "30px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Add Review
+                  </Button>
+                </Box>
+              )}
             </Box>
           </Card>
         ))}
-        <Divider sx={{ my: 3 }} />
-        <Typography
-          variant="h5"
-          textAlign="end"
-          sx={{
-            fontFamily: "Poppins",
-            fontWeight: "bold",
-            color: "#1976d2",
-            mt: 2,
-          }}
-        >
-          Order Total: ${formatPrice(order.totalAmount)}
-        </Typography>
-        <Typography
-          variant="h6"
-          textAlign="end"
-          sx={{
-            fontFamily: "Poppins",
-            fontWeight: "bold",
-            color: "#ff5722",
-            mt: 1,
-          }}
-        >
-          Shipping Cost: ${formatPrice(shippingCost)}
-        </Typography>
 
-        {/* Confirm Order Button */}
+        {/* Order Summary */}
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{ fontFamily: "Poppins", fontWeight: "bold" }}
+          >
+            Shipping Fee:
+          </Typography>
+          <Typography variant="h6" sx={{ fontFamily: "Poppins" }}>
+            ${formatPrice(shippingCost)}
+          </Typography>
+        </Box>
+
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{ fontFamily: "Poppins", fontWeight: "bold" }}
+          >
+            Total:
+          </Typography>
+          <Typography variant="h6" sx={{ fontFamily: "Poppins" }}>
+            ${formatPrice(order.totalAmount)}
+          </Typography>
+        </Box>
         {orderStatus === "SHIPPED" && (
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", mb: 2, gap: 2 }}
+          >
             <Button
               variant="contained"
               color="success"
               onClick={handleConfirmOrder}
               sx={{
                 textTransform: "none",
-                fontFamily: "Montserrat",
-                borderRadius: "30px",
-                fontWeight: "bold",
+                borderRadius: 30,
+                fontFamily: "Poppins",
               }}
             >
-              Confirm Order
+              Confirm Receipt
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleRejectOrder}
+              sx={{
+                textTransform: "none",
+                borderRadius: 30,
+                fontFamily: "Poppins",
+              }}
+            >
+              Reject Order or Return
             </Button>
           </Box>
         )}
       </div>
+      <ReviewModal
+        open={openReviewModal}
+        handleClose={handleCloseReviewModal}
+        productId={selectedProduct}
+        name={selectedProductDetails?.productName}
+        image={selectedProductDetails?.productImage}
+        orderDetails={selectedProductDetails?.orderDetailId}
+        handleSubmitReview={handleSubmitReview}
+      />
     </div>
   );
 }

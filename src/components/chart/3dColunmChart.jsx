@@ -6,19 +6,15 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 // Sử dụng theme amCharts Animated
 am4core.useTheme(am4themes_animated);
 
-const Column3DChart = () => {
+const Column3DChart = ({ chartData }) => {
   useEffect(() => {
+    if (!chartData || chartData.length === 0) return; // Kiểm tra xem có dữ liệu hay không
+
     // Create chart instance
     let chart = am4core.create("Colunmchartdiv", am4charts.XYChart3D);
 
     // Add data
-    chart.data = [
-      { category: "January", revenue: 5000 },
-      { category: "February", revenue: 7000 },
-      { category: "March", revenue: 8000 },
-      { category: "April", revenue: 6000 },
-      { category: "May", revenue: 9000 },
-    ];
+    chart.data = chartData;
 
     // Create X-axis (Category Axis)
     let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
@@ -53,7 +49,7 @@ const Column3DChart = () => {
     return () => {
       chart.dispose();
     };
-  }, []);
+  }, [chartData]); // Thêm chartData vào mảng phụ thuộc để cập nhật chart mỗi khi dữ liệu thay đổi
 
   return (
     <div

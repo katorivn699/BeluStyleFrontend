@@ -69,4 +69,20 @@ export const paymentCallback = async(orderId, authHeader, status) => {
       transition: Zoom
     })
   }
-}
+};
+
+export const cancelOrder = async (orderId, authHeader) => {
+  try {
+    const response = await apiClient.put("/api/orders/" + orderId + "/cancel", {}, {
+      headers: {
+        Authorization: authHeader
+      }
+    })
+    return response
+  } catch (error) {
+    toast.error(error?.data || "Error when cancel order", {
+      position: "top-center",
+      transition: Zoom
+    })
+  }
+};

@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { confirmOrder } from "../../service/OrderSevice";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { toast } from "react-toastify";
+import { cancelOrder, paymentCallback } from "../../service/CheckoutService";
 
 function OrderStatus({ status }) {
   let statusText = "";
@@ -21,11 +22,11 @@ function OrderStatus({ status }) {
   switch (status) {
     case "PENDING":
       statusText = "Pending";
-      statusColor = "text-yellow-500"; // Or use a suitable yellow color
+      statusColor = "text-orange-500"; // Or use a suitable yellow color
       break;
     case "PROCESSING":
       statusText = "Processing";
-      statusColor = "text-blue-500"; // Or a suitable blue
+      statusColor = "text-purple-500"; // Or a suitable blue
       break;
     case "COMPLETED":
       statusText = "Completed";
@@ -33,7 +34,7 @@ function OrderStatus({ status }) {
       break;
     case "SHIPPED":
       statusText = "Shipped";
-      statusColor = "text-green-700"; // A darker green
+      statusColor = "text-blue-700"; // A darker green
       break;
     case "CANCELLED":
       statusText = "Cancelled";
@@ -43,7 +44,6 @@ function OrderStatus({ status }) {
       statusText = "Unknown";
       statusColor = "text-gray-500";
   }
-
 
   return (
     <Typography
@@ -66,6 +66,13 @@ function OrderItemCard({ Order, loading }) {
     } catch (error) {
       // Error handling is already done inside confirmOrder
     }
+  };
+
+  const handleDeniedOrder = async () => {
+    try {
+      await cancelOrder(Order.orderId, authHeader);
+      setOrderStatus("CANCELLED");
+    } catch (error) {}
   };
 
   if (loading) {
@@ -125,7 +132,7 @@ function OrderItemCard({ Order, loading }) {
         <Divider />
 
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-6 flex justify-start items-center font-montserrat">
+          <div className="col-span-4 flex justify-start items-center font-montserrat">
             <Typography
               variant="body1"
               className="font-bold mr-2"
@@ -135,22 +142,38 @@ function OrderItemCard({ Order, loading }) {
             </Typography>
           </div>
 
-          <div className="col-span-6 space-x-3 flex justify-end items-center">
+          <div className="col-span-8 space-x-3 flex justify-end items-center">
             {orderStatus === "SHIPPED" && (
-              <Typography>
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleConfirmOrder}
-                  sx={{
-                    textTransform: "none",
-                    fontFamily: "Montserrat",
-                    borderRadius: "30px",
-                  }}
-                >
-                  Confirm Delivery
-                </Button>
-            </Typography>
+              <>
+                <Typography>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleConfirmOrder}
+                    sx={{
+                      textTransform: "none",
+                      fontFamily: "Montserrat",
+                      borderRadius: "30px",
+                    }}
+                  >
+                    Confirm Delivery
+                  </Button>
+                </Typography>
+                <Typography>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleDeniedOrder}
+                    sx={{
+                      textTransform: "none",
+                      fontFamily: "Montserrat",
+                      borderRadius: "30px",
+                    }}
+                  >
+                    Reject Order
+                  </Button>
+                </Typography>
+              </>
             )}
             <Typography>
               <Link to={`/user/orders/${Order.orderId}`}>

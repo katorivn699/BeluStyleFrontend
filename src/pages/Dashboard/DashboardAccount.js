@@ -4,9 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import DashboardAccountDrawer from "../../components/drawer/DashboardAccountDrawer";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const DashboardAccounts = () => {
   const [users, setUsers] = useState([]);

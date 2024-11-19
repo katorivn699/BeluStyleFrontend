@@ -25,7 +25,7 @@ import vnpay from "../../assets/images/vnpay.jpg";
 import payos from "../../assets/images/payos.svg";
 import { BiSolidBank } from "react-icons/bi";
 import cod from "../../assets/images/cod.png";
-import DeleteAccountButton from "../../components/buttons/DeleteAccount";
+import DeleteAccountButton from "../../components/modals/DeleteAccount";
 
 export const UserProfile = () => {
   const authHeader = useAuthHeader();

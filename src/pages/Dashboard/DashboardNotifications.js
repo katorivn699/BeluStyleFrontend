@@ -3,10 +3,10 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { apiClient } from "../../core/api";
 import { Link } from "react-router-dom";
 import { FaEye, FaPlus, FaTrash } from "react-icons/fa";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast, Zoom } from "react-toastify";
 import NotificationDrawer from "../../components/drawer/DashboardNotificationDrawer";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const DashboardNotifications = () => {
   const [notifications, setNotifications] = useState([]);

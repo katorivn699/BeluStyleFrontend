@@ -3,10 +3,10 @@ import { FaPlus, FaEdit, FaTrash, FaEye, FaUserPlus } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { formatPrice } from "../../components/format/formats";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const DashboardDiscounts = () => {
   const [discounts, setDiscounts] = useState([]);

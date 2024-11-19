@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FaFilter, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal"; // Import DeleteConfirmationModal
 import { apiClient } from "../../core/api";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser
 import BrandDrawer from "../../components/drawer/DashboardBrandDrawer";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const DashboardBrands = () => {
   const [brands, setbrands] = useState([]); // State to store brands

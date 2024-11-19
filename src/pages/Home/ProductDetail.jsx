@@ -233,7 +233,9 @@ const ProductDetailPage = () => {
     <div className="ProductDetail font-poppins">
       <div className="headerBreadcums flex items-center h-32 bg-beluBlue">
         <div className="pl-16">
-          <Breadcrumbs>
+          <Breadcrumbs sx={{
+            fontFamily: "Poppins"
+          }}>
             <NavLink to={"/"}>Home</NavLink>
             <NavLink to={"/shop"}>Shop</NavLink>
             <p>{product.productName}</p>

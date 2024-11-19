@@ -3,11 +3,11 @@ import { apiClient } from "../../core/api";
 import { Link } from "react-router-dom";
 import { Box, Button, Typography, Modal, TextField } from "@mui/material";
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import DeleteConfirmationModal from "../../components/buttons/DeleteConfirmationModal";
 import { toast } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { formatPrice } from "../../components/format/formats";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const DashboardProducts = () => {
   const [products, setProducts] = useState([]);
