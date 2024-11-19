@@ -1,12 +1,11 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useCart } from "react-use-cart";
-import { Navigate, NavLink, useNavigate, useParams } from "react-router-dom";
+import { Navigate, NavLink, useParams } from "react-router-dom";
 import { Tabs, Tab, Box, Rating, Skeleton, Breadcrumbs } from "@mui/material";
 import { formatPrice } from "../../components/format/formats";
 import { getProductItem } from "../../service/ShopService";
 import { useProduct } from "../../components/Providers/Product";
-import ProductItem from "../../components/items/ProductItem";
 import ProductRecommend from "../../components/items/ProductRecommend";
 import ReviewStars from "../../components/reviewStars/ReviewStars";
 
