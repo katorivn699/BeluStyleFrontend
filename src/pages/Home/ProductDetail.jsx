@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useCart } from "react-use-cart";
 import { Navigate, NavLink, useParams } from "react-router-dom";
@@ -22,7 +22,8 @@ const ProductDetailPage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
   const [cartCheck, setCartCheck] = useState(true);
-  const { products } = useProduct(); // Access products from ProductContext
+  const { products } = useProduct();
+  const prevColorRef = useRef(selectedColor);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -216,6 +217,12 @@ const ProductDetailPage = () => {
       setCarouselIndex(imageStartIndex[selectedColor] -1 || 0);
     }
   }, [selectedColor, imageStartIndex, product]);
+
+  useEffect(() => {
+    if (prevColorRef.current !== selectedColor) {
+      prevColorRef.current = selectedColor; 
+    }
+  }, [selectedColor]);
   if (loading) {
     return (
       <div className="ProductDetail">
@@ -252,8 +259,7 @@ const ProductDetailPage = () => {
         <div className="col-span-1 lg:col-span-3 place-items-center">
           {selectedVariation?.images ? (
             <Carousel
-              autoPlay={selectedColor !== null}
-              
+              autoPlay={selectedColor !== null && prevColorRef.current === selectedColor}
               index={carouselIndex}
               sx={{
                 width: "100%",
