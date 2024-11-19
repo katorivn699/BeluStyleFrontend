@@ -28,15 +28,11 @@ const Sidebar = ({ isOpen }) => {
   return (
     <div
       className={`bg-white shadow-md h-screen transition-all duration-500 ease-in-out transform ${
-        isOpen ? "max-w-[300px] w-full opacity-100" : "max-w-0 w-0 opacity-0"
-      } flex justify-center items-center`}
-      style={{
-        maxHeight: "100vh",
-        overflowY: isOpen ? "auto" : "hidden",
-      }} // Allow scrolling when open
+        isOpen ? "max-w-[150px] md:max-w-[300px] sm:max-w-[200px] w-full overflow-auto opacity-100" : "max-w-0 w-0 opacity-0 overflow-hidden"
+      } flex justify-start items-start lg:justify-center lg:items-center overflow-y-auto`}
     >
       {isOpen && (
-        <ul className="space-y-4 p-4">
+        <ul className="space-y-4 p-7 w-full lg:w-72">
           <li>
             <Link
               to="/Dashboard"

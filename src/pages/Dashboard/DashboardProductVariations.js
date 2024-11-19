@@ -18,6 +18,7 @@ import { FaEdit, FaPlus, FaStar, FaTrash } from "react-icons/fa";
 import { toast, Zoom } from "react-toastify";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import ReviewStars from "../../components/reviewStars/ReviewStars";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardProductVariations = () => {
   const { productId } = useParams();
@@ -193,7 +194,7 @@ const DashboardProductVariations = () => {
               style={{ backgroundColor: variation.color.hexCode }}
             />
             <p className="font-bold mt-2 text-xl">
-              Price: ${variation.productPrice.toFixed(2)}
+              Price: {formatPrice(variation.productPrice)}
             </p>
           </div>
         ))}

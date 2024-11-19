@@ -171,7 +171,7 @@ const DashboardAccounts = () => {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.username} className="hover:bg-gray-50">
+              <tr key={user.username} className="hover:bg-gray-50 space-y-2">
                 <td className="px-4 py-2">{user.username}</td>
                 <td className="px-4 py-2">{user.email}</td>
                 <td

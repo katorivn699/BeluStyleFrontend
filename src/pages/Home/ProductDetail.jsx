@@ -57,31 +57,38 @@ const ProductDetailPage = () => {
 
   const { allImages, imageStartIndex } = useMemo(() => {
     if (!product) return { allImages: [], imageStartIndex: {} };
-
+  
     const images = [];
     const startIndex = {};
     let imageCounter = 0;
-
+  
+    // Function to get the last part of the URL (filename)
+    const getImagePath = (url) => {
+      const urlObj = new URL(url);
+      return urlObj.pathname.split('/').pop(); // Extract the last part of the URL path (filename)
+    };
+  
     // Use optional chaining and fallback to empty arrays to handle null or undefined
     (product.colors || []).forEach((color) => {
       const colorName = color?.colorName;
       const variations = product.variations?.[colorName] || {};
-
+  
       if (colorName && variations) {
         Object.keys(variations).forEach((size) => {
           const image = variations[size]?.images;
-
-          // Check if image is unique before adding it
-          if (image && !images.some((img) => img.image === image)) {
+  
+          // Ensure images for each color are unique by checking the filename
+          if (image && !images.some((img) => getImagePath(img.image) === getImagePath(image) && img.colorName === colorName)) {
             images.push({ colorName, image });
             imageCounter++;
           }
         });
       }
-
+  
+      // Track the start index of images for each color
       startIndex[colorName] = imageCounter;
     });
-
+  
     return { allImages: images, imageStartIndex: startIndex };
   }, [product]);
 
@@ -206,8 +213,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     // Update the carousel index whenever the selected color changes
     if (product && selectedColor) {
-      // Set the starting image index for the selected color
-      setCarouselIndex(imageStartIndex[selectedColor] || 0);
+      setCarouselIndex(imageStartIndex[selectedColor] -1 || 0);
     }
   }, [selectedColor, imageStartIndex, product]);
   if (loading) {
@@ -246,8 +252,8 @@ const ProductDetailPage = () => {
         <div className="col-span-1 lg:col-span-3 place-items-center">
           {selectedVariation?.images ? (
             <Carousel
-              autoPlay={true}
-              navButtonsAlwaysVisible
+              autoPlay={selectedColor !== null}
+              
               index={carouselIndex}
               sx={{
                 width: "100%",
