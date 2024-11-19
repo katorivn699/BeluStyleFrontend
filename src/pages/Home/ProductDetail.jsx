@@ -8,6 +8,7 @@ import { getProductItem } from "../../service/ShopService";
 import { useProduct } from "../../components/Providers/Product";
 import ProductItem from "../../components/items/ProductItem";
 import ProductRecommend from "../../components/items/ProductRecommend";
+import ReviewStars from "../../components/reviewStars/ReviewStars";
 
 const ProductDetailPage = () => {
   const { items, addItem } = useCart();
@@ -485,13 +486,7 @@ const ProductDetailPage = () => {
                 product.reviews.map((review, index) => (
                   <div key={index} className="mb-4">
                     <h4 className="font-semibold">{review.fullName}</h4>
-                    <Rating
-                      readOnly
-                      style={{
-                        width: 100,
-                      }}
-                      value={review.reviewRating}
-                    />
+                    <ReviewStars rating={review.reviewRating} />
                     <p>{review.reviewComment}</p>
                   </div>
                 ))

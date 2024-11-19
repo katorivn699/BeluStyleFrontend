@@ -33,28 +33,21 @@ const Sidebar = ({ isOpen }) => {
       style={{
         maxHeight: "100vh",
         overflowY: isOpen ? "auto" : "hidden",
-        paddingTop: "10vh",
       }} // Allow scrolling when open
     >
       {isOpen && (
         <ul className="space-y-4 p-4">
           <li>
-            <div className="flex items-center h-full p-4">
-              <span className="text-xl text-[#4880ff] font-bold">Belu</span>
-              <span className="text-xl text-[#202224] font-bold "> Admin</span>
-            </div>
-          </li>
-
-          {/* Dashboard Link */}
-          <li>
             <Link
               to="/Dashboard"
-              className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isDashboard("/Dashboard") ? "bg-blue-500 text-white" : ""
+              className={`flex items-center justify-center text-gray-700 hover:text-white hover:bg-gray-500 ${
+                isDashboard("/Dashboard")
+                  ? "border-2 border-blue-700 text-white"
+                  : ""
               } p-2 rounded-md`}
             >
-              <FaGaugeHigh className="mr-2" />
-              Dashboard
+              <span className="text-xl text-[#4880ff] font-bold">Belu</span>
+              <span className="text-xl text-[#202224] font-bold "> Admin</span>
             </Link>
           </li>
 
@@ -103,16 +96,16 @@ const Sidebar = ({ isOpen }) => {
             </Link>
           </li>
 
-          {/* Order Lists Link */}
+          {/* Brands Link */}
           <li>
             <Link
-              to="/Dashboard/Orders"
+              to="/Dashboard/Brands"
               className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Dashboard/Orders") ? "bg-blue-500 text-white" : ""
+                isActive("/Dashboard/Brands") ? "bg-blue-500 text-white" : ""
               } p-2 rounded-md`}
             >
-              <FaList className="mr-2" />
-              Order Lists
+              <FaStar className="mr-2" />
+              Brands
             </Link>
           </li>
 
@@ -147,19 +140,6 @@ const Sidebar = ({ isOpen }) => {
             </Link>
           </li>
 
-          {/* Brands Link */}
-          <li>
-            <Link
-              to="/Dashboard/Brands"
-              className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
-                isActive("/Dashboard/Brands") ? "bg-blue-500 text-white" : ""
-              } p-2 rounded-md`}
-            >
-              <FaStar className="mr-2" />
-              Brands
-            </Link>
-          </li>
-
           {/* Sales Link */}
           <li>
             <Link
@@ -170,6 +150,19 @@ const Sidebar = ({ isOpen }) => {
             >
               <FaGift className="mr-2" />
               Sales
+            </Link>
+          </li>
+
+          {/* Order Lists Link */}
+          <li>
+            <Link
+              to="/Dashboard/Orders"
+              className={`flex items-center text-gray-700 hover:text-white hover:bg-gray-500 ${
+                isActive("/Dashboard/Orders") ? "bg-blue-500 text-white" : ""
+              } p-2 rounded-md`}
+            >
+              <FaList className="mr-2" />
+              Order Lists
             </Link>
           </li>
 

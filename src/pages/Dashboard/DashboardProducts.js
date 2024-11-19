@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../core/api";
 import { Link } from "react-router-dom";
-import { Box, Button, Typography, Modal, TextField } from "@mui/material";
-import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import { TextField } from "@mui/material";
+import {
+  FaEdit,
+  FaPlus,
+  FaRegStar,
+  FaStar,
+  FaStarHalfAlt,
+  FaTrash,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { formatPrice } from "../../components/format/formats";
@@ -85,6 +92,31 @@ const DashboardProducts = () => {
     setSelectedProduct(null);
   };
 
+  // Hàm render sao
+  const renderStars = (rating) => {
+    const maxStars = 5; // Tổng số sao
+    const fullStars = Math.floor(rating); // Số sao đầy đủ
+    const halfStar = rating % 1 >= 0.5 ? 1 : 0; // Có nửa sao không
+    const emptyStars = maxStars - fullStars - halfStar; // Số sao trống
+
+    return (
+      <div className="flex items-center">
+        {Array(fullStars)
+          .fill(0)
+          .map((_, index) => (
+            <FaStar key={`full-${index}`} className="text-yellow-500" />
+          ))}
+        {/* Sao nửa */}{" "}
+        {halfStar === 1 && <FaStarHalfAlt className="text-yellow-500" />}
+        {Array(emptyStars)
+          .fill(0)
+          .map((_, index) => (
+            <FaRegStar key={`empty-${index}`} className="text-gray-400" />
+          ))}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -140,9 +172,14 @@ const DashboardProducts = () => {
                       : "N/A"}
                   </p>
 
-                  <p className="text-gray-400">
-                    Avg. Rating: {product.averageRating} ({product.totalRatings}{" "}
-                    ratings)
+                  <p className="text-gray-400 flex items-center">
+                    {renderStars(product.averageRating)}
+                    <span className="ml-2 text-sm text-yellow-500">
+                      {product.averageRating}
+                    </span>
+                    <span className="ml-2 text-sm">
+                      ({product.totalRatings} ratings)
+                    </span>
                   </p>
                 </div>
               </Link>

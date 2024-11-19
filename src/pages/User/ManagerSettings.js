@@ -99,6 +99,8 @@ const ManagerSettings = ({
         transition: Zoom,
       });
       onImageUpdate(values.userImage);
+      localStorage.setItem("userImage", values.userImage);
+      localStorage.setItem("userFullName", values.fullName);
       onFullNameUpdate(values.fullName);
       onClose();
     } catch (error) {

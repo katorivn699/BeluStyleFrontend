@@ -70,7 +70,7 @@ export const RegisterUser = async (data, navigate) => {
       fullName: data.fullname,
       email: data.email,
       passwordHash: data.password,
-      phoneNumber: data.phoneNumber
+      phoneNumber: data.phoneNumber,
     });
     localStorage.setItem("mail", data.email);
     navigate("/register/confirm-registration");
@@ -126,8 +126,8 @@ export const HandleLoginGoogle = async (accessToken, navigate, signIn) => {
 
     toast.success("Login successful!" || response?.data?.message, {
       position: "bottom-center",
-      transition: Zoom
-    })
+      transition: Zoom,
+    });
     navigate("/");
   } catch (error) {
     console.error("Error in HandleLoginGoogle:", error);
@@ -189,7 +189,8 @@ export const loginForStaffAndAdmin = async (data, navigate, signIn) => {
   try {
     const response = await loginPromise;
     const user = jwtDecode(response.data.token);
-
+    localStorage.setItem("userImage", user.image);
+    localStorage.setItem("userFullName", user.fullName);
     console.log(response.data.token);
     console.log(user);
 
