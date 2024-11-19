@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { apiClient } from "../../core/api";
 import { FaPlus } from "react-icons/fa";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardWarehouseDetail = () => {
   const { stockId } = useParams();
@@ -192,7 +193,7 @@ const DashboardWarehouseDetail = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-semibold">
-                        ${variation.productPrice.toFixed(2)}
+                       {formatPrice(variation.productPrice)}
                       </p>
                       <p
                         className={`text-sm ${

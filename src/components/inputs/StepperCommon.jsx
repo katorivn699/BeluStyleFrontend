@@ -70,7 +70,7 @@ const ColorlibConnector = styled(StepConnector)(({ theme, status }) => ({
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
         status === 4
-          ? "linear-gradient(95deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)"  // Red gradient for "Canceled"
+          ? "linear-gradient(95deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)" // Red gradient for "Canceled"
           : "linear-gradient(95deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)", // Normal gradient
     },
   },
@@ -93,8 +93,7 @@ const ColorlibConnector = styled(StepConnector)(({ theme, status }) => ({
   },
 }));
 
-
-const ColorlibStepIconRoot = styled("div")(({ theme, status }) => ({
+const ColorlibStepIconRoot = styled("div")(({ theme, status, ownerState }) => ({
   backgroundColor: "#ccc",
   zIndex: 1,
   color: "#fff",
@@ -104,57 +103,48 @@ const ColorlibStepIconRoot = styled("div")(({ theme, status }) => ({
   borderRadius: "50%",
   justifyContent: "center",
   alignItems: "center",
-  ...theme.applyStyles("dark", {
-    backgroundColor: theme.palette.grey[700],
+  ...(status === 4 && {
+    backgroundImage:
+      "linear-gradient(136deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)", // Red gradient for "Canceled"
   }),
-  // Apply a gradient based on the current status
-  ...(status === 4 && { // If the status is 4 (Canceled), apply a red gradient
-    backgroundImage: "linear-gradient(136deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)",
+  ...(ownerState.active && {
+    backgroundImage:
+      status === 4
+        ? "linear-gradient(136deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)" // Red for active canceled state
+        : "linear-gradient(136deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)", // Normal active state
+    boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
   }),
-  variants: [
-    {
-      props: ({ ownerState }) => ownerState.active,
-      style: {
-        backgroundImage:
-          "linear-gradient(136deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)",
-        boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
-      },
-    },
-    {
-      props: ({ ownerState }) => ownerState.completed,
-      style: {
-        backgroundImage:
-          "linear-gradient(136deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)",
-      },
-    },
-  ],
+  ...(ownerState.completed && {
+    backgroundImage:
+      status === 4
+        ? "linear-gradient(136deg, rgba(255,0,0,1) 0%, rgba(255,127,127,1) 100%)"
+        : "linear-gradient(136deg, rgba(23,124,216,1) 0%, rgba(41,127,253,1) 44%, rgba(126,204,250,1) 100%)",
+  }),
 }));
 
-
 function ColorlibStepIcon(props) {
-  const { active, completed, className, icon, status } = props;
+  const { active, completed, icon, status } = props;
 
   const icons = {
     1: <MdOutlinePendingActions />,
     2: <BiLoaderCircle />,
     3: <FaBox />,
     4: <TbShoppingCartCheck />,
-    5: <TbShoppingCartX />, // Icon for Cancel step
+    5: <TbShoppingCartX />,
   };
 
   return (
-    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className} status={status}>
+    <ColorlibStepIconRoot ownerState={{ completed, active }} status={status}>
       {icons[String(icon)]}
     </ColorlibStepIconRoot>
   );
 }
 
-
 ColorlibStepIcon.propTypes = {
   active: PropTypes.bool,
-  className: PropTypes.string,
   completed: PropTypes.bool,
   icon: PropTypes.node,
+  status: PropTypes.number, // Ensure the status prop is passed
 };
 
 export default function CustomizedSteppers({ status }) {
@@ -165,7 +155,7 @@ export default function CustomizedSteppers({ status }) {
     "Delivered",
   ];
 
-  if (status === 4) { // Add "Canceled" step when status is 4
+  if (status === 4) {
     steps.push("Canceled");
   }
 
@@ -173,11 +163,15 @@ export default function CustomizedSteppers({ status }) {
     <Stepper
       alternativeLabel
       activeStep={status}
-      connector={<ColorlibConnector status={status} />} // Pass status to connector
+      connector={<ColorlibConnector status={status} />}
     >
       {steps.map((label, index) => (
         <Step key={index}>
-          <StepLabel StepIconComponent={(props) => <ColorlibStepIcon {...props} status={status} />}>
+          <StepLabel
+            StepIconComponent={(props) => (
+              <ColorlibStepIcon {...props} status={status} />
+            )}
+          >
             {label}
           </StepLabel>
         </Step>
@@ -185,4 +179,3 @@ export default function CustomizedSteppers({ status }) {
     </Stepper>
   );
 }
-

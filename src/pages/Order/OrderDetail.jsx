@@ -294,17 +294,19 @@ function OrderDetail() {
 
                 {/* Discount and Total Price */}
                 <Box>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontWeight: "medium",
-                      color: "green",
-                    }}
-                  >
-                    <span style={{ fontWeight: "bold" }}>Discount:</span> -${" "}
-                    {formatPrice(item.discountAmount)}
-                  </Typography>
+                  {item.discountAmount > 0 && (
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontFamily: "Poppins",
+                        fontWeight: "medium",
+                        color: "green",
+                      }}
+                    >
+                      <span style={{ fontWeight: "bold" }}>Discount:</span> -${" "}
+                      {formatPrice(item.discountAmount)}
+                    </Typography>
+                  )}
                   <Typography
                     variant="body1"
                     sx={{

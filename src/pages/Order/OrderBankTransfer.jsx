@@ -36,7 +36,7 @@ function OrderBankTransfer() {
   return (
     <div className="mx-auto max-h-full">
       {/* Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-10">
         {/* Left side: QR Code */}
         <div className="flex justify-center">
           <img
