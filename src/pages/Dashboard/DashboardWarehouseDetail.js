@@ -32,7 +32,17 @@ const DashboardWarehouseDetail = () => {
 
   if (!stockProducts.length) {
     return (
-      <div className="text-red-500"> No products available in this stock.</div>
+      <>
+        <div className="text-red-500">
+          {" "}
+          No products available in this stock.
+        </div>
+        <Link to={`/Dashboard/Warehouse/${stockId}/Import`}>
+          <button className="text-blue-600 border border-blue-500 px-4 py-2 rounded-lg flex items-center">
+            <FaPlus className="mr-2" /> Import Product
+          </button>
+        </Link>
+      </>
     );
   }
 
