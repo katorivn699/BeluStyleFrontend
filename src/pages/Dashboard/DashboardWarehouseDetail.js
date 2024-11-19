@@ -31,7 +31,9 @@ const DashboardWarehouseDetail = () => {
   }, [stockId]);
 
   if (!stockProducts.length) {
-    return <div>Loading stock details...</div>;
+    return (
+      <div className="text-red-500"> No products available in this stock.</div>
+    );
   }
 
   const groupedProducts = stockProducts.reduce((grouped, product) => {
@@ -193,7 +195,7 @@ const DashboardWarehouseDetail = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-semibold">
-                       {formatPrice(variation.productPrice)}
+                        {formatPrice(variation.productPrice)}
                       </p>
                       <p
                         className={`text-sm ${
@@ -210,7 +212,7 @@ const DashboardWarehouseDetail = () => {
             </div>
           ))
         ) : (
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-red-500">
             No products available in this stock.
           </p>
         )}
