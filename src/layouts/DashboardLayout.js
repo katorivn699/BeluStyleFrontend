@@ -19,8 +19,12 @@ const DashboardLayout = ({ toggleSidebar, isOpen, children }) => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [userImage, setUserImage] = useState(authUser.userImage || userDefault);
-  const [fullName, setFullName] = useState(authUser.userFullName);
+  const [userImage, setUserImage] = useState(
+    localStorage.getItem("userImage") || authUser.userImage || userDefault
+  );
+  const [fullName, setFullName] = useState(
+    localStorage.getItem("userFullName") || authUser.userFullName
+  );
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const openSettingsModal = () => {

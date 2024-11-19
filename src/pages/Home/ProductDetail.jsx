@@ -8,6 +8,7 @@ import { getProductItem } from "../../service/ShopService";
 import { useProduct } from "../../components/Providers/Product";
 import ProductItem from "../../components/items/ProductItem";
 import ProductRecommend from "../../components/items/ProductRecommend";
+import ReviewStars from "../../components/reviewStars/ReviewStars";
 
 const ProductDetailPage = () => {
   const { items, addItem } = useCart();
@@ -47,14 +48,12 @@ const ProductDetailPage = () => {
 
   const recommendedProducts = useMemo(() => {
     if (!product) return [];
-    
+
     const otherProducts = products.filter(
       (item) => item.productId !== product.productId
     );
 
-    return otherProducts
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 5);
+    return otherProducts.sort(() => 0.5 - Math.random()).slice(0, 5);
   }, [products, product]);
 
   const { allImages, imageStartIndex } = useMemo(() => {
@@ -229,7 +228,7 @@ const ProductDetailPage = () => {
         </div>
       </div>
     );
-  };
+  }
 
   return (
     <div className="ProductDetail font-poppins">
@@ -477,13 +476,7 @@ const ProductDetailPage = () => {
                 product.reviews.map((review, index) => (
                   <div key={index} className="mb-4">
                     <h4 className="font-semibold">{review.fullName}</h4>
-                    <Rating
-                      readOnly
-                      style={{
-                        width: 100,
-                      }}
-                      value={review.reviewRating}
-                    />
+                    <ReviewStars rating={review.reviewRating} />
                     <p>{review.reviewComment}</p>
                   </div>
                 ))

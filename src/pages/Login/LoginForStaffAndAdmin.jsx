@@ -28,6 +28,10 @@ const LoginForStaffAndAdmin = () => {
     }
   };
 
+  const handleBackToHome = () => {
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-white via-blue-300 to-blue-600 flex justify-center items-center p-4">
       <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
@@ -92,6 +96,12 @@ const LoginForStaffAndAdmin = () => {
             </button>
           </div>
         </form>
+        <button
+          onClick={handleBackToHome}
+          className="mt-4 w-full bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-semibold text-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-300"
+        >
+          Back to Home
+        </button>
       </div>
     </div>
   );

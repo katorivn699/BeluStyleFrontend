@@ -18,12 +18,15 @@ const DashboardCreateNotification = () => {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [targetRoleId, setTargetRoleId] = useState("");
+  const [touched, setTouched] = useState({
+    title: false,
+    message: false,
+  });
   const authUser = useAuthUser();
   const userRole = authUser.role;
   const navigate = useNavigate();
   const varToken = useAuthHeader();
 
-  // Define available roles based on user role
   const availableRoles =
     userRole === "ADMIN"
       ? [
@@ -32,8 +35,20 @@ const DashboardCreateNotification = () => {
         ]
       : [{ id: 2, name: "Customer" }];
 
+  // Validation logic
+  const isTitleValid = title.trim().length > 5;
+  const isMessageValid = message.trim().length > 5;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setTouched({
+      title: true,
+      message: true,
+    });
+
+    if (!isTitleValid || !isMessageValid) return;
+
     await apiClient
       .post(
         "/api/notifications",
@@ -77,6 +92,13 @@ const DashboardCreateNotification = () => {
           margin="normal"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onBlur={() => setTouched((prev) => ({ ...prev, title: true }))}
+          error={touched.title && !isTitleValid}
+          helperText={
+            touched.title && !isTitleValid
+              ? "Title must be longer than 5 characters."
+              : ""
+          }
           required
         />
         <TextField
@@ -88,6 +110,13 @@ const DashboardCreateNotification = () => {
           rows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onBlur={() => setTouched((prev) => ({ ...prev, message: true }))}
+          error={touched.message && !isMessageValid}
+          helperText={
+            touched.message && !isMessageValid
+              ? "Message must be longer than 5 characters."
+              : ""
+          }
           required
         />
         <FormControl fullWidth margin="normal" required>
