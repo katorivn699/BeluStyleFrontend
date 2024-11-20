@@ -49,7 +49,7 @@ const Footer = () => {
             BeluStyle
           </h1>
           <div className="info w-full">
-            <p className="font-poppins text-sm md:text-base">
+            <p className="font-montserrat font-medium text-sm md:text-base">
               600 Nguyễn Văn Cừ Nối Dài, An Bình, Ninh Kiều, Cần Thơ 900000 FPT
               CAN THO UNIVERSITY
             </p>
