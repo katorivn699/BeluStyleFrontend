@@ -101,7 +101,12 @@ const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
         <img
           src={account.userImage}
           alt={account.username}
-          style={{ width: "100%", height: "auto" }}
+          style={{
+            width: "100%", // Set the width
+            height: "25%", // Match the height to the width for a square
+            objectFit: "cover", // Ensures the image scales proportionally
+            borderRadius: "8px", // Optional: Slightly rounded corners
+          }}
         />
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
           <strong>Email:</strong> {account.email}
