@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../../core/api";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardStockTransactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -122,9 +123,8 @@ const DashboardStockTransactions = () => {
                     )}
                   </p>
                   <p>
-                    <strong>Price:</strong> $
-                    {transaction.productVariation?.productPrice?.toFixed(2) ||
-                      "null"}
+                    <strong>Price:</strong>
+                    {formatPrice(transaction.productVariation?.productPrice)}
                   </p>
                   <p>
                     <strong>Quantity:</strong>{" "}

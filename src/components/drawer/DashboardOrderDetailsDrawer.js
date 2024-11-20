@@ -134,7 +134,7 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
                     {/* Product Image */}
                     <Grid item xs={12} sm={6}>
                       <img
-                        src={`path_to_images/${item.productImage}`}
+                        src={item.productImage}
                         alt={item.productName}
                         style={{
                           width: "100%",
