@@ -211,7 +211,7 @@ const ManagerSettings = ({
                 fullWidth
                 margin="normal"
                 onChange={handleChange}
-                disabled={role === "STAFF"}
+                disabled
                 error={touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
               />

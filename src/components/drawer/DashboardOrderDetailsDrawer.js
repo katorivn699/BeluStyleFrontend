@@ -44,7 +44,7 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
     if (orderId && open) {
       fetchOrderDetails();
     }
-  }, [orderId, open]);
+  }, [orderId, open, onClose, orderId]);
 
   const fetchOrderDetails = () => {
     apiClient
@@ -56,7 +56,10 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
       .then((response) => {
         setOrderDetails(response.data);
       })
-      .catch((error) => console.error("Error fetching order details:", error));
+      .catch((error) => {
+        setOrderDetails(null);
+        console.error("Error fetching order details:", error);
+      });
   };
 
   if (!orderDetails) {
@@ -134,7 +137,7 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
                     {/* Product Image */}
                     <Grid item xs={12} sm={6}>
                       <img
-                        src={`path_to_images/${item.productImage}`}
+                        src={item.productImage}
                         alt={item.productName}
                         style={{
                           width: "100%",

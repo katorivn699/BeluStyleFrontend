@@ -200,7 +200,7 @@ const DashboardOrders = () => {
                       className="flex items-center mb-1"
                     >
                       <Payment className="mr-1" /> Total Amount:{" "}
-                      {formatPrice(order.totalAmount.toFixed(2))}
+                      {formatPrice(order.totalAmount)}
                     </Typography>
                     <Typography
                       color="textSecondary"
