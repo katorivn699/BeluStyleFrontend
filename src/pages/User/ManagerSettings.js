@@ -64,7 +64,7 @@ const ManagerSettings = ({
           console.error("Error fetching user data:", error);
         });
     }
-  }, [open, varToken]);
+  }, [open, varToken, userData, onClose]);
 
   const handleImageUpload = async (e, setFieldValue) => {
     const file = e.target.files[0];
