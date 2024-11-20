@@ -143,36 +143,59 @@ function OrderItemCard({ Order, loading }) {
           </div>
 
           <div className="col-span-8 space-x-3 flex justify-end items-center">
-            {orderStatus === "SHIPPED" && (
+            {(orderStatus === "SHIPPED" ||
+              orderStatus === "PENDING" ||
+              orderStatus === "PROCESSING") && (
               <>
-                <Typography>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={handleConfirmOrder}
-                    sx={{
-                      textTransform: "none",
-                      fontFamily: "Montserrat",
-                      borderRadius: "30px",
-                    }}
-                  >
-                    Confirm Delivery
-                  </Button>
-                </Typography>
-                <Typography>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleDeniedOrder}
-                    sx={{
-                      textTransform: "none",
-                      fontFamily: "Montserrat",
-                      borderRadius: "30px",
-                    }}
-                  >
-                    Reject Order
-                  </Button>
-                </Typography>
+                {orderStatus === "SHIPPED" && (
+                  <>
+                    <Typography>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={handleConfirmOrder}
+                        sx={{
+                          textTransform: "none",
+                          fontFamily: "Montserrat",
+                          borderRadius: "30px",
+                        }}
+                      >
+                        Confirm Delivery
+                      </Button>
+                    </Typography>
+                    <Typography>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={handleDeniedOrder}
+                        sx={{
+                          textTransform: "none",
+                          fontFamily: "Montserrat",
+                          borderRadius: "30px",
+                        }}
+                      >
+                        Reject Order
+                      </Button>
+                    </Typography>
+                  </>
+                )}
+                {(orderStatus === "PENDING" ||
+                  orderStatus === "PROCESSING") && (
+                  <Typography>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleDeniedOrder}
+                      sx={{
+                        textTransform: "none",
+                        fontFamily: "Montserrat",
+                        borderRadius: "30px",
+                      }}
+                    >
+                      Cancel Order
+                    </Button>
+                  </Typography>
+                )}
               </>
             )}
             <Typography>
