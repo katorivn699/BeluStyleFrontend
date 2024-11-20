@@ -58,26 +58,30 @@ const ProductDetailPage = () => {
 
   const { allImages, imageStartIndex } = useMemo(() => {
     if (!product) return { allImages: [], imageStartIndex: {} };
-  
+
     const images = [];
     const startIndex = {};
     let imageCounter = 0;
-  
+
     // Function to get the last part of the URL (filename)
     const getImagePath = (url) => {
-      const urlObj = new URL(url);
-      return urlObj.pathname.split('/').pop(); // Extract the last part of the URL path (filename)
+      try {
+        const urlObj = new URL(url, window.location.origin); 
+        return urlObj.pathname.split('/').pop(); 
+      } catch (error) {
+        console.warn("Invalid URL:", url, "Error:", error);
+        return url.split('/').pop(); 
+      }
     };
-  
-    // Use optional chaining and fallback to empty arrays to handle null or undefined
+
     (product.colors || []).forEach((color) => {
       const colorName = color?.colorName;
       const variations = product.variations?.[colorName] || {};
-  
+
       if (colorName && variations) {
         Object.keys(variations).forEach((size) => {
           const image = variations[size]?.images;
-  
+
           // Ensure images for each color are unique by checking the filename
           if (image && !images.some((img) => getImagePath(img.image) === getImagePath(image) && img.colorName === colorName)) {
             images.push({ colorName, image });
@@ -85,11 +89,11 @@ const ProductDetailPage = () => {
           }
         });
       }
-  
+
       // Track the start index of images for each color
       startIndex[colorName] = imageCounter;
     });
-  
+
     return { allImages: images, imageStartIndex: startIndex };
   }, [product]);
 
