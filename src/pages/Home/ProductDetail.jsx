@@ -247,7 +247,7 @@ const ProductDetailPage = () => {
   }
 
   return (
-    <div className="ProductDetail font-poppins">
+    <div className="ProductDetail font-montserrat">
       <div className="headerBreadcums flex items-center h-32 bg-beluBlue">
         <div className="pl-16">
           <Breadcrumbs sx={{

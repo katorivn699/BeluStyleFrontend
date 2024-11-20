@@ -24,6 +24,8 @@ import useSignIn from "react-auth-kit/hooks/useSignIn";
 import vnpay from "../../assets/images/vnpay.jpg";
 import payos from "../../assets/images/payos.svg";
 import { BiSolidBank } from "react-icons/bi";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import cod from "../../assets/images/cod.png";
 import DeleteAccountButton from "../../components/modals/DeleteAccount";
 
@@ -57,13 +59,13 @@ export const UserProfile = () => {
           userId: userInfo.userId || "ID not available",
           email: userInfo.email || "Email not provided",
           username: userInfo.username || "Name not set",
-          fullName: userInfo.fullName || "Full name not specified",
-          userAddress: userInfo.userAddress || "Address not provided",
+          fullName: userInfo.fullName || "",
+          userAddress: userInfo.userAddress || "",
           currentPaymentMethod:
             userInfo.currentPaymentMethod ||
             "Place an order to add a payment method",
           userImage: userInfo.userImage || userDefault,
-          phoneNumber: userInfo.phoneNumber || "Phone number not provided", // Ensure phone number is populated
+          phoneNumber: userInfo.phoneNumber || "", // Ensure phone number is populated
         };
         setUserData(userInfoData);
         setProfileImage(userInfo.userImage);
@@ -76,6 +78,67 @@ export const UserProfile = () => {
     };
     fetchUserInfo();
   }, [authHeader]);
+
+  const validationSchema = Yup.object({
+    fullName: Yup.string()
+      .required("Full name is required")
+      .matches(
+        /^[a-zA-Z\s]+$/,
+        "Full name must not contain special characters or numbers"
+      ),
+    phoneNumber: Yup.string()
+      .matches(/^\d+$/, "Phone number must contain only digits")
+      .min(10, "Phone number must be at least 10 digits")
+      .max(15, "Phone number can't exceed 15 digits")
+      .required("Phone number is required"),
+    userAddress: Yup.string().required("Address is required"),
+  });
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      fullName: userData.fullName || "",
+      phoneNumber: userData.phoneNumber || "",
+      userAddress: userData.userAddress || "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append("image", selectedFile);
+
+          const uploadResponse = await fetch(
+            "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+          const uploadResult = await uploadResponse.json();
+
+          if (!uploadResult.success) throw new Error("Failed to upload image");
+
+          values.userImage = uploadResult.data.url;
+        }
+
+        const updatedData = { ...userData, ...values };
+        await UpdateUserInfo(updatedData, authHeader, signIn);
+
+        toast.success("Profile updated successfully!", {
+          position: "top-center",
+          transition: Zoom,
+        });
+        setInitialData(updatedData);
+        setSelectedFile(null);
+      } catch (error) {
+        toast.error("An error occurred: " + error.message, {
+          position: "top-center",
+          transition: Zoom,
+        });
+      }
+    },
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -105,40 +168,40 @@ export const UserProfile = () => {
     );
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (selectedFile) {
-        const formData = new FormData();
-        formData.append("image", selectedFile);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     if (selectedFile) {
+  //       const formData = new FormData();
+  //       formData.append("image", selectedFile);
 
-        const uploadResponse = await fetch(
-          "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-        const uploadResult = await uploadResponse.json();
+  //       const uploadResponse = await fetch(
+  //         "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
+  //         {
+  //           method: "POST",
+  //           body: formData,
+  //         }
+  //       );
+  //       const uploadResult = await uploadResponse.json();
 
-        if (!uploadResult.success) throw new Error("Failed to upload image");
+  //       if (!uploadResult.success) throw new Error("Failed to upload image");
 
-        userData.userImage = uploadResult.data.url;
-      }
-      await UpdateUserInfo(userData, authHeader, signIn);
-      toast.success("Profile updated successfully!", {
-        position: "top-center",
-        transition: Zoom,
-      });
-      setInitialData(userData);
-      setSelectedFile(null);
-    } catch (error) {
-      toast.error("An error occurred: " + error.message, {
-        position: "top-center",
-        transition: Zoom,
-      });
-    }
-  };
+  //       userData.userImage = uploadResult.data.url;
+  //     }
+  //     await UpdateUserInfo(userData, authHeader, signIn);
+  //     toast.success("Profile updated successfully!", {
+  //       position: "top-center",
+  //       transition: Zoom,
+  //     });
+  //     setInitialData(userData);
+  //     setSelectedFile(null);
+  //   } catch (error) {
+  //     toast.error("An error occurred: " + error.message, {
+  //       position: "top-center",
+  //       transition: Zoom,
+  //     });
+  //   }
+  // };
 
   return (
     <Grid2 container>
@@ -214,7 +277,7 @@ export const UserProfile = () => {
                 </Typography>
               </Box>
             </Box>
-            <Box component="form" mt={3} onSubmit={handleSubmit}>
+            <Box component="form" mt={3} onSubmit={formik.handleSubmit}>
               <TextField
                 fullWidth
                 margin="normal"
@@ -252,8 +315,13 @@ export const UserProfile = () => {
                 margin="normal"
                 label="Full Name"
                 name="fullName"
-                value={userData.fullName}
-                onChange={handleInputChange}
+                value={formik.values.fullName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.fullName && Boolean(formik.errors.fullName)
+                }
+                helperText={formik.touched.fullName && formik.errors.fullName}
                 sx={{
                   "& .MuiInputBase-input": {
                     fontFamily: "Montserrat",
@@ -268,8 +336,16 @@ export const UserProfile = () => {
                 margin="normal"
                 label="Phone number"
                 name="phoneNumber"
-                value={userData.phoneNumber}
-                onChange={handleInputChange}
+                value={formik.values.phoneNumber}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.phoneNumber &&
+                  Boolean(formik.errors.phoneNumber)
+                }
+                helperText={
+                  formik.touched.phoneNumber && formik.errors.phoneNumber
+                }
                 sx={{
                   "& .MuiInputBase-input": {
                     fontFamily: "Montserrat",
@@ -284,8 +360,16 @@ export const UserProfile = () => {
                 margin="normal"
                 label="Address"
                 name="userAddress"
-                value={userData.userAddress}
-                onChange={handleInputChange}
+                value={formik.values.userAddress}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.userAddress &&
+                  Boolean(formik.errors.userAddress)
+                }
+                helperText={
+                  formik.touched.userAddress && formik.errors.userAddress
+                }
                 sx={{
                   "& .MuiInputBase-input": {
                     fontFamily: "Montserrat",
@@ -295,6 +379,18 @@ export const UserProfile = () => {
                   },
                 }}
               />
+              {formik.touched.userAddress && (
+                <div className="font-montserrat">
+                  <p className="text-red-400">
+                    <strong>Caution:</strong>
+                  </p>
+                  <p>
+                    Modifying the address format may prevent it from being
+                    automatically populated during checkout. Please ensure it's
+                    in the correct format.
+                  </p>
+                </div>
+              )}
               {/* <TextField
               fullWidth
               margin="normal"
