@@ -10,10 +10,7 @@ export const getOrderById = async (orderId, authHeader) => {
     });
     return response;
   } catch (error) {
-    toast.error(error?.data || "Get order error!", {
-      position: "top-center",
-      transition: Zoom,
-    });
+    console.log("Error fetching Order");
   }
 };
 
@@ -29,9 +26,5 @@ export const confirmOrder = async (orderId, authHeader) => {
     );
     return response;
   } catch (error) {
-    toast.error(error?.data || "Error when confirm the order! try again", {
-        position: "top-center",
-        transition: Zoom
-    })
   }
 };

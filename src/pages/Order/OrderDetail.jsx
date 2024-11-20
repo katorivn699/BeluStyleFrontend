@@ -39,8 +39,9 @@ function OrderDetail() {
         setIsLoading(true);
         const response = await getOrderById(orderId, authHeader);
         setOrder(response.data);
-        setOrderStatus(response.data.orderStatus); // Set order status when fetched
+        setOrderStatus(response.data.orderStatus); 
       } catch (error) {
+        navigate("/user/orders");
         console.error("Error fetching order details:", error);
       } finally {
         setIsLoading(false);

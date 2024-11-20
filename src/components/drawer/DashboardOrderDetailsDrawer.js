@@ -14,7 +14,6 @@ import { Close } from "@mui/icons-material";
 import { apiClient } from "../../core/api";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { formatPrice } from "../format/formats";
-import { FaStar, FaRegStar } from "react-icons/fa";
 import ReviewStars from "../reviewStars/ReviewStars";
 
 // Status color mapping
@@ -134,7 +133,7 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
                     {/* Product Image */}
                     <Grid item xs={12} sm={6}>
                       <img
-                        src={`path_to_images/${item.productImage}`}
+                        src={item.productImage}
                         alt={item.productName}
                         style={{
                           width: "100%",
