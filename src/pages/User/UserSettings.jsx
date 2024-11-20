@@ -83,7 +83,7 @@ export const UserProfile = () => {
     fullName: Yup.string()
       .required("Full name is required")
       .matches(
-        /^[a-zA-Z\s]+$/,
+        /^[\p{L}\s]+$/u,  // Unicode property escape: \p{L} matches any letter (including Vietnamese)
         "Full name must not contain special characters or numbers"
       ),
     phoneNumber: Yup.string()
@@ -91,8 +91,14 @@ export const UserProfile = () => {
       .min(10, "Phone number must be at least 10 digits")
       .max(15, "Phone number can't exceed 15 digits")
       .required("Phone number is required"),
-    userAddress: Yup.string().required("Address is required"),
+    userAddress: Yup.string()
+      .required("Address is required")
+      .matches(
+        /^[\p{L}\p{N}\s,.-]+$/u,  // Unicode property escape: \p{L} for letters, \p{N} for numbers
+        "Address must not contain special characters"
+      ),
   });
+    
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -381,10 +387,10 @@ export const UserProfile = () => {
               />
               {formik.touched.userAddress && (
                 <div className="font-montserrat">
-                  <p className="text-red-400">
+                  <p className="text-red-700">
                     <strong>Caution:</strong>
                   </p>
-                  <p>
+                  <p className="text-red-500">
                     Modifying the address format may prevent it from being
                     automatically populated during checkout. Please ensure it's
                     in the correct format.
