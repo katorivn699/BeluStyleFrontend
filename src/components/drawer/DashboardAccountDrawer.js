@@ -29,7 +29,7 @@ const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
           setIsLoading(false);
         });
     }
-  }, [userId]);
+  }, [userId, isOpen, onClose]);
 
   if (isLoading) {
     return (
