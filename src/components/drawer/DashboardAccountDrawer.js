@@ -132,10 +132,12 @@ const DashboardAccountDrawer = ({ isOpen, onClose, userId }) => {
           <strong>Address:</strong> {account.userAddress}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          <strong>Created At:</strong> {account.createdAt}
+          <strong>Created At:</strong>{" "}
+          {new Date(account.createdAt).toLocaleString()}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 2 }}>
-          <strong>Updated At:</strong> {account.updatedAt}
+          <strong>Updated At:</strong>{" "}
+          {new Date(account.updatedAt).toLocaleString()}
         </Typography>
       </Box>
     </Drawer>

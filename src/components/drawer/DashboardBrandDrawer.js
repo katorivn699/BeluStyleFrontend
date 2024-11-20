@@ -60,10 +60,10 @@ const BrandDrawer = ({ isOpen, onClose, brand, onEdit, onDelete }) => {
           <strong>Total quantity:</strong> {brand.totalQuantity}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          <strong>Created:</strong> {brand.createdAt}
+          <strong>Created:</strong> {new Date(brand.createdAt).toLocaleString()}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 2 }}>
-          <strong>Updated:</strong> {brand.updatedAt}
+          <strong>Updated:</strong> {new Date(brand.updatedAt).toLocaleString()}
         </Typography>
 
         {/* Action Buttons */}

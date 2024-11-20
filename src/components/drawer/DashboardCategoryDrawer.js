@@ -51,10 +51,12 @@ const CategoryDrawer = ({ isOpen, onClose, category, onEdit, onDelete }) => {
           <strong>Total quantity:</strong> {category.totalQuantity}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
-          <strong>Created:</strong> {category.createdAt}
+          <strong>Created:</strong>{" "}
+          {new Date(category.createdAt).toLocaleString()}
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 2 }}>
-          <strong>Updated:</strong> {category.updatedAt}
+          <strong>Updated:</strong>
+          {new Date(category.updatedAt).toLocaleString()}
         </Typography>
 
         {/* Action Buttons */}
