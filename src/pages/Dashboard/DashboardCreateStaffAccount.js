@@ -32,8 +32,11 @@ const DashboardCreateStaffAccount = () => {
       ),
     fullName: Yup.string().required("Full name is required"),
     email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
+      .email("Invalid email format")
+      .required("Email is required")
+      .min(1, "Email must be at least 1 character")
+      .max(255, "Email cannot exceed 255 characters")
+      .matches(/^[a-zA-Z0-9@.]+$/, "Email cannot contain special characters"),
     phoneNumber: Yup.string()
       .matches(
         /^(?:\+84|0)\d{9,10}$/,

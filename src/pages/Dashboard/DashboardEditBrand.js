@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 import * as Yup from "yup";
-import { Formik, Field, ErrorMessage } from "formik";
+import { Formik, Field, ErrorMessage, Form } from "formik";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 const DashboardEditBrand = () => {
@@ -141,7 +141,7 @@ const DashboardEditBrand = () => {
         onSubmit={handleSubmit}
       >
         {({ values, handleChange, handleBlur, errors, touched }) => (
-          <form onSubmit={(e) => e.preventDefault()}>
+          <Form>
             <TextField
               label="Brand Name"
               variant="outlined"
@@ -168,7 +168,9 @@ const DashboardEditBrand = () => {
               onBlur={handleBlur}
               required
               disabled={loading}
-              error={touched.brandDescription && !!errors.brandDescription}
+              error={
+                touched.brandDescription && Boolean(errors.brandDescription)
+              }
               helperText={touched.brandDescription && errors.brandDescription}
             />
 
@@ -183,7 +185,7 @@ const DashboardEditBrand = () => {
               onBlur={handleBlur}
               required
               disabled={loading}
-              error={touched.websiteUrl && !!errors.websiteUrl}
+              error={touched.websiteUrl && Boolean(errors.websiteUrl)}
               helperText={touched.websiteUrl && errors.websiteUrl}
             />
 
@@ -249,7 +251,7 @@ const DashboardEditBrand = () => {
                 color="primary"
                 fullWidth
                 disabled={loading}
-                onClick={() => handleSubmit(values)}
+                onSubmit={() => handleSubmit(values)}
               >
                 {loading ? (
                   <CircularProgress size={24} color="inherit" />
@@ -258,7 +260,7 @@ const DashboardEditBrand = () => {
                 )}
               </Button>
             </Box>
-          </form>
+          </Form>
         )}
       </Formik>
     </Container>
