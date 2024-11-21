@@ -43,7 +43,7 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
     if (orderId && open) {
       fetchOrderDetails();
     }
-  }, [orderId, open]);
+  }, [orderId, open, onClose]);
 
   const fetchOrderDetails = () => {
     apiClient
@@ -55,7 +55,9 @@ const DashboardOrderDetailsDrawer = ({ open, onClose, orderId }) => {
       .then((response) => {
         setOrderDetails(response.data);
       })
-      .catch((error) => console.error("Error fetching order details:", error));
+      .catch((error) => {
+        setOrderDetails(null);
+      });
   };
 
   if (!orderDetails) {

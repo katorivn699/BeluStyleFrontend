@@ -39,7 +39,7 @@ const DashboardOrders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [currentPage]);
+  }, [currentPage, orders, drawerOpen]);
 
   const fetchOrders = () => {
     apiClient
