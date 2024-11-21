@@ -169,6 +169,8 @@ const CheckoutPage = () => {
           maximumDiscountValue: response.data.maximumDiscountValue,
         };
 
+        console.log(discount);
+
         setDiscountApply(discount);
         const discountAmount = calculateDiscount(subTT, discount);
         setDiscountMinus(discountAmount);
@@ -181,20 +183,21 @@ const CheckoutPage = () => {
   // Discount calculation function
   const calculateDiscount = (originalPrice, discount) => {
     let discountAmount = 0;
-
+  
     if (discount.discountType === "PERCENTAGE") {
-      discountAmount =
-        (originalPrice * discount.discountValue) / 100 >
-        (discount.maximumDiscountValue !== null || undefined
-          ? discount.maximumDiscountValue
-          : discount.discountValue)
-          ? discount.maximumDiscountValue
-          : (originalPrice * discount.discountValue) / 100;
+      const calculatedDiscount = (originalPrice * discount.discountValue) / 100;
+      const maxDiscount = discount.maximumDiscountValue !== null && discount.maximumDiscountValue !== undefined
+        ? discount.maximumDiscountValue
+        : Infinity;
+  
+      discountAmount = Math.min(calculatedDiscount, maxDiscount);
     } else if (discount.discountType === "FIXED_AMOUNT") {
       discountAmount = discount.discountValue;
     }
+  
     return discountAmount;
   };
+  
 
   // Định nghĩa itemCheckout sau khi tính toán subtotal
   const itemCheckout = items.map((item, index) => ({
