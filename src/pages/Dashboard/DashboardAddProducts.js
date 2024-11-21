@@ -164,6 +164,7 @@ const DashboardAddProducts = () => {
         value={productName}
         onChange={(e) => setProductName(e.target.value)}
         required
+        disabled={isSubmitting}
       />
       <TextField
         label="Product Description"
@@ -173,6 +174,7 @@ const DashboardAddProducts = () => {
         value={productDescription}
         onChange={(e) => setProductDescription(e.target.value)}
         required
+        disabled={isSubmitting}
       />
       <FormControl fullWidth>
         <InputLabel>Category</InputLabel>
@@ -180,6 +182,7 @@ const DashboardAddProducts = () => {
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
           required
+          disabled={isSubmitting}
         >
           {categories.map((category) => (
             <MenuItem key={category.categoryId} value={category.categoryId}>
@@ -194,6 +197,7 @@ const DashboardAddProducts = () => {
           value={brandId}
           onChange={(e) => setBrandId(e.target.value)}
           required
+          disabled={isSubmitting}
         >
           {brands.map((brand) => (
             <MenuItem key={brand.brandId} value={brand.brandId}>
@@ -214,6 +218,7 @@ const DashboardAddProducts = () => {
                 handleVariationChange(index, "sizeId", e.target.value)
               }
               required
+              disabled={isSubmitting}
             >
               {sizes.map((size) => (
                 <MenuItem key={size.sizeId} value={size.sizeId}>
@@ -230,6 +235,7 @@ const DashboardAddProducts = () => {
                 handleVariationChange(index, "colorId", e.target.value)
               }
               required
+              disabled={isSubmitting}
             >
               {colors.map((color) => (
                 <MenuItem key={color.colorId} value={color.colorId}>
@@ -261,6 +267,7 @@ const DashboardAddProducts = () => {
               }
             }}
             inputProps={{ min: 0, max: 999999999999 }}
+            disabled={isSubmitting}
           />
 
           <Button variant="outlined" component="label">
@@ -270,6 +277,7 @@ const DashboardAddProducts = () => {
               hidden
               onChange={(e) => handleImageChange(index, e)}
               required
+              disabled={isSubmitting}
             />
           </Button>
           {isImageRequired && (
