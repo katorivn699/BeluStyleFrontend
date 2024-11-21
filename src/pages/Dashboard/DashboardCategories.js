@@ -35,7 +35,7 @@ const DashboardCategories = () => {
       .catch((error) => {
         console.error("Error fetching categories:", error);
       });
-  }, [varToken]);
+  }, [isOpen, isDrawerOpen]);
 
   const openDeleteModal = (category) => {
     setCategoryToDelete(category);

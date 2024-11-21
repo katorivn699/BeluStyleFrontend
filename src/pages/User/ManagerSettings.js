@@ -28,7 +28,7 @@ const validationSchema = Yup.object().shape({
     .min(1, "Full Name must be at least 1 character")
     .max(255, "Full Name cannot exceed 255 characters")
     .matches(
-      /^[a-zA-Z\s]+$/,
+      /^[\p{L} .'-]+$/u,
       "Full Name cannot contain special characters or numbers"
     ),
   phoneNumber: Yup.string()

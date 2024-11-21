@@ -1,13 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import { Drawer, Button, Typography, Box } from "@mui/material";
 import { FaTimes } from "react-icons/fa";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser"; // Import useAuthUser to get user's role
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { apiClient } from "../../core/api";
+import DeleteConfirmationModal from "../modals/DeleteConfirmationModal";
+import { toast, Zoom } from "react-toastify";
 
 const CategoryDrawer = ({ isOpen, onClose, category, onEdit, onDelete }) => {
   const authUser = useAuthUser(); // Get the authenticated user
+  const varToken = useAuthHeader();
 
-  const userRole = authUser.role; // Access the user's role (assumes role is stored in authUser)
+  const userRole = authUser.role;
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
+  const handleDelete = (categoryId) => {
+    if (categoryId) {
+      apiClient
+        .delete(`/api/categories/${categoryId}`, {
+          headers: {
+            Authorization: varToken,
+          },
+        })
+        .then((response) => {
+          toast.success(
+            response.data.message || "Delete category successfully",
+            {
+              position: "bottom-right",
+              transition: Zoom,
+            }
+          );
+          onClose();
+        })
+        .catch((error) =>
+          toast.error(error.data.message || "Delete category failed", {
+            position: "bottom-right",
+            transition: Zoom,
+          })
+        );
+    }
+  };
+
+  const openDeleteModal = (brand) => {
+    setCategoryToDelete(brand);
+    setDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setCategoryToDelete(null);
+  };
   return (
     <Drawer anchor="right" open={isOpen} onClose={onClose}>
       <Box
@@ -39,7 +82,12 @@ const CategoryDrawer = ({ isOpen, onClose, category, onEdit, onDelete }) => {
         <img
           src={category.imageUrl}
           alt={category.categoryName}
-          style={{ width: "100%", height: "auto" }}
+          style={{
+            width: "100%",
+            height: "25%", // Match the height to the width for a square
+            objectFit: "cover", // Ensures the image scales proportionally
+            borderRadius: "8px",
+          }} // Optional: Slightly rounded corners }}
         />
         <Typography variant="body1" sx={{ marginBottom: 1 }}>
           <strong>ID:</strong> {category.categoryId}
@@ -77,16 +125,25 @@ const CategoryDrawer = ({ isOpen, onClose, category, onEdit, onDelete }) => {
             <Button
               variant="outlined"
               color="secondary"
-              onClick={() => {
-                onDelete(category);
-                onClose();
-              }}
+              onClick={() => openDeleteModal(category)}
             >
               Delete
             </Button>
           )}
         </Box>
       </Box>
+
+      {categoryToDelete && (
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={closeDeleteModal}
+          onConfirm={() => {
+            handleDelete(categoryToDelete.categoryId);
+            closeDeleteModal();
+          }}
+          name={categoryToDelete.categoryName}
+        />
+      )}
     </Drawer>
   );
 };

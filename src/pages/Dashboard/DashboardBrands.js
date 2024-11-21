@@ -32,7 +32,7 @@ const DashboardBrands = () => {
       .catch((error) => {
         console.error("Error fetching brands:", error);
       });
-  }, []); // Empty dependency array means this useEffect runs once when the component mounts
+  }, [isOpen, isDrawerOpen]); // Empty dependency array means this useEffect runs once when the component mounts
 
   const openDeleteModal = (brand) => {
     setbrandToDelete(brand);

@@ -111,6 +111,7 @@ const DashboardCreateCategory = () => {
             }
             required
             margin="normal"
+            disabled={isSubmitting}
           />
           <TextField
             label="Description"
@@ -128,6 +129,7 @@ const DashboardCreateCategory = () => {
               formik.errors.categoryDescription
             }
             margin="normal"
+            disabled={isSubmitting}
           />
           <Box mt={2}>
             <Button variant="outlined" component="label">
@@ -137,6 +139,7 @@ const DashboardCreateCategory = () => {
                 accept="image/*"
                 hidden
                 onChange={handleImageChange}
+                disabled={isSubmitting}
               />
             </Button>
           </Box>

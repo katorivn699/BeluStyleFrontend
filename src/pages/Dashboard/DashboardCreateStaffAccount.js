@@ -30,7 +30,14 @@ const DashboardCreateStaffAccount = () => {
         /^[a-zA-Z0-9]*$/,
         "Username cannot contain special characters or spaces"
       ),
-    fullName: Yup.string().required("Full name is required"),
+    fullName: Yup.string()
+      .required("Full Name is required")
+      .min(1, "Full Name must be at least 1 character")
+      .max(255, "Full Name cannot exceed 255 characters")
+      .matches(
+        /^[\p{L} .'-]+$/u,
+        "Full Name cannot contain special characters or numbers"
+      ),
     email: Yup.string()
       .email("Invalid email format")
       .required("Email is required")
