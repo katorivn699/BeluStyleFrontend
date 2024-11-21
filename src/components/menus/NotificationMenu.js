@@ -21,7 +21,7 @@ export default function NotificationIcon() {
       try {
         const response = await GetNotifications(authHeader);
         if (response.data) {
-          setNotifications(response.data);
+          setNotifications(response.data.reverse());
         }
       } catch (error) {
         console.log("Error!");

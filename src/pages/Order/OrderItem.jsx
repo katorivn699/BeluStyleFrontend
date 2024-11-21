@@ -320,7 +320,7 @@ function ProductDetail({ item }) {
             className="font-bold mt-1"
             fontFamily="Montserrat"
           >
-            Final Price: {formatPrice(item.unitPrice - item.discountAmount)}
+            Final Price: {formatPrice(item.unitPrice * item.orderQuantity - item.discountAmount)}
           </Typography>
         </div>
       </div>

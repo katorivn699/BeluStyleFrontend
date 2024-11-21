@@ -33,6 +33,12 @@ const SearchBar = ({ toggleSearchBar }) => {
   };
 
   useEffect(() => {
+    if (isSearchOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isSearchOpen]);
+
+  useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -81,7 +87,7 @@ const SearchBar = ({ toggleSearchBar }) => {
           type="text"
           value={query}
           onChange={handleChange}
-          placeholder="Tìm kiếm..."
+          placeholder="Find..."
           className="border border-gray-300 rounded-full px-4 py-2 w-[40rem]"
         />
         <button
@@ -101,8 +107,9 @@ const SearchBar = ({ toggleSearchBar }) => {
           onMouseDown={(e) => e.stopPropagation()}
         >
           <ul className="max-h-64 overflow-y-auto">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product, index) => (
               <Link
+              tabIndex={index}
                 to={`/shop/product/${product.productId}`}
                 key={product.productId}
                 onClick={(e) => {

@@ -5,8 +5,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import { TbReorder } from "react-icons/tb";
 import { paymentCallback } from "../../service/CheckoutService";
-import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import { useCart } from "react-use-cart";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 function OrderSuccess() {
   const [searchParams] = useSearchParams();
@@ -28,19 +28,19 @@ function OrderSuccess() {
   
     // Handle cases where searchParams are missing
     if (!responseCode || !transactionStatus) {
-      // Assume success for methods without response codes (e.g., PayOs, COD, Bank Transfer)
       paymentCallback(orderId, authHeader, 1); // Status 1 for success
-      return;
+      return localStorage.removeItem("orderId");
     }
   
     // Handle VNPay specific responses
     if (responseCode === "00" && transactionStatus === "00") {
       // Success: perform callback
       paymentCallback(orderId, authHeader, 1); // Status 1 for success
+      localStorage.removeItem("orderId");
     } else {
       // Failure: redirect to error page
       navigate("/orders/error");
-      return;
+      return localStorage.removeItem("orderId");
     }
   }, [authHeader, emptyCart, navigate, orderId, searchParams]);
   

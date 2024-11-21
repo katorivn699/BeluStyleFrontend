@@ -7,6 +7,7 @@ export function NavLogin() {
 
   const handleGoBack = () => {
     navigate(-1);
+    localStorage.removeItem("orderId");
   };
 
   return (
