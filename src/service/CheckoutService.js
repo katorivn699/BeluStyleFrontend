@@ -1,12 +1,5 @@
-import React from "react";
 import { apiClient } from "../core/api";
 import { toast, Zoom } from "react-toastify";
-
-export const checkout = async ({ items }) => {
-  const response = apiClient.post("/api/orders", {
-    orderDetails: items
-  });
-};
 
 export const checkDiscount = async (discountCode, authHeader, totalOrder) => {
   try {
@@ -64,10 +57,11 @@ export const paymentCallback = async(orderId, authHeader, status) => {
     })
     return response;
   } catch (error) {
-    toast.error(error?.data || "Error when payment", {
-      position: "top-center",
-      transition: Zoom
-    })
+    // toast.error(error?.data || "Error when payment", {
+    //   position: "top-center",
+    //   transition: Zoom
+    // })
+    // console.log(error);
   }
 };
 

@@ -4,6 +4,7 @@ import { apiClient } from "../../core/api";
 import { toast, Zoom } from "react-toastify";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardViewSaleProduct = () => {
   const [products, setProducts] = useState([]);
@@ -79,7 +80,12 @@ const DashboardViewSaleProduct = () => {
         <div className="mb-6">
           <h2 className="text-2xl font-bold">Sale ID: {sale.saleId}</h2>
           <p>Type: {sale.saleType}</p>
-          <p>Value: {sale.saleValue}</p>
+          <p>
+            Value:{" "}
+            {sale.saleType === "PERCENTAGE"
+              ? sale.saleValue + "%"
+              : formatPrice(sale.saleValue)}
+          </p>
           <p>Start Date: {new Date(sale.startDate).toLocaleString()}</p>
           <p>End Date: {new Date(sale.endDate).toLocaleString()}</p>
           <p>Status: {sale.saleStatus}</p>

@@ -21,16 +21,7 @@ export const ProductProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // Fetch products initially
     fetchProducts();
-
-    // Set up auto-refresh every 30 seconds (adjust the interval as needed)
-    const interval = setInterval(() => {
-      fetchProducts();
-    }, 30000); // Refresh every 30 seconds
-
-    // Clean up the interval on component unmount
-    return () => clearInterval(interval);
   }, [fetchProducts]);
 
   return (

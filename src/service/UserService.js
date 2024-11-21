@@ -16,9 +16,6 @@ export const GetUserInfo = (authHeader) => {
         position: "bottom-center",
         transition: Zoom,
       });
-      throw new Error(error.response);
-    } else {
-      throw new Error("An error occurred. Please try again.");
     }
   }
 };

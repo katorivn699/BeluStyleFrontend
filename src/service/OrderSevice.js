@@ -1,4 +1,3 @@
-import { toast, Zoom } from "react-toastify";
 import { apiClient } from "../core/api";
 
 export const getOrderById = async (orderId, authHeader) => {

@@ -4,6 +4,7 @@ import { apiClient } from "../../core/api";
 import { toast, Zoom } from "react-toastify";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardViewUserDiscount = () => {
   const [discount, setDiscount] = useState(null);
@@ -82,7 +83,12 @@ const DashboardViewUserDiscount = () => {
           </h2>
           <p>Code: {discount.discountCode}</p>
           <p>Type: {discount.discountType}</p>
-          <p>Value: {discount.discountValue}</p>
+          <p>
+            Value:{" "}
+            {discount.discountType === "PERCENTAGE"
+              ? discount.discountValue + "%"
+              : formatPrice(discount.discountValue)}
+          </p>
           <p>Start Date: {new Date(discount.startDate).toLocaleString()}</p>
           <p>End Date: {new Date(discount.endDate).toLocaleString()}</p>
           <p>Status: {discount.discountStatus}</p>

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { formatPrice } from "../../components/format/formats";
 
 const DashboardImportProducts = () => {
   const [products, setProducts] = useState([]);
@@ -282,7 +283,7 @@ const VariationCard = ({ variation, onVariationChange, isSelected }) => {
         Color: {variation.color.colorName}
       </p>
       <p className="text-xs font-semibold text-gray-800">
-        Price: ${variation.productPrice}
+        Price: {formatPrice(variation.productPrice)}
       </p>
       {showInput && (
         <input

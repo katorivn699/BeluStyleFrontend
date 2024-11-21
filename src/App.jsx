@@ -10,7 +10,6 @@ import useSignOut from "react-auth-kit/hooks/useSignOut";
 import { jwtDecode } from "jwt-decode";
 import AppRoutes from "./routes/AppRoutes.js";
 import ScrollToTop from "./Scroll.js";
-import SearchBar from "./components/Search/SearchBar.jsx";
 import { ProductProvider } from "./components/Providers/Product.js";
 
 function App() {
@@ -68,6 +67,10 @@ function App() {
     location.pathname !== "/reset-password" &&
     location.pathname !== "/LoginForStaffAndAdmin" &&
     location.pathname !== "/checkout" &&
+    location.pathname !== "/payment-options" &&
+    location.pathname !== "/return" &&
+    location.pathname !== "/contact" &&
+    location.pathname !== "/privacy-policies" &&
     !location.pathname.startsWith("/user") &&
     !location.pathname.startsWith("/Dashboard") &&
     !location.pathname.startsWith("/confirm-registration") &&
@@ -91,7 +94,10 @@ function App() {
       path === "/cart" ||
       path === "/checkout" ||
       path.startsWith("/reset-password") ||
-      path.startsWith("/orders")
+      path.startsWith("/orders") ||
+      path === "/payment-options" ||
+      path === "/privacy-policies" ||
+      path === "/return" 
     ) {
       return "pt-[100px]";
     }

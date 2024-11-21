@@ -1,6 +1,6 @@
 import { UserForm } from "../../layouts/LRFCLayout";
 import { Formik, Form } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 import { Link, useLocation, useNavigate} from "react-router-dom";
 import * as Yup from "yup";
@@ -10,18 +10,18 @@ import { AuthCommonBtn } from "../../components/buttons/Button";
 
 const ResetPasswordPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [resetPassword, setResetPassword] = useState(false);
+  // const [resetPassword, setResetPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
   const email = queryParams.get("email");
 
-  useEffect(() => {
-    if (token === undefined && email === undefined) {
-        setResetPassword(true);
-    }
-  },[email, token]);
+  // useEffect(() => {
+  //   if (token === undefined && email === undefined) {
+  //       setResetPassword(true);
+  //   }
+  // },[email, token]);
 
 
   const toggleShowPassword = () => {

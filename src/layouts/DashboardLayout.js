@@ -8,7 +8,6 @@ import {
 } from "react-icons/fa";
 import Sidebar from "../components/sidebars/Sidebar";
 import Breadcrumb from "../components/breadcrumb/Breadcrumbs";
-import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import userDefault from "../assets/images/userdefault.webp";
 import { Link } from "react-router-dom";

@@ -59,6 +59,10 @@ import DashboardEditProductVariation from "../pages/Dashboard/DashboardEditProdu
 import OrderSuccess from "../pages/Order/OrderSuccess.jsx";
 import OrderFail from "../pages/Order/OrderFail.jsx";
 import OrderBankTransfer from "../pages/Order/OrderBankTransfer.jsx";
+import PaymentOptions from "../pages/footer/PaymentOptions.jsx";
+import ReturnOrder from "../pages/footer/ReturnOrder.jsx";
+import PrivacyPolicies from "../pages/footer/PrivacyPolicies.jsx";
+import Contact from "../pages/Home/Contact.js";
 
 const AppRoutes = ({ toggleSidebar, isOpen }) => {
   return (
@@ -85,6 +89,38 @@ const AppRoutes = ({ toggleSidebar, isOpen }) => {
         element={
           <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
             <About />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payment-options"
+        element={
+          <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
+            <PaymentOptions />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/return"
+        element={
+          <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
+            <ReturnOrder />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/privacy-policies"
+        element={
+          <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
+            <PrivacyPolicies />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <ProtectedRoute types={["GUEST", "CUSTOMER"]}>
+            <Contact />
           </ProtectedRoute>
         }
       />

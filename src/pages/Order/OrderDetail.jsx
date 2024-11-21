@@ -281,7 +281,7 @@ function OrderDetail() {
                     variant="body1"
                     sx={{ fontFamily: "Poppins", fontWeight: "medium" }}
                   >
-                    <span style={{ fontWeight: "bold" }}>Unit Price:</span> ${" "}
+                    <span style={{ fontWeight: "bold" }}>Unit Price:</span>{" "}
                     {formatPrice(item.unitPrice)}
                   </Typography>
                   <Typography
@@ -304,7 +304,7 @@ function OrderDetail() {
                         color: "green",
                       }}
                     >
-                      <span style={{ fontWeight: "bold" }}>Discount:</span> -${" "}
+                      <span style={{ fontWeight: "bold" }}>Discount:</span> -{" "}
                       {formatPrice(item.discountAmount)}
                     </Typography>
                   )}
@@ -316,7 +316,7 @@ function OrderDetail() {
                       color: "#1976d2",
                     }}
                   >
-                    <span style={{ fontWeight: "bold" }}>Total Price:</span> ${" "}
+                    <span style={{ fontWeight: "bold" }}>Total Price:</span>{" "}
                     {formatPrice(
                       item.unitPrice * item.orderQuantity - item.discountAmount
                     )}
@@ -362,7 +362,7 @@ function OrderDetail() {
             Shipping Fee:
           </Typography>
           <Typography variant="h6" sx={{ fontFamily: "Poppins" }}>
-            ${formatPrice(shippingCost)}
+            {formatPrice(shippingCost)}
           </Typography>
         </Box>
 
@@ -374,7 +374,7 @@ function OrderDetail() {
             Total:
           </Typography>
           <Typography variant="h6" sx={{ fontFamily: "Poppins" }}>
-            ${formatPrice(order.totalAmount)}
+            {formatPrice(order.totalAmount)}
           </Typography>
         </Box>
         {orderStatus === "SHIPPED" && (

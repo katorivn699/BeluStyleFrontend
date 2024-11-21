@@ -3,10 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 import { RegisterUser } from "../../service/AuthService";
 import { LoginGooglebtn, RegisterBtn } from "../buttons/Button";
-import { Checkbox, Divider } from "@mui/material";
+import { Button, Checkbox, Divider } from "@mui/material";
 import { toast, Zoom } from "react-toastify";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import TermsAndPrivacyModals from "../modals/Term";
 
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +31,12 @@ export function RegisterForm() {
         /^[a-zA-Z0-9]*$/,
         "Username cannot contain special characters or spaces"
       ),
-    fullname: Yup.string().required("Full name is required"),
+    fullname: Yup.string()
+      .required("Full name is required")
+      .matches(
+        /^[\p{L} .'-]+$/u,
+        "Full name can only contain letters, spaces, dots, apostrophes, and hyphens."
+      ),
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
@@ -206,12 +212,12 @@ export function RegisterForm() {
               />
             </div>
             <div className="agreeTerm flex flex-row">
-              <Checkbox required/>
+              <Checkbox required />
               <p className="text-left text-xl">
-                By continuing, you agree to the{" "}
-                <Link className="underline font-semibold">Terms of Use</Link>{" "}
+                By continuing, you agree to the <TermsAndPrivacyModals />
+                {/* <Button className="font-semibold">Terms of Use</Button>
                 and{" "}
-                <Link className="underline font-semibold">Privacy Policy</Link>
+                <Button className="font-semibold">Privacy Policy</Button> */}
               </p>
             </div>
             <RegisterBtn disabled={isSubmitting} />

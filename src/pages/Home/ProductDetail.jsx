@@ -210,6 +210,7 @@ const ProductDetailPage = () => {
       image: selectedVariation.images,
       price: selectedVariation.price,
       saledPrice: finalPrice,
+      maxQuantity: selectedVariation.quantity,
     };
 
     addItem(cartItem, quantity);

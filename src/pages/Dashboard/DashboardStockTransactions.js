@@ -111,7 +111,7 @@ const DashboardStockTransactions = () => {
                   <p className="flex items-center">
                     <strong>Color:</strong>{" "}
                     <span
-                      className="inline-block w-4 h-4 mr-1 rounded-full border border-gray-200"
+                      className="inline-block w-4 h-4 ml-1 mr-1 rounded-full border border-gray-200"
                       style={{
                         backgroundColor:
                           transaction.productVariation?.color?.hexCode ||
@@ -123,7 +123,7 @@ const DashboardStockTransactions = () => {
                     )}
                   </p>
                   <p>
-                    <strong>Price:</strong>
+                    <strong>Price:</strong>{" "}
                     {formatPrice(transaction.productVariation?.productPrice)}
                   </p>
                   <p>

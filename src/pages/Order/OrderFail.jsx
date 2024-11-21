@@ -4,7 +4,6 @@ import orderFail from "../../assets/anim/ordererror.json";
 import { useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import { paymentCallback } from "../../service/CheckoutService";
-import { toast, Zoom } from "react-toastify";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 function OrderFail() {

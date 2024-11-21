@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const CAN_THO_LATITUDE = 10.0364634;
 const CAN_THO_LONGITUDE = 105.7875821;

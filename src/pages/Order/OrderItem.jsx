@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardMedia,
@@ -6,14 +6,12 @@ import {
   Divider,
   Skeleton,
   Button,
-  Zoom,
 } from "@mui/material";
 import { formatPrice } from "../../components/format/formats";
 import { Link } from "react-router-dom";
 import { confirmOrder } from "../../service/OrderSevice";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import { toast } from "react-toastify";
-import { cancelOrder, paymentCallback } from "../../service/CheckoutService";
+import { cancelOrder } from "../../service/CheckoutService";
 
 function OrderStatus({ status }) {
   let statusText = "";
@@ -287,7 +285,7 @@ function ProductDetail({ item }) {
             className="font-bold"
             fontFamily="Montserrat"
           >
-            Price:
+            Price: {" "}
             {item.discountAmount > 0 ? (
               <>
                 {/* Original Price with Strikethrough */}

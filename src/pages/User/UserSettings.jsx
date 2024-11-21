@@ -83,19 +83,19 @@ export const UserProfile = () => {
     fullName: Yup.string()
       .required("Full name is required")
       .matches(
-        /^[\p{L}\s]+$/u, // Unicode property escape: \p{L} matches any letter (including Vietnamese)
-        "Full name must not contain special characters or numbers"
+        /^[\p{L} .'-]+$/u,
+        "Full name can only contain letters, spaces, dots, apostrophes, and hyphens."
       ),
     phoneNumber: Yup.string()
+      .required("Phone number is required")
       .matches(
         /^(?:\+84|0)\d{9,10}$/,
         "Phone number must start with '+84' or '0' and be 10-11 digits"
-      )
-      .required("Phone number is required"),
+      ),
     userAddress: Yup.string()
       .required("Address is required")
       .matches(
-        /^[\p{L}\p{N}\s,.-]+$/u, // Unicode property escape: \p{L} for letters, \p{N} for numbers
+        /^[\p{L}\p{N}\s,.-]+$/u,
         "Address must not contain special characters"
       ),
   });
@@ -107,7 +107,7 @@ export const UserProfile = () => {
       phoneNumber: userData.phoneNumber || "",
       userAddress: userData.userAddress || "",
     },
-    validationSchema: validationSchema,
+    validationSchema,
     onSubmit: async (values) => {
       try {
         if (selectedFile) {
@@ -135,6 +135,7 @@ export const UserProfile = () => {
           position: "top-center",
           transition: Zoom,
         });
+
         setInitialData(updatedData);
         setSelectedFile(null);
       } catch (error) {
@@ -145,12 +146,6 @@ export const UserProfile = () => {
       }
     },
   });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value });
-    console.log(userData);
-  };
 
   const handleDeleteSuccess = () => {
     signOut();
@@ -168,46 +163,26 @@ export const UserProfile = () => {
   };
 
   const hasChanges = () => {
-    return (
-      JSON.stringify(initialData) !== JSON.stringify(userData) ||
-      selectedFile !== null
-    );
-  };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     if (selectedFile) {
-  //       const formData = new FormData();
-  //       formData.append("image", selectedFile);
-
-  //       const uploadResponse = await fetch(
-  //         "https://api.imgbb.com/1/upload?key=387abfba10f808a7f6ac4abb89a3d912",
-  //         {
-  //           method: "POST",
-  //           body: formData,
-  //         }
-  //       );
-  //       const uploadResult = await uploadResponse.json();
-
-  //       if (!uploadResult.success) throw new Error("Failed to upload image");
-
-  //       userData.userImage = uploadResult.data.url;
-  //     }
-  //     await UpdateUserInfo(userData, authHeader, signIn);
-  //     toast.success("Profile updated successfully!", {
-  //       position: "top-center",
-  //       transition: Zoom,
-  //     });
-  //     setInitialData(userData);
-  //     setSelectedFile(null);
-  //   } catch (error) {
-  //     toast.error("An error occurred: " + error.message, {
-  //       position: "top-center",
-  //       transition: Zoom,
-  //     });
-  //   }
-  // };
+    const currentValues = {
+      fullName: formik.values.fullName,
+      phoneNumber: formik.values.phoneNumber,
+      userAddress: formik.values.userAddress,
+    };
+  
+    const initialValues = {
+      fullName: initialData?.fullName,
+      phoneNumber: initialData?.phoneNumber,
+      userAddress: initialData?.userAddress,
+    };
+  
+    // Check if form values or selected file have changed
+    const valuesChanged =
+      JSON.stringify(currentValues) !== JSON.stringify(initialValues) ||
+      selectedFile !== null;
+  
+    // Ensure form is valid
+    return valuesChanged && formik.isValid;
+  };  
 
   return (
     <Grid2 container>
@@ -340,7 +315,7 @@ export const UserProfile = () => {
               <TextField
                 fullWidth
                 margin="normal"
-                label="Phone number"
+                label="Phone Number"
                 name="phoneNumber"
                 value={formik.values.phoneNumber}
                 onChange={formik.handleChange}
@@ -397,17 +372,6 @@ export const UserProfile = () => {
                   </p>
                 </div>
               )}
-              {/* <TextField
-              fullWidth
-              margin="normal"
-              label="Payment Method"
-              name="currentPaymentMethod"
-              value={userData.currentPaymentMethod}
-              readOnly
-              sx={{
-                fontFamily: "Poppins",
-              }}
-            /> */}
               <div className="pt-3">
                 <div className="flex justify-start items-center w-auto h-20 border-2 rounded-lg px-10 font-montserrat">
                   {(() => {

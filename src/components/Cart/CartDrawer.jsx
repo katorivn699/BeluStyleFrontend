@@ -8,15 +8,23 @@ import {
   Typography,
   Box,
   Divider,
+  IconButton,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Drawerbtn } from "../buttons/Button";
 import { formatPrice } from "../format/formats";
-import { MdCancel } from "react-icons/md";
+import { MdAdd, MdCancel, MdRemove } from "react-icons/md";
 
 const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
   const drawerRef = useRef(null);
-  const { isEmpty, items, removeItem, emptyCart, cartTotal } = useCart();
+  const {
+    isEmpty,
+    items,
+    removeItem,
+    emptyCart,
+    cartTotal,
+    updateItemQuantity,
+  } = useCart();
   const navigate = useNavigate();
 
   const handleClickOutside = (event) => {
@@ -27,7 +35,19 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
 
   const handleClearAll = (e) => {
     emptyCart();
-  }
+  };
+
+  const handleIncrease = (item) => {
+    if (item.quantity < item.maxQuantity) {
+      updateItemQuantity(item.id, item.quantity + 1);
+    }
+  };
+
+  const handleDecrease = (item) => {
+    if (item.quantity > 1) {
+      updateItemQuantity(item.id, item.quantity - 1);
+    }
+  };
 
   useEffect(() => {
     if (isCartOpen) {
@@ -54,12 +74,19 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
       }}
     >
       <div ref={drawerRef} className="p-10">
-        <Typography variant="h5" className="font-bold" gutterBottom fontFamily="Poppins">
+        <Typography
+          variant="h5"
+          className="font-bold"
+          gutterBottom
+          fontFamily="Poppins"
+        >
           Shopping Cart
         </Typography>
 
         {isEmpty ? (
-          <Typography variant="body1" fontFamily="Poppins">Your cart is empty.</Typography>
+          <Typography variant="body1" fontFamily="Poppins">
+            Your cart is empty.
+          </Typography>
         ) : (
           <List>
             {items.map((item) => (
@@ -85,14 +112,46 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
                 />
                 <Box>
                   {/* Product Name */}
-                  <Typography variant="body1" color="text.primary" fontFamily="Poppins">
+                  <Typography
+                    variant="body1"
+                    color="text.primary"
+                    fontFamily="Poppins"
+                  >
                     {item.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" fontFamily="Poppins">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontFamily="Poppins"
+                  >
                     {item.color} - {item.size}
                   </Typography>
                   {/* Quantity and Price */}
-                  <Typography variant="body2" color="text.secondary" fontFamily="Poppins">
+                  <Box display="flex" alignItems="center" mt={1}>
+                    <IconButton
+                      onClick={() => handleDecrease(item)}
+                      disabled={item.quantity <= 1}
+                      size="small"
+                    >
+                      <MdRemove />
+                    </IconButton>
+                    <Typography variant="body2" mx={1}>
+                      {item.quantity}
+                    </Typography>
+                    <IconButton
+                      onClick={() => handleIncrease(item)}
+                      disabled={item.quantity >= item.maxQuantity}
+                      size="small"
+                    >
+                      <MdAdd />
+                    </IconButton>
+                  </Box>
+                  {/* Quantity and Price */}
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontFamily="Poppins"
+                  >
                     {item.quantity} x {formatPrice(item.price)}
                   </Typography>
                 </Box>
@@ -117,10 +176,20 @@ const CartDrawer = ({ isCartOpen, toggleCartDrawer }) => {
 
         {/* Subtotal and Checkout */}
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="body1" color="text.primary" fontWeight="bold" fontFamily="Poppins">
+          <Typography
+            variant="body1"
+            color="text.primary"
+            fontWeight="bold"
+            fontFamily="Poppins"
+          >
             Subtotal
           </Typography>
-          <Typography variant="body1" color="primary" fontWeight="bold" fontFamily="Poppins">
+          <Typography
+            variant="body1"
+            color="primary"
+            fontWeight="bold"
+            fontFamily="Poppins"
+          >
             {formatPrice(cartTotal)}
           </Typography>
         </Box>
